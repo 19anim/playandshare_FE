@@ -1,9 +1,15 @@
 import { Link } from "react-router-dom";
-import store from "../../store/store";
 import { useSelector } from "react-redux";
+import store from "../../store/store";
+import { userDataClearance } from "../../store/user";
 
 const Navbar = () => {
   const { username, accessToken } = useSelector((state) => state.user);
+
+  const signOutHandler = () => {
+    store.dispatch(userDataClearance());
+  };
+
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="navbar-start">
@@ -30,22 +36,33 @@ const Navbar = () => {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
             <li>
-              <a>Item 1</a>
+              <Link to="/search" className="btn">
+                Tìm kiếm
+              </Link>
             </li>
             <li>
-              <a>Item 2</a>
+              <Link to="/create-post" className="btn">
+                Đăng bài viết
+              </Link>
             </li>
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl">Home</a>
+        {/* <a className="btn btn-ghost text-xl">Trang chủ</a> */}
+        <Link to="/" className="btn">
+          Trang chủ
+        </Link>
       </div>
       <div className="navbar-center hidden lg:block">
-        <ul className="menu menu-horizontal px-1 text-xl">
+        <ul className="menu menu-horizontal px-1 text-xl gap-3">
           <li>
-            <a>Item 1</a>
+            <Link to="/search" className="btn">
+              Tìm kiếm
+            </Link>
           </li>
           <li>
-            <a>Item 2</a>
+            <Link to="/create-post" className="btn">
+              Đăng bài viết
+            </Link>
           </li>
         </ul>
       </div>
@@ -55,7 +72,14 @@ const Navbar = () => {
             Sign in/ Sign up
           </Link>
         ) : (
-          <p>Hello {username}</p>
+          <div className="flex items-center justify-center gap-2">
+            <p>Hello</p>
+            <span className="badge badge-success">{username.toUpperCase()}</span>{" "}
+            <i
+              onClick={signOutHandler}
+              className="fa-solid fa-right-from-bracket cursor-pointer"
+            ></i>
+          </div>
         )}
       </div>
     </div>

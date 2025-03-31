@@ -1,20 +1,21 @@
 import "./App.css";
 import HomePage from "./pages/home.page";
 import Layout from "./layout/layout";
-import TestPage from "./pages/test.page";
+import CreatePost from "./pages/createPost.page";
 import NotFound from "./pages/notFound.page";
 import SignIn from "./pages/signin.page";
 import SignUp from "./pages/signup.page";
-import store from "./store/store";
-import { initiateAccessToken } from "./store/user";
+import Search from "./pages/search.page";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useSelector } from "react-redux";
-
-// Check if user have login before
+import fetchSigninedUser from "./hooks/fetchSigninedUser.hook";
+import TestPage from "./pages/test.page";
+import { fetchCities, fetchPlayTypes } from "./store/postUtil";
+import store from "./store/store";
 
 const App = () => {
-  // const user = useSelector((state) => state.user);
-  // store.dispatch(initiateAccessToken());
+  store.dispatch(fetchCities());
+  store.dispatch(fetchPlayTypes());
+  fetchSigninedUser();
   const router = createBrowserRouter([
     {
       path: "/",
@@ -22,11 +23,10 @@ const App = () => {
       // errorElement: <ErrorPage />,
       children: [
         { index: true, element: <HomePage /> },
+        { path: "search", element: <Search /> },
         { path: "test", element: <TestPage /> },
-        {
-          path: "signin",
-          element: <SignIn />,
-        },
+        { path: "create-post", element: <CreatePost /> },
+        { path: "signin", element: <SignIn /> },
         { path: "signup", element: <SignUp /> },
       ],
     },

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import store from "../store/store";
-import { signin, initiateAccessToken } from "../store/user";
+import { signin } from "../store/user";
 import SignInImage from "../assets/authentication/signin.svg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +9,6 @@ import { useSelector } from "react-redux";
 const SignIn = () => {
   const { loading, accessToken } = useSelector((state) => state.user);
 
-  store.dispatch(initiateAccessToken());
   const navigate = useNavigate();
   if (accessToken !== "") navigate("/");
 

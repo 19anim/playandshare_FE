@@ -1,5 +1,6 @@
 import axios from "axios";
 import { apiCallBegan } from "../api";
+import apiWithToken from "../../helper/api";
 
 const api =
   ({ dispatch }) =>
@@ -7,18 +8,30 @@ const api =
   async (action) => {
     if (action.type !== apiCallBegan.type) return next(action);
 
-    const { url, method, data, onStart, onSuccess, onError, withCredentials } = action.payload;
+    const { url, method, data, onStart, onSuccess, onError, withCredentials, accessTokenNeeded } =
+      action.payload;
 
     if (onStart) dispatch({ type: onStart });
 
     try {
-      const response = await axios.request({
-        baseURL: "http://localhost:3000/api",
-        url,
-        method,
-        data,
-        withCredentials,
-      });
+      let response = null;
+      if (!accessTokenNeeded) {
+        response = await axios.request({
+          baseURL: "http://localhost:3000/api",
+          url,
+          method,
+          data,
+          withCredentials,
+        });
+      } else {
+        response = await apiWithToken.request({
+          baseURL: "http://localhost:3000/api",
+          url,
+          method,
+          data,
+          withCredentials,
+        });
+      }
 
       dispatch({ type: onSuccess, payload: response.data });
       next(action);

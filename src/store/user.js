@@ -7,6 +7,7 @@ const userReducer = createSlice({
   initialState: {
     userId: "",
     username: "",
+    email: "",
     accessToken: token.getAccessToken(),
     loading: false,
     error: null,
@@ -21,25 +22,33 @@ const userReducer = createSlice({
     apiRequestedDone: (state, action) => {
       state.loading = false;
     },
+    userDataClearance: (state, action) => {
+      token.deleteAccessToken();
+      state.loading = false;
+      state.userId = "";
+      state.username = "";
+      state.email = "";
+      state.accessToken = "";
+    },
     storeLoginData: (state, action) => {
       const { accessToken, user } = action.payload;
       token.setAccessToken(accessToken);
       state.accessToken = accessToken;
       state.userId = user._id;
       state.username = user.username;
+      state.email = user.email;
       state.loading = false;
     },
-    initiateAccessToken: (state, action) => {
-      console.log(token.getAccessToken());
-      state = {
-        ...state,
-        accessToken: token.getAccessToken(),
-      };
+    inititate: (state, action) => {
+      const { id, username, email } = action.payload;
+      state.userId = id;
+      state.username = username;
+      state.email = email;
     },
   },
 });
 
-export const { apiRequested, apiRequestFailed, storeLoginData, initiateAccessToken } =
+export const { apiRequested, apiRequestFailed, storeLoginData, inititate, userDataClearance } =
   userReducer.actions;
 export default userReducer.reducer;
 
@@ -52,5 +61,12 @@ export const signin = (signinData) => {
     onSuccess: storeLoginData.type,
     onError: apiRequestFailed.type,
     withCredentials: true,
+  });
+};
+
+export const signout = () => {
+  return apiCallBegan({
+    url: "auth/signout",
+    onStart: apiRequested.type,
   });
 };

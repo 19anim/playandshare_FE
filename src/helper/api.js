@@ -12,7 +12,8 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = store.getState("user").user.accessToken;
+    //const token = store.getState("user").user.accessToken;
+    const token = localStorage.getItem("access_token");
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
@@ -39,6 +40,7 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return api(originalRequest);
       } catch (err) {
+        console.log("ERROR");
         return Promise.reject(err);
       }
     }
@@ -53,13 +55,11 @@ const refreshToken = async () => {
     });
 
     const newAccessToken = refreshResponse.data.accessToken;
-    localStorage.setItem("token", newAccessToken); // Store new token
-    console.log("REFRESHED: ", newAccessToken);
+    localStorage.setItem("access_token", newAccessToken); // Store new token
     return newAccessToken;
   } catch (error) {
     console.error("Failed to refresh token", error);
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("access_token");
     throw error;
   }
 };

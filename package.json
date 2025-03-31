@@ -12,9 +12,11 @@
   "dependencies": {
     "@cloudinary/react": "^1.14.1",
     "@cloudinary/url-gen": "^1.21.0",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@reduxjs/toolkit": "^2.6.1",
     "@tailwindcss/cli": "^4.0.14",
     "@tailwindcss/vite": "^4.0.14",
+    "antd": "^5.24.4",
     "axios": "^1.8.3",
     "daisyui": "^5.0.4",
     "react": "^19.0.0",
