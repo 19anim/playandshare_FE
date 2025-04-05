@@ -1,12 +1,14 @@
-const Select = ({ selectLable, selectOptions, searchVisible }) => {
+const Select = ({ selectLable, selectOptions, searchVisible, onchangeHandler }) => {
   return (
     <div className="join grow">
-      <div>
+      {searchVisible === false ? null : (
         <div>
-          <input className="input join-item" placeholder="Search" />
+          <div>
+            <input className="input join-item" placeholder="Search" />
+          </div>
         </div>
-      </div>
-      <select className="select join-item">
+      )}
+      <select name="city" onChange={onchangeHandler} className="select join-item">
         <option disabled defaultValue>
           {selectLable}
         </option>

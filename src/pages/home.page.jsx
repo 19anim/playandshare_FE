@@ -5,7 +5,7 @@ const HomePage = () => {
   return (
     <div
       style={{ backgroundImage: `url('${img}')` }}
-      className="h-screen bg-cover bg-center flex items-center justify-center"
+      className="h-screen bg-cover bg-center flex items-center justify-center relative"
     >
       <div className="w-full flex flex-col justify-center items-center">
         <div className="hero">
