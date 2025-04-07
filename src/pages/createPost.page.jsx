@@ -6,13 +6,17 @@ import Select from "../components/Filter/select.component";
 import axios from "../helper/api";
 import ErrorModal from "../components/Modal/error.component";
 import SuccessModal from "../components/Modal/success.component";
+import imageCompression from "browser-image-compression";
 
 const CreatePost = () => {
+  const MAX_SIZE_MB = 0.5;
+  const MAX_IMAGE_COUNT = 10;
   const [isCreating, setIsCreating] = useState(false);
   const [responseStatus, setResponseStatus] = useState();
   const [selectedTypes, setSelectedTypes] = useState([]);
-  const [images, setImages] = useState([]);
   const [imagesToSend, setImagesToSend] = useState([]);
+  const [images, setImages] = useState([]);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const imageElementRef = useRef(null);
   const successModalRef = useRef(null);
   const errorModalRef = useRef(null);
@@ -39,34 +43,73 @@ const CreatePost = () => {
 
   const onClickSelectedTypesHandler = (e) => {
     const newSelectedTypes = [...selectedTypes];
-    const typeIndex = newSelectedTypes.indexOf(e.target.innerText);
+    const btn = e.currentTarget;
+    const text = btn.childNodes[0].textContent.trim();
+    const typeIndex = newSelectedTypes.indexOf(text);
     newSelectedTypes.splice(typeIndex, 1);
     setSelectedTypes([...newSelectedTypes]);
     setFormdata({ ...formData, types: [...newSelectedTypes] });
   };
 
   const handleUploadClick = (e) => {
-    imageElementRef.current.click();
+    if (images.length < MAX_IMAGE_COUNT) imageElementRef.current.click();
   };
 
-  const handleUploadChange = (e) => {
+  const handleUploadChange = async (e) => {
+    const options = {
+      maxSizeMB: MAX_SIZE_MB,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
     const files = Array.from(e.target.files);
-    setImagesToSend([...e.target.files]);
+    const imagesToSendName = imagesToSend.map((image) => image.name);
+    try {
+      setIsUploadingImage(true);
+      const compressedFiles = await Promise.all(
+        files.map(async (file) => {
+          if (imagesToSendName.indexOf(file.name) !== -1) {
+            return false;
+          }
 
-    files.forEach((file) => {
-      if (file.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          if (images.indexOf(reader.result) === -1)
-            setImages((prevImages) => [...prevImages, reader.result]);
-        };
-        reader.readAsDataURL(file);
-      }
-    });
+          const compressedImage = await imageCompression(file, options);
+          if (compressedImage.size / (1024 * 1024) > MAX_SIZE_MB) {
+            alert(`${file.name} không thể upload do vượt quá dung lượng cho phép`);
+          }
+          return compressedImage;
+        })
+      );
+
+      const validCompressedFiles = compressedFiles.filter((file) => {
+        if (file !== false) return file;
+      });
+
+      const tempImages = [...imagesToSend, ...validCompressedFiles];
+      tempImages.splice(MAX_IMAGE_COUNT);
+
+      setImagesToSend([...tempImages]);
+
+      validCompressedFiles.forEach((file) => {
+        if (file.type.startsWith("image/")) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setImages((prev) => {
+              if (prev.includes(reader.result) || prev.length >= MAX_IMAGE_COUNT) return prev;
+              return [...prev, reader.result];
+            });
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    } catch (error) {
+      console.error("Compression failed:", error);
+    } finally {
+      setIsUploadingImage(false);
+    }
   };
 
   const handleRemoveImage = (index) => {
     setImages(images.filter((_, i) => i !== index));
+    setImagesToSend(imagesToSend.filter((_, i) => i !== index));
   };
 
   const handleOnChangeFormData = (e) => {
@@ -148,23 +191,54 @@ const CreatePost = () => {
             className="hidden"
             multiple
           />
-          <div onClick={handleUploadClick} className="cursor-pointer ">
-            <i className="text-3xl fa-regular fa-images"></i>
+          <div
+            onClick={handleUploadClick}
+            className={`flex items-center gap-2 ${
+              images.length < MAX_IMAGE_COUNT ? "cursor-pointer" : null
+            }`}
+          >
+            <i
+              className={`text-3xl fa-regular fa-images ${
+                images.length >= MAX_IMAGE_COUNT ? "text-gray-500" : null
+              }`}
+            ></i>
+            {images.length >= MAX_IMAGE_COUNT ? (
+              <div role="alert" className="alert alert-warning px-3 py-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 shrink-0 stroke-current"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+                <span>Đã đạt số lượng tối đa 10 tấm ảnh</span>
+              </div>
+            ) : null}
           </div>
         </section>
 
         <div className="w-full max-w-[750px] flex flex-wrap gap-2">
-          {images.map((image, index) => (
-            <div key={index} className="relative size-[80px] rounded-md overflow-hidden">
-              <img src={image} alt={`Preview ${index}`} className="w-full h-full object-cover" />
-              <button
-                onClick={() => handleRemoveImage(index)}
-                className="absolute top-0 right-0  text-white p-1 rounded-full cursor-pointer"
-              >
-                <i className="fa-solid fa-x"></i>
-              </button>
-            </div>
-          ))}
+          {isUploadingImage ? (
+            <span className="loading loading-bars loading-xl"></span>
+          ) : (
+            images.map((image, index) => (
+              <div key={index} className="relative size-[80px] rounded-md overflow-hidden">
+                <img src={image} alt={`Preview ${index}`} className="w-full h-full object-cover" />
+                <button
+                  onClick={() => handleRemoveImage(index)}
+                  className="absolute top-0 right-0  text-white p-1 rounded-full cursor-pointer"
+                >
+                  <i className="fa-solid fa-x"></i>
+                </button>
+              </div>
+            ))
+          )}
         </div>
 
         <button onClick={handleSubmitPost} className="btn btn-primary" disabled={isCreating}>
