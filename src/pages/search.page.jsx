@@ -1,67 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Filter from "../components/Filter/filter.component";
 import SelectedFilter from "../components/Filter/selectedFilter.component";
 import Select from "../components/Filter/select.component";
 import Post from "../components/Post/post.component";
 import { useSelector } from "react-redux";
-import store from "../store/store";
 import { getPosts } from "../store/post";
+import store from "../store/store";
 
 const Search = () => {
   const [isUsingFilter, setIsUsingFilter] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState([]);
   const { playTypes, cities } = useSelector((state) => state.postUtil);
-  //const posts = useSelector((state) => state.post);
-  store.dispatch(getPosts());
+  const posts = useSelector((state) => state.post);
 
-  const tempPost = {
-    author: "Tuấn Ân",
-    title: "Ăn sập Vũng Tàu chỉ với 120k ? Tin được không",
-    content: `Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An
-    Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An
-    Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An`,
-    typeTags: ["Coffee", "Ăn uống"],
-    cityTag: "Vũng Tàu",
-    images: ["https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"],
-    likes: 50,
-    comments: ["1", "2", "3", "4", "5"],
-    shares: 5,
-  };
-  const tempPost2 = {
-    author: "Tuấn Ân",
-    title: "Ăn sập Vũng Tàu chỉ với 120k ? Tin được không",
-    // content: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam provident quo, aperiam, eos suscipit, ut optio ipsum ratione officiis libero ex veniam corporis consectetur
-    // earum nulla numquam. Dolorum, facere dolor.
-
-    // Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam provident quo, aperiam,
-    // eos suscipit, ut optio ipsum ratione officiis libero ex veniam corporis consectetur
-    // earum nulla numquam. Dolorum, facere dolor.
-
-    // Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam provident quo, aperiam,
-    // eos suscipit, ut optio ipsum ratione officiis libero ex veniam corporis consectetur
-    // earum nulla numquam. Dolorum, facere dolor.`,
-    content: `Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An
-    Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An
-    Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An
-    
-    Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan AnNguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan AnNguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan AnNguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An
-    Nguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan AnNguyen Phi Tuan An Nguyen Phi Tuan An Nguyen Phi Tuan An`,
-    typeTags: ["Coffee", "Ăn uống"],
-    cityTag: "Vũng Tàu",
-    images: [
-      "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
-      "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
-      "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
-      "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
-      "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
-      "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
-      "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
-      "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
-    ],
-    likes: 50,
-    comments: ["1", "2", "3", "4", "5"],
-    shares: 5,
-  };
+  useEffect(() => {
+    store.dispatch(getPosts());
+  }, []);
 
   const onclickFilterHandler = (e) => {
     setIsUsingFilter(!isUsingFilter);
@@ -113,9 +67,7 @@ const Search = () => {
           </section>
         ) : null}
 
-        <Post post={tempPost2} />
-        <Post post={tempPost} />
-        <Post post={tempPost} />
+        {posts.length > 0 ? posts.map((post) => <Post post={post} />) : null}
       </fieldset>
     </section>
   );

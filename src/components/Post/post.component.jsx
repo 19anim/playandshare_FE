@@ -1,7 +1,8 @@
 import PostImages from "./postImages.component";
 
 const Post = ({ post }) => {
-  const { author, title, content, typeTags, cityTag, images, likes, comments, shares } = post;
+  console.log(post);
+  const { author, title, content, types, city, images, likes, comments, shares } = post;
   return (
     <div
       className={`fieldset w-full ${
@@ -16,23 +17,26 @@ const Post = ({ post }) => {
                 <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
               </div>
             </div>
-            {author}
+            {author.username}
           </h2>
           <h1 className="text-xl font-medium"> {title}</h1>
           <p className="whitespace-pre-line">{content}</p>
           <div className="card-actions justify-end">
-            {typeTags.map((type) => (
-              <div key={`${author}_${title}_${type}`} className="badge badge-soft badge-neutral">
-                {type}
+            {types.map((type) => (
+              <div
+                key={`${author}_${title}_${type.name}`}
+                className="badge badge-soft badge-neutral"
+              >
+                {type.name}
               </div>
             ))}
           </div>
           <div className="card-actions justify-end">
-            <div className="badge badge-soft badge-primary font-bold">{cityTag}</div>
+            <div className="badge badge-soft badge-primary font-bold">{city.name}</div>
           </div>
         </div>
       </div>
-      <PostImages images={images} />
+      {images.length > 0 ? <PostImages images={images} /> : null}
       <section className="flex gap-3 px-6 justify-between text-base text-[#9d9d9d]">
         <section>{likes} Lượt yêu thích</section>
         <section className="flex gap-3">

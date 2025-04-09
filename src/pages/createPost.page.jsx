@@ -189,6 +189,7 @@ const CreatePost = () => {
             ref={imageElementRef}
             type="file"
             className="hidden"
+            accept="image/*"
             multiple
           />
           <div

@@ -6,16 +6,16 @@ const PostImages = ({ images }) => {
     <div className="grow self-center w-full flex flex-col gap-y-0.5">
       <ImageLayout col={images.length}>
         {images.map((image, index) => (
-          <Image key={`${image}_${index}`} image={image} />
+          <Image key={`${image}_${index}`} image={image.url} />
         ))}
       </ImageLayout>
     </div>
   ) : (
-    <div className="grow min-h-[300px] self-center w-full flex flex-col gap-y-0.5">
+    <div className="grow md:min-h-[500px] min-h-[300px] self-center w-full flex flex-col gap-y-0.5">
       <ImageLayout col={2}>
         {images.map((image, index) => {
           if (index < 2) {
-            return <Image key={`${image}_${index}`} image={image} />;
+            return <Image key={`${image}_${index}`} image={image.url} />;
           }
         })}
       </ImageLayout>
@@ -25,13 +25,13 @@ const PostImages = ({ images }) => {
             return (
               <Image
                 key={`${image}_${index}`}
-                image={image}
+                image={image.url}
                 isOverLayout={true}
                 overAmount={images.length - 5}
               />
             );
           } else if (index >= 2 && index <= 4) {
-            return <Image key={`${image}_${index}`} image={image} />;
+            return <Image key={`${image}_${index}`} image={image.url} />;
           }
         })}
       </ImageLayout>
