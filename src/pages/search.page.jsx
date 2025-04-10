@@ -6,6 +6,7 @@ import Post from "../components/Post/post.component";
 import { useSelector } from "react-redux";
 import { getPosts } from "../store/post";
 import store from "../store/store";
+import axios from "../helper/api";
 
 const Search = () => {
   const [isUsingFilter, setIsUsingFilter] = useState(false);
@@ -16,6 +17,23 @@ const Search = () => {
   useEffect(() => {
     store.dispatch(getPosts());
   }, []);
+
+  const onLikeHandler = async (postId) => {
+    try {
+      const response = await axios.request("/post/like", {
+        method: "POST",
+        data: {
+          postId: postId,
+        },
+      });
+
+      if (response) {
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const onclickFilterHandler = (e) => {
     setIsUsingFilter(!isUsingFilter);
@@ -67,7 +85,11 @@ const Search = () => {
           </section>
         ) : null}
 
-        {posts.length > 0 ? posts.map((post) => <Post post={post} />) : null}
+        {posts.length > 0
+          ? posts.map((post) => (
+              <Post key={post.id} post={post} likeHandler={() => onLikeHandler(post._id)} />
+            ))
+          : null}
       </fieldset>
     </section>
   );

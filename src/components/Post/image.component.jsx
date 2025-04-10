@@ -1,10 +1,10 @@
 import { useRef } from "react";
 
-const Image = ({ image, isOverLayout, overAmount }) => {
-  const modalRef = useRef(null);
-  const handleImageClick = () => {
-    modalRef.current.showModal();
-  };
+const Image = ({ image, isOverLayout, overAmount, onclickHandler }) => {
+  // const modalRef = useRef(null);
+  // const handleImageClick = () => {
+  //   modalRef.current.showModal();
+  // };
 
   return (
     <>
@@ -15,7 +15,7 @@ const Image = ({ image, isOverLayout, overAmount }) => {
             style={{ backgroundImage: `url("${image}")` }}
           ></div>
           <span
-            onClick={handleImageClick}
+            onClick={onclickHandler}
             className="absolute inset-0 flex justify-center items-center text-white text-3xl cursor-pointer"
           >
             +{overAmount}
@@ -23,12 +23,12 @@ const Image = ({ image, isOverLayout, overAmount }) => {
         </div>
       ) : (
         <div
-          onClick={handleImageClick}
+          onClick={onclickHandler}
           className="bg-cover w-full bg-center cursor-pointer"
           style={{ backgroundImage: `url("${image}")` }}
         ></div>
       )}
-      <dialog ref={modalRef} className="modal text-black">
+      {/* <dialog ref={modalRef} className="modal text-black">
         <div className="modal-box max-w-screen w-[95%] h-[95%] p-0">
           <form method="dialog">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
@@ -43,7 +43,7 @@ const Image = ({ image, isOverLayout, overAmount }) => {
             <div className="px-3 py-10 overflow-scroll">Post detail</div>
           </div>
         </div>
-      </dialog>
+      </dialog> */}
     </>
   );
 };

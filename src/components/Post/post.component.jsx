@@ -1,8 +1,32 @@
 import PostImages from "./postImages.component";
+import axios from "../../helper/api";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
 const Post = ({ post }) => {
-  console.log(post);
-  const { author, title, content, types, city, images, likes, comments, shares } = post;
+  const { _id, author, title, content, types, city, images, likes, comments, shares } = post;
+  const { userId } = useSelector((state) => state.user);
+  const [liked, setLiked] = useState(likes.indexOf(userId) !== -1);
+  const [currentLikeAmount, setCurrentLikeAmount] = useState(likes.length);
+
+  const onLikeHandler = async () => {
+    try {
+      const response = await axios.request("/post/like", {
+        method: "POST",
+        data: {
+          postId: _id,
+        },
+      });
+
+      if (response) {
+        setCurrentLikeAmount(response.data.post.likes.length);
+        setLiked(!liked);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div
       className={`fieldset w-full ${
@@ -38,7 +62,7 @@ const Post = ({ post }) => {
       </div>
       {images.length > 0 ? <PostImages images={images} /> : null}
       <section className="flex gap-3 px-6 justify-between text-base text-[#9d9d9d]">
-        <section>{likes} Lượt yêu thích</section>
+        <section>{currentLikeAmount} Lượt yêu thích</section>
         <section className="flex gap-3">
           <p>{comments.length} Bình luận</p>
           <p>{shares} chia sẻ</p>
@@ -46,7 +70,9 @@ const Post = ({ post }) => {
       </section>
       <div className="divider my-0 before:bg-[#9d9d9d] after:bg-[#9d9d9d]"></div>
       <div className="join">
-        <button className="btn btn-ghost join-item grow">Yêu thích</button>
+        <button onClick={onLikeHandler} className="btn btn-ghost join-item grow">
+          {liked ? "Bỏ yêu thích" : "Yêu thích"}
+        </button>
         <button className="btn btn-ghost join-item grow">Bình luận</button>
         <button className="btn btn-ghost join-item grow">Chia sẻ</button>
       </div>
