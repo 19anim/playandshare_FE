@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Filter from "../components/Filter/filter.component";
 import SelectedFilter from "../components/Filter/selectedFilter.component";
 import Select from "../components/Filter/select.component";
@@ -6,34 +6,27 @@ import Post from "../components/Post/post.component";
 import { useSelector } from "react-redux";
 import { getPosts } from "../store/post";
 import store from "../store/store";
-import axios from "../helper/api";
+import { useLocation } from "react-router-dom";
 
 const Search = () => {
+  const location = useLocation();
+  const [scrollToPostId, setScrollToPostId] = useState();
   const [isUsingFilter, setIsUsingFilter] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState([]);
   const { playTypes, cities } = useSelector((state) => state.postUtil);
   const posts = useSelector((state) => state.post);
+  const postRefs = useRef({});
 
   useEffect(() => {
     store.dispatch(getPosts());
+    setScrollToPostId(location.state?.scrollToPostId);
   }, []);
 
-  const onLikeHandler = async (postId) => {
-    try {
-      const response = await axios.request("/post/like", {
-        method: "POST",
-        data: {
-          postId: postId,
-        },
-      });
-
-      if (response) {
-        console.log(response.data);
-      }
-    } catch (error) {
-      console.log(error);
+  useEffect(() => {
+    if (scrollToPostId && postRefs.current[scrollToPostId]) {
+      postRefs.current[scrollToPostId].scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  };
+  }, [scrollToPostId]);
 
   const onclickFilterHandler = (e) => {
     setIsUsingFilter(!isUsingFilter);
@@ -87,7 +80,9 @@ const Search = () => {
 
         {posts.length > 0
           ? posts.map((post) => (
-              <Post key={post.id} post={post} likeHandler={() => onLikeHandler(post._id)} />
+              <div key={post._id} ref={(element) => (postRefs.current[post._id] = element)}>
+                <Post post={post} />
+              </div>
             ))
           : null}
       </fieldset>

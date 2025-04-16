@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const ImageModal = ({ modalRef, images, modalStartIndex }) => {
+const ImageModal = ({ modalRef, images, modalStartIndex = 0 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   useEffect(() => {
     setCurrentIndex(modalStartIndex);
@@ -15,7 +15,7 @@ const ImageModal = ({ modalRef, images, modalStartIndex }) => {
   };
 
   return (
-    <dialog ref={modalRef} className="modal text-black">
+    <dialog ref={modalRef} className="modal text-black z-50">
       <div className="modal-box max-w-screen w-[95%] h-[95%] p-0">
         <form method="dialog">
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
@@ -26,7 +26,7 @@ const ImageModal = ({ modalRef, images, modalStartIndex }) => {
               ❮
             </a>
             <div
-              style={{ backgroundImage: `url("${images[currentIndex].url}")` }}
+              style={{ backgroundImage: `url("${images[currentIndex]?.url}")` }}
               className="bg-white w-[70%] h-full bg-cover bg-center"
             ></div>
             <a onClick={handleNext} className="btn btn-circle">

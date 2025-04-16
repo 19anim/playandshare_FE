@@ -36,8 +36,8 @@ const Navbar = () => {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
             <li>
-              <Link to="/search" className="btn">
-                Tìm kiếm
+              <Link to="/posts" className="btn">
+                Bài viết
               </Link>
             </li>
             <li>
@@ -55,8 +55,8 @@ const Navbar = () => {
       <div className="navbar-center hidden lg:block">
         <ul className="menu menu-horizontal px-1 text-xl gap-3">
           <li>
-            <Link to="/search" className="btn">
-              Tìm kiếm
+            <Link to="/posts" className="btn">
+              Bài viết
             </Link>
           </li>
           <li>

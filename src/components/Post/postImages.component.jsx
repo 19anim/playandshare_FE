@@ -2,8 +2,10 @@ import Image from "./image.component";
 import ImageLayout from "./imageLayout.component";
 import { useRef, useState } from "react";
 import ImageModal from "../Modal/imageModal.component";
+import { useNavigate } from "react-router-dom";
 
-const PostImages = ({ images }) => {
+const PostImages = ({ images, postId }) => {
+  const navigate = useNavigate();
   const [modalStartIndex, setModalStartIndex] = useState(0);
   const modalRef = useRef(null);
   const handleImageClick = (index) => {
@@ -20,9 +22,14 @@ const PostImages = ({ images }) => {
               <Image
                 key={`${image}_${index}`}
                 image={image.url}
-                onclickHandler={() => {
-                  handleImageClick(index);
-                }}
+                onclickHandler={() =>
+                  navigate(`photo?postId=${postId}&imageId=${image._id}`, {
+                    state: { scrollToPostId: postId },
+                  })
+                }
+                // onclickHandler={() => {
+                //   handleImageClick(index);
+                // }}
               />
             ))}
           </ImageLayout>
@@ -36,9 +43,14 @@ const PostImages = ({ images }) => {
                   <Image
                     key={`${image}_${index}`}
                     image={image.url}
-                    onclickHandler={() => {
-                      handleImageClick(index);
-                    }}
+                    onclickHandler={() =>
+                      navigate(`photo?postId=${postId}&imageId=${image._id}`, {
+                        state: { scrollToPostId: postId },
+                      })
+                    }
+                    // onclickHandler={() => {
+                    //   handleImageClick(index);
+                    // }}
                   />
                 );
               }
@@ -53,9 +65,14 @@ const PostImages = ({ images }) => {
                     image={image.url}
                     isOverLayout={true}
                     overAmount={images.length - 5}
-                    onclickHandler={() => {
-                      handleImageClick(index);
-                    }}
+                    onclickHandler={() =>
+                      navigate(`photo?postId=${postId}&imageId=${image._id}`, {
+                        state: { scrollToPostId: postId },
+                      })
+                    }
+                    // onclickHandler={() => {
+                    //   handleImageClick(index);
+                    // }}
                   />
                 );
               } else if (index >= 2 && index <= 4) {
@@ -63,9 +80,14 @@ const PostImages = ({ images }) => {
                   <Image
                     key={`${image}_${index}`}
                     image={image.url}
-                    onclickHandler={() => {
-                      handleImageClick(index);
-                    }}
+                    onclickHandler={() =>
+                      navigate(`photo?postId=${postId}&imageId=${image._id}`, {
+                        state: { scrollToPostId: postId },
+                      })
+                    }
+                    // onclickHandler={() => {
+                    //   handleImageClick(index);
+                    // }}
                   />
                 );
               }
