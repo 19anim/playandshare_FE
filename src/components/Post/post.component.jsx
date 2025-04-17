@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { useRef, useState } from "react";
 import PostComment from "./postComment.component";
 import PostModal from "../Modal/postModal.component";
+import PostActionButtons from "./postActionButtons.component";
+import PostStatus from "./postStatus.component";
 
 const Post = ({ post }) => {
   const { _id, author, title, content, types, city, images, likes, comments, shares } = post;
@@ -69,43 +71,24 @@ const Post = ({ post }) => {
         </div>
       </div>
       {images.length > 0 ? <PostImages images={images} postId={_id} /> : null}
-      <section className="flex gap-3 px-6 justify-between text-base text-[#9d9d9d]">
-        <section>{currentLikeAmount} Lượt yêu thích</section>
-        <section className="flex gap-3">
-          <p>{comments.length} Bình luận</p>
-          <p>{shares} chia sẻ</p>
-        </section>
-      </section>
+      <PostStatus
+        currentLikeAmount={currentLikeAmount}
+        commentAmount={comments.length}
+        shareAmount={shares}
+      />
       <div className="divider my-0 before:bg-[#9d9d9d] after:bg-[#9d9d9d]"></div>
-      <div className="join">
-        <button onClick={onLikeHandler} className="btn btn-ghost join-item grow">
-          {liked ? (
-            <span className="flex gap-2 items-center">
-              <i className="fa-solid fa-heart"></i>Bỏ yêu thích
-            </span>
-          ) : (
-            <span className="flex gap-2 items-center">
-              <i className="fa-regular fa-heart"></i>Yêu thích
-            </span>
-          )}
-        </button>
-        <button onClick={handleCommentClick} className="btn btn-ghost join-item grow">
-          Bình luận
-        </button>
-        <button className="btn btn-ghost join-item grow">Chia sẻ</button>
-      </div>
-      <div className="flex flex-col gap-2">
-        <PostComment
-          user={{ username: "Tuan An" }}
-          comment="A card component has a figure, a body part, and inside body there are title and actions parts A card component has a figure, a body part, and inside body there are title and actions parts A card component has a figure, a body part, and inside body there are title and actions parts A card component has a figure, a body part, and inside body there are title and actions parts"
-        />
-
-        <PostComment
-          user={{ username: "Minh Thu" }}
-          comment="A card component has a figure, a body part, and inside body there are title and actions parts A card component has a figure, a body part, and inside body there are title and actions parts A card component has a figure, a body part, a"
-        />
-      </div>
-      <PostModal modalRef={modalRef} post={post} />
+      <PostActionButtons
+        likeHandler={onLikeHandler}
+        commentHandler={handleCommentClick}
+        isLiked={liked}
+      />
+      <PostModal
+        modalRef={modalRef}
+        post={post}
+        likeHandler={onLikeHandler}
+        currentLikeAmount={currentLikeAmount}
+        liked={liked}
+      />
     </div>
   );
 };

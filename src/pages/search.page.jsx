@@ -14,7 +14,7 @@ const Search = () => {
   const [isUsingFilter, setIsUsingFilter] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState([]);
   const { playTypes, cities } = useSelector((state) => state.postUtil);
-  const posts = useSelector((state) => state.post);
+  const posts = useSelector((state) => state.post.posts);
   const postRefs = useRef({});
 
   useEffect(() => {
@@ -80,7 +80,11 @@ const Search = () => {
 
         {posts.length > 0
           ? posts.map((post) => (
-              <div key={post._id} ref={(element) => (postRefs.current[post._id] = element)}>
+              <div
+                className="w-full max-w-[950px] self-center"
+                key={post._id}
+                ref={(element) => (postRefs.current[post._id] = element)}
+              >
                 <Post post={post} />
               </div>
             ))
