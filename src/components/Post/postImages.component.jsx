@@ -8,10 +8,6 @@ const PostImages = ({ images, postId }) => {
   const navigate = useNavigate();
   const [modalStartIndex, setModalStartIndex] = useState(0);
   const modalRef = useRef(null);
-  const handleImageClick = (index) => {
-    setModalStartIndex(index);
-    modalRef.current.showModal();
-  };
 
   return (
     <>
@@ -27,9 +23,6 @@ const PostImages = ({ images, postId }) => {
                     state: { scrollToPostId: postId },
                   })
                 }
-                // onclickHandler={() => {
-                //   handleImageClick(index);
-                // }}
               />
             ))}
           </ImageLayout>
@@ -48,9 +41,6 @@ const PostImages = ({ images, postId }) => {
                         state: { scrollToPostId: postId },
                       })
                     }
-                    // onclickHandler={() => {
-                    //   handleImageClick(index);
-                    // }}
                   />
                 );
               }
@@ -70,9 +60,6 @@ const PostImages = ({ images, postId }) => {
                         state: { scrollToPostId: postId },
                       })
                     }
-                    // onclickHandler={() => {
-                    //   handleImageClick(index);
-                    // }}
                   />
                 );
               } else if (index >= 2 && index <= 4) {
@@ -85,9 +72,6 @@ const PostImages = ({ images, postId }) => {
                         state: { scrollToPostId: postId },
                       })
                     }
-                    // onclickHandler={() => {
-                    //   handleImageClick(index);
-                    // }}
                   />
                 );
               }

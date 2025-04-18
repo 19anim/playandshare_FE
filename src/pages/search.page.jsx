@@ -18,7 +18,6 @@ const Search = () => {
   const postRefs = useRef({});
 
   useEffect(() => {
-    store.dispatch(getPosts());
     setScrollToPostId(location.state?.scrollToPostId);
   }, []);
 

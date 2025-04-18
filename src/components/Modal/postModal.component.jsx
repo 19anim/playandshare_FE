@@ -82,6 +82,7 @@ const PostModal = ({ modalRef, post, likeHandler, currentLikeAmount, liked }) =>
             {comments?.map((comment) => {
               return (
                 <PostComment
+                  key={comment._id}
                   user={comment.user}
                   comment={comment.content}
                   createdAt={comment.createdAt}

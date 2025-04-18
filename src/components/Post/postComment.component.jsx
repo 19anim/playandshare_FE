@@ -14,7 +14,7 @@ const PostComment = ({ user, comment, createdAt }) => {
             <p className="textarea-md whitespace-pre">{comment}</p>
           </div>
         </div>
-        <div className="col-start-2 flex gap-2">
+        <div className="col-start-2 flex items-center gap-2 text-xs">
           {/* <p>10 minutes</p> */}
           <p>{createdAt}</p>
           <p className="cursor-pointer hover:underline">Like</p>

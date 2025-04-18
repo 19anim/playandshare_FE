@@ -13,10 +13,15 @@ import TestPage from "./pages/test.page";
 import { fetchCities, fetchPlayTypes } from "./store/postUtil";
 import store from "./store/store";
 import ImageDetail from "./pages/imageDetail.page";
+import { getPosts } from "./store/post";
+import { useEffect } from "react";
 
 const App = () => {
-  store.dispatch(fetchCities());
-  store.dispatch(fetchPlayTypes());
+  useEffect(() => {
+    store.dispatch(fetchCities());
+    store.dispatch(fetchPlayTypes());
+    store.dispatch(getPosts());
+  }, []);
   fetchSigninedUser();
   const router = createBrowserRouter([
     {
@@ -28,16 +33,17 @@ const App = () => {
         {
           path: "posts",
           element: <PostLayout />,
-          children: [
-            { index: true, element: <Search /> },
-            { path: "photo", element: <ImageDetail /> },
-          ],
+          children: [{ index: true, element: <Search /> }],
         },
         { path: "test", element: <TestPage /> },
         { path: "create-post", element: <CreatePost /> },
         { path: "signin", element: <SignIn /> },
         { path: "signup", element: <SignUp /> },
       ],
+    },
+    {
+      path: "/posts/photo",
+      element: <ImageDetail />,
     },
     {
       path: "*",

@@ -10,16 +10,22 @@ const postReducer = createSlice({
     },
     storeComments: (state, action) => {
       const updatedPost = action.payload.post;
-      console.log(updatedPost);
       const index = state.posts.findIndex((p) => p._id === updatedPost._id);
       if (index !== -1) {
         state.posts[index].comments = updatedPost.comments;
       }
     },
+    storeLike: (state, action) => {
+      const updatedPost = action.payload.post;
+      const index = state.posts.findIndex((p) => p._id === updatedPost._id);
+      if (index !== -1) {
+        state.posts[index].likes = updatedPost.likes;
+      }
+    },
   },
 });
 
-export const { storePosts, storeComments } = postReducer.actions;
+export const { storePosts, storeComments, storeLike } = postReducer.actions;
 export default postReducer.reducer;
 
 export const getPosts = () => {
@@ -37,6 +43,17 @@ export const getComments = (commentData) => {
     method: "POST",
     data: commentData,
     onSuccess: storeComments.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
+  });
+};
+
+export const getLikes = (postId) => {
+  return apiCallBegan({
+    url: "/post/like",
+    method: "POST",
+    data: postId,
+    onSuccess: storeLike.type,
     withCredentials: true,
     accessTokenNeeded: true,
   });
