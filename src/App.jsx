@@ -1,12 +1,12 @@
 import "./App.css";
-import HomePage from "./pages/home.page";
 import Layout from "./layout/layout";
 import CreatePost from "./pages/createPost.page";
 import NotFound from "./pages/notFound.page";
 import SignIn from "./pages/signin.page";
 import SignUp from "./pages/signup.page";
 import Search from "./pages/search.page";
-import PostLayout from "./layout/postLayout";
+import UserInfor from "./pages/userInfor.page";
+import UserPosts from "./pages/userPosts.page";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import fetchSigninedUser from "./hooks/fetchSigninedUser.hook";
 import TestPage from "./pages/test.page";
@@ -29,20 +29,22 @@ const App = () => {
       element: <Layout />,
       // errorElement: <ErrorPage />,
       children: [
-        { index: true, element: <HomePage /> },
-        {
-          path: "posts",
-          element: <PostLayout />,
-          children: [{ index: true, element: <Search /> }],
-        },
+        { index: true, element: <Search /> },
         { path: "test", element: <TestPage /> },
+        {
+          path: "user",
+          children: [
+            { path: "info", element: <UserInfor /> },
+            { path: "posts", element: <UserPosts /> },
+          ],
+        },
         { path: "create-post", element: <CreatePost /> },
         { path: "signin", element: <SignIn /> },
         { path: "signup", element: <SignUp /> },
       ],
     },
     {
-      path: "/posts/photo",
+      path: "photo",
       element: <ImageDetail />,
     },
     {

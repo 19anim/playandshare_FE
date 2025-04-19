@@ -1,4 +1,4 @@
-const Select = ({ selectLable, selectOptions, searchVisible, onchangeHandler }) => {
+const Select = ({ selectLable, selectOptions, searchVisible, onchangeHandler, ref }) => {
   return (
     <div className="join grow">
       {searchVisible === false ? null : (
@@ -8,8 +8,8 @@ const Select = ({ selectLable, selectOptions, searchVisible, onchangeHandler }) 
           </div>
         </div>
       )}
-      <select name="city" onChange={onchangeHandler} className="select join-item">
-        <option disabled defaultValue>
+      <select ref={ref} name="city" onChange={onchangeHandler} className="select join-item">
+        <option value="default_city" defaultValue>
           {selectLable}
         </option>
         {selectOptions.map((option) => (

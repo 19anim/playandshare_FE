@@ -36,29 +36,18 @@ const Navbar = () => {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
             <li>
-              <Link to="/posts" className="btn">
-                Bài viết
-              </Link>
-            </li>
-            <li>
               <Link to="/create-post" className="btn">
                 Đăng bài viết
               </Link>
             </li>
           </ul>
         </div>
-        {/* <a className="btn btn-ghost text-xl">Trang chủ</a> */}
         <Link to="/" className="btn">
           Trang chủ
         </Link>
       </div>
       <div className="navbar-center hidden lg:block">
         <ul className="menu menu-horizontal px-1 text-xl gap-3">
-          <li>
-            <Link to="/posts" className="btn">
-              Bài viết
-            </Link>
-          </li>
           <li>
             <Link to="/create-post" className="btn">
               Đăng bài viết
@@ -69,12 +58,29 @@ const Navbar = () => {
       <div className="navbar-end">
         {accessToken === "" ? (
           <Link to="signin" className="btn">
-            Sign in/ Sign up
+            Đăng ký / Đăng nhập
           </Link>
         ) : (
           <div className="flex items-center justify-center gap-2">
             <p>Hello</p>
-            <span className="badge badge-success">{username.toUpperCase()}</span>{" "}
+
+            <div className="dropdown">
+              <div tabIndex={1} role="button" className="badge badge-success cursor-pointer">
+                {username.toUpperCase()}
+              </div>
+              <ul
+                tabIndex={1}
+                className="dropdown-content menu bg-base-100 rounded-box z-1 w-25 p-2 shadow-sm"
+              >
+                <li>
+                  <Link to="/user/info">Thông tin</Link>
+                </li>
+                <li>
+                  <Link to="/user/posts">Bài viết</Link>
+                </li>
+              </ul>
+            </div>
+
             <i
               onClick={signOutHandler}
               className="fa-solid fa-right-from-bracket cursor-pointer"

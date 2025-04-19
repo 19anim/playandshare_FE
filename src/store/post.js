@@ -6,7 +6,9 @@ const postReducer = createSlice({
   initialState: { posts: [] },
   reducers: {
     storePosts: (state, action) => {
-      state.posts = action.payload.posts;
+      state.posts = action.payload.posts.sort(
+        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+      );
     },
     storeComments: (state, action) => {
       const updatedPost = action.payload.post;

@@ -248,7 +248,7 @@ const CreatePost = () => {
         <SuccessModal
           ref={successModalRef}
           modalMessage="Bài viết đã được tạo thành công!"
-          modalNavigationLink="/search"
+          modalNavigationLink="/"
           modalNavigationText="Đến trang bài viết"
         />
         <ErrorModal

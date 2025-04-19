@@ -62,7 +62,7 @@ const ImageDetail = () => {
                 className="absolute left-5 top-1/2 translate-y-[-50%] text-base size-12 flex items-center justify-center hover:bg-[#fff] bg-[#ffffff4f] px-3 py-1 rounded-full cursor-pointer hover:translate-x-[-0.5rem] transition-transform duration-500"
                 onClick={() =>
                   navigate(
-                    `/posts/photo?postId=${postId}&imageId=${
+                    `/photo?postId=${postId}&imageId=${
                       currentIndex === 0
                         ? images[images.length - 1]._id
                         : images[currentIndex - 1]._id
@@ -84,7 +84,7 @@ const ImageDetail = () => {
                 className="absolute right-5 top-1/2 translate-y-[-50%] text-base size-12 flex items-center justify-center hover:bg-[#fff] bg-[#ffffff4f] px-3 py-1 rounded-full cursor-pointer hover:translate-x-[0.5rem] transition-transform duration-500"
                 onClick={() =>
                   navigate(
-                    `/posts/photo?postId=${postId}&imageId=${
+                    `/photo?postId=${postId}&imageId=${
                       currentIndex === images.length - 1
                         ? images[0]._id
                         : images[currentIndex + 1]._id
@@ -97,7 +97,7 @@ const ImageDetail = () => {
               </button>
               <button
                 className="absolute top-3 left-5 text-white text-2xl cursor-pointer"
-                onClick={() => navigate("/posts", { state: { scrollToPostId } })}
+                onClick={() => navigate("/", { state: { scrollToPostId } })}
               >
                 <i className="fa-solid fa-xmark"></i>
               </button>
