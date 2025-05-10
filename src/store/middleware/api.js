@@ -36,8 +36,8 @@ const api =
       dispatch({ type: onSuccess, payload: response.data });
       next(action);
     } catch (error) {
-      if (onError) dispatch({ type: onError, payload: { error: error.message } });
-      dispatch({ type: "SHOW_ERROR", payload: { error: error.message } });
+      if (onError) dispatch({ type: onError, payload: { error: error.response.data } });
+      dispatch({ type: "SHOW_ERROR", payload: { error: error.response.data } });
     }
   };
 

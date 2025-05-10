@@ -2,15 +2,19 @@ import { Link } from "react-router-dom";
 import store from "../store/store";
 import { signin } from "../store/user";
 import SignInImage from "../assets/authentication/signin.svg";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const SignIn = () => {
-  const { loading, accessToken } = useSelector((state) => state.user);
-
+  const { loading, accessToken, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
-  if (accessToken !== "") navigate("/");
+
+  useEffect(() => {
+    if (accessToken !== "") {
+      navigate("/");
+    }
+  }, [accessToken, navigate]);
 
   const [signinData, setSigninData] = useState({
     username: "",
@@ -23,6 +27,7 @@ const SignIn = () => {
   };
 
   const onSubmitHandler = (e) => {
+    e.preventDefault();
     store.dispatch(signin(signinData));
   };
   return (
@@ -35,35 +40,38 @@ const SignIn = () => {
           </p>
           <p className="text-gray-400">Cùng chia sẻ địa điểm du lịch nào</p>
           <fieldset className="fieldset self-center w-xs md:w-sm">
-            <legend className="fieldset-legend text-2xl">Đăng nhập</legend>
+            <form onSubmit={onSubmitHandler} className="fieldset self-center w-xs md:w-sm">
+              <legend className="fieldset-legend text-2xl">Đăng nhập</legend>
 
-            <label className="fieldset-label">Tên đăng nhập</label>
-            <input
-              className="input w-full"
-              onChange={onChangeHandler}
-              value={signinData.username}
-              type="text"
-              placeholder="abcxyz"
-              name="username"
-            />
+              <label className="fieldset-label">Tên đăng nhập</label>
+              <input
+                className="input w-full"
+                onChange={onChangeHandler}
+                value={signinData.username}
+                type="text"
+                placeholder="abcxyz"
+                name="username"
+              />
 
-            <label className="fieldset-label">Mật khẩu</label>
-            <input
-              className="input w-full"
-              onChange={onChangeHandler}
-              value={signinData.password}
-              type="password"
-              placeholder="***"
-              name="password"
-            />
-            <button
-              onClick={onSubmitHandler}
-              disabled={loading ? true : false}
-              className="btn btn-neutral mt-4"
-            >
-              Let's go
-            </button>
+              <label className="fieldset-label">Mật khẩu</label>
+              <input
+                className="input w-full"
+                onChange={onChangeHandler}
+                value={signinData.password}
+                type="password"
+                placeholder="***"
+                name="password"
+              />
+              <button
+                type="submit"
+                disabled={loading ? true : false}
+                className="btn btn-neutral mt-4"
+              >
+                Let's go
+              </button>
+            </form>
           </fieldset>
+          <p className="text-red-500">{error !== null ? error : null}</p>
           <p>
             Bạn chưa có tài khoản ?{" "}
             <Link className="text-blue-600" to="/signup">

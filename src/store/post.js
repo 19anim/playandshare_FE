@@ -3,12 +3,28 @@ import { apiCallBegan } from "./api";
 
 const postReducer = createSlice({
   name: "post",
-  initialState: { posts: [] },
+  initialState: {
+    posts: [],
+    page: 1,
+    hasMore: true,
+    loading: false,
+    error: null,
+  },
   reducers: {
-    storePosts: (state, action) => {
-      state.posts = action.payload.posts.sort(
-        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-      );
+    getPostsStart: (state) => {
+      state.loading = true;
+    },
+    getPostsSuccess: (state, action) => {
+      const { posts, hasMore, page } = action.payload;
+      state.posts = page === 1 ? posts : [...state.posts, ...posts];
+      //state.posts = state.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+      state.hasMore = hasMore;
+      state.page = page;
+      state.loading = false;
+    },
+    getPostsFailure: (state, action) => {
+      state.error = action.payload;
+      state.loading = false;
     },
     storeComments: (state, action) => {
       const updatedPost = action.payload.post;
@@ -27,13 +43,16 @@ const postReducer = createSlice({
   },
 });
 
-export const { storePosts, storeComments, storeLike } = postReducer.actions;
+export const { getPostsStart, getPostsSuccess, getPostsFailure, storeComments, storeLike } =
+  postReducer.actions;
 export default postReducer.reducer;
 
-export const getPosts = () => {
+export const getPosts = (page = 1, limit = 5) => {
   return apiCallBegan({
-    url: "/post/",
-    onSuccess: storePosts.type,
+    url: `/post?page=${page}&limit=${limit}`,
+    onStart: getPostsStart.type,
+    onSuccess: getPostsSuccess.type,
+    onError: getPostsFailure.type,
     withCredentials: true,
     accessTokenNeeded: true,
   });

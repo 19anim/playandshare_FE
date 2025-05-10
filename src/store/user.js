@@ -8,6 +8,18 @@ const userReducer = createSlice({
     userId: "",
     username: "",
     email: "",
+    avatar: "",
+    residence: "",
+    phone: "",
+    socialMedia: [
+      { platform: "Facebook", link: "" },
+      { platform: "Instagram", link: "" },
+      { platform: "Thread", link: "" },
+      { platform: "Tiktok", link: "" },
+    ],
+    posts: [],
+    comments: [],
+    roles: [],
     accessToken: token.getAccessToken(),
     loading: false,
     error: null,
@@ -17,9 +29,11 @@ const userReducer = createSlice({
       state.loading = true;
     },
     apiRequestFailed: (state, action) => {
+      state.error = action.payload.error;
       state.loading = false;
     },
     apiRequestedDone: (state, action) => {
+      state.error = null;
       state.loading = false;
     },
     userDataClearance: (state, action) => {
@@ -29,6 +43,19 @@ const userReducer = createSlice({
       state.username = "";
       state.email = "";
       state.accessToken = "";
+      state.avatar = "";
+      state.residence = "";
+      state.phone = "";
+      state.socialMedia = [
+        { platform: "Facebook", link: "" },
+        { platform: "Instagram", link: "" },
+        { platform: "Thread", link: "" },
+        { platform: "Tiktok", link: "" },
+      ];
+      state.posts = [];
+      state.comments = [];
+      state.roles = [];
+      state.error = null;
     },
     storeLoginData: (state, action) => {
       const { accessToken, user } = action.payload;
@@ -37,13 +64,32 @@ const userReducer = createSlice({
       state.userId = user._id;
       state.username = user.username;
       state.email = user.email;
+      state.avatar = user.avatar;
+      state.residence = user.residence;
+      state.phone = user.phone;
+      state.socialMedia = user.socialMedia;
+      state.posts = user.posts;
+      state.comments = user.comments;
+      state.loading = false;
+      state.roles = user.roles;
+      state.error = null;
       state.loading = false;
     },
     inititate: (state, action) => {
-      const { id, username, email } = action.payload;
+      const { id, username, email, avatar, residence, phone, socialMedia, posts, comments, roles } =
+        action.payload;
       state.userId = id;
       state.username = username;
       state.email = email;
+      state.avatar = avatar;
+      state.residence = residence;
+      state.phone = phone;
+      state.socialMedia = socialMedia;
+      state.posts = posts;
+      state.comments = comments;
+      state.roles = roles;
+      state.error = null;
+      state.loading = false;
     },
   },
 });
@@ -64,9 +110,38 @@ export const signin = (signinData) => {
   });
 };
 
+export const signup = (signupData) => {
+  return apiCallBegan({
+    url: "user/",
+    method: "POST",
+    data: signupData,
+    onStart: apiRequested.type,
+    onSuccess: storeLoginData.type,
+    onError: apiRequestFailed.type,
+    withCredentials: true,
+  });
+};
+
 export const signout = () => {
   return apiCallBegan({
     url: "auth/signout",
+    method: "POST",
     onStart: apiRequested.type,
+    onSuccess: userDataClearance.type,
+    onError: apiRequestFailed.type,
+    withCredentials: true,
+  });
+};
+
+export const updateUser = (userData) => {
+  return apiCallBegan({
+    url: "user/update",
+    method: "POST",
+    data: userData,
+    onStart: apiRequested.type,
+    onSuccess: storeLoginData.type,
+    onError: apiRequestFailed.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
   });
 };

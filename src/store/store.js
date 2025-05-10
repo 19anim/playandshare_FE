@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./user";
 import postUtilReducer from "./postUtil";
 import postReducer from "./post";
+import themeReducer from "./theme";
 import api from "./middleware/api";
 
 const store = configureStore({
@@ -9,6 +10,7 @@ const store = configureStore({
     user: userReducer,
     postUtil: postUtilReducer,
     post: postReducer,
+    theme: themeReducer,
   },
   middleware: (getDefaultMiddleware) => [...getDefaultMiddleware(), api],
 });

@@ -15,8 +15,16 @@ import store from "./store/store";
 import ImageDetail from "./pages/imageDetail.page";
 import { getPosts } from "./store/post";
 import { useEffect } from "react";
+import ThemeToggle from "./components/ThemeToggle/themeToggle.component";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
+import token from "./helper/token";
 
 const App = () => {
+  const { mode } = useSelector((state) => state.theme);
+  const { username } = useSelector((state) => state.user);
+  const acessToken = token.getAccessToken();
+
   useEffect(() => {
     store.dispatch(fetchCities());
     store.dispatch(fetchPlayTypes());
@@ -34,13 +42,19 @@ const App = () => {
         {
           path: "user",
           children: [
-            { path: "info", element: <UserInfor /> },
-            { path: "posts", element: <UserPosts /> },
+            {
+              path: "info",
+              element: acessToken !== "" ? <UserInfor /> : <Navigate to="/" replace />,
+            },
+            {
+              path: "posts",
+              element: acessToken !== "" ? <UserPosts /> : <Navigate to="/" replace />,
+            },
           ],
         },
         { path: "create-post", element: <CreatePost /> },
-        { path: "signin", element: <SignIn /> },
-        { path: "signup", element: <SignUp /> },
+        { path: "signin", element: username ? <Navigate to="/" replace /> : <SignIn /> },
+        { path: "signup", element: username ? <Navigate to="/" replace /> : <SignUp /> },
       ],
     },
     {
@@ -52,6 +66,11 @@ const App = () => {
       element: <NotFound />,
     },
   ]);
-  return <RouterProvider router={router} />;
+  return (
+    <div className={`App w-screen ${mode === "dark" ? "dark" : ""}`}>
+      <ThemeToggle />
+      <RouterProvider router={router} />
+    </div>
+  );
 };
 export default App;

@@ -1,2 +1,7 @@
 @import "tailwindcss";
 @plugin "daisyui";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-bright: #f8f8f8;
+}

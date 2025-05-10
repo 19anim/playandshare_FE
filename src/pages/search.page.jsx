@@ -1,29 +1,64 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, lazy, Suspense, useCallback } from "react";
 import Filter from "../components/Filter/filter.component";
 import SelectedFilter from "../components/Filter/selectedFilter.component";
 import Select from "../components/Filter/select.component";
-import Post from "../components/Post/post.component";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-import store from "../store/store";
+import { useDispatch } from "react-redux";
 import { getPosts } from "../store/post";
 
+const Post = lazy(() => import("../components/Post/post.component"));
+
+// Create a PostSkeleton component for loading state
+const PostSkeleton = () => (
+  <div className="w-full max-w-[950px] self-center p-4">
+    <div className="card bg-base-100 shadow-xl animate-pulse">
+      <div className="skeleton h-32"></div>
+      <div className="card-body">
+        <div className="skeleton h-4 w-2/3"></div>
+        <div className="skeleton h-4 w-full"></div>
+        <div className="skeleton h-4 w-1/2"></div>
+      </div>
+    </div>
+  </div>
+);
+
 const Search = () => {
+  const dispatch = useDispatch();
+  const observerRef = useRef(null);
+
   const location = useLocation();
   const [scrollToPostId, setScrollToPostId] = useState();
   const [isUsingFilter, setIsUsingFilter] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
   const { playTypes, cities } = useSelector((state) => state.postUtil);
-  const posts = useSelector((state) => state.post.posts);
+  const { posts, page, hasMore, loading } = useSelector((state) => state.post);
   const postRefs = useRef({});
   const cityRef = useRef(null);
   const [postsWithFilter, setPostsWithFilter] = useState([]);
   const DEFAULT_CITY = "default_city";
 
+  const lastPostRef = useCallback(
+    (node) => {
+      if (loading) return;
+
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore && !isUsingFilter) {
+          dispatch(getPosts(page + 1));
+        }
+      });
+
+      if (node) observerRef.current.observe(node);
+    },
+    [loading, hasMore, page, isUsingFilter]
+  );
+
   useEffect(() => {
     setScrollToPostId(location.state?.scrollToPostId);
-    store.dispatch(getPosts());
+    dispatch(getPosts(1));
   }, []);
 
   useEffect(() => {
@@ -40,7 +75,6 @@ const Search = () => {
     }
 
     filtered.sort((a, b) => new Date(b.UpdatedAt) - new Date(a.UpdatedAt));
-
     setPostsWithFilter(filtered);
   }, [posts, selectedCity, selectedTypes]);
 
@@ -55,7 +89,7 @@ const Search = () => {
 
   useEffect(() => {
     if (scrollToPostId && postRefs.current[scrollToPostId]) {
-      postRefs.current[scrollToPostId].scrollIntoView({ behavior: "smooth", block: "center" });
+      postRefs.current[scrollToPostId].scrollIntoView({ behavior: "smooth" });
     }
   }, [scrollToPostId]);
 
@@ -82,8 +116,8 @@ const Search = () => {
   };
 
   return (
-    <section className="w-full h-full flex justify-center items-center">
-      <fieldset className="fieldset h-full w-full max-w-[1300px] bg-base-200 border border-base-300 p-4 m-4 rounded-box flex flex-col">
+    <section className="w-full h-full flex justify-center items-center ">
+      <fieldset className="fieldset h-full w-full max-w-[1300px] bg-bright border border-base-300 p-4 m-4 rounded-box flex flex-col">
         <legend className="fieldset-legend text-base">Tìm kiếm chỗ đi chơi thôi</legend>
 
         <section className="flex flex-col max-w-[950px] w-full self-center md:flex-row gap-3 items-center">
@@ -120,17 +154,37 @@ const Search = () => {
           </section>
         ) : null}
 
-        {postsWithFilter.length > 0
-          ? postsWithFilter.map((post) => (
-              <div
-                className="w-full max-w-[950px] self-center"
-                key={post._id}
-                ref={(element) => (postRefs.current[post._id] = element)}
-              >
+        {postsWithFilter.map((post, index) => {
+          const isLastPost = index === postsWithFilter.length - 1;
+          return (
+            <div
+              className="w-full max-w-[950px] self-center"
+              key={post._id}
+              ref={(element) => {
+                postRefs.current[post._id] = element;
+
+                if (isLastPost) {
+                  lastPostRef(element);
+                }
+              }}
+            >
+              <Suspense fallback={<PostSkeleton />}>
                 <Post post={post} />
-              </div>
-            ))
-          : null}
+              </Suspense>
+            </div>
+          );
+        })}
+
+        {loading && (
+          <>
+            <PostSkeleton />
+            <PostSkeleton />
+          </>
+        )}
+
+        {!loading && postsWithFilter.length === 0 && (
+          <div className="text-center py-4">No posts found</div>
+        )}
       </fieldset>
     </section>
   );

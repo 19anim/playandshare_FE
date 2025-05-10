@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import store from "../../store/store";
-import { userDataClearance } from "../../store/user";
-
+import { signout } from "../../store/user";
+import { useNavigate } from "react-router-dom";
 const Navbar = () => {
+  const navigate = useNavigate();
   const { username, accessToken } = useSelector((state) => state.user);
-
   const signOutHandler = () => {
-    store.dispatch(userDataClearance());
+    store.dispatch(signout());
+    navigate("/");
   };
 
   return (
