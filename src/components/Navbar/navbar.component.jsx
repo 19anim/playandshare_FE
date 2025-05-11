@@ -5,12 +5,11 @@ import { signout } from "../../store/user";
 import { useNavigate } from "react-router-dom";
 const Navbar = () => {
   const navigate = useNavigate();
-  const { username, accessToken } = useSelector((state) => state.user);
+  const { username, avatar, accessToken } = useSelector((state) => state.user);
   const signOutHandler = () => {
     store.dispatch(signout());
     navigate("/");
   };
-
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="navbar-start">
@@ -64,7 +63,11 @@ const Navbar = () => {
         ) : (
           <div className="flex items-center justify-center gap-2">
             <p>Hello</p>
-
+            <div className="avatar">
+              <div className="w-8 rounded-full">
+                <img src={avatar !== "" ? avatar : "https://avatar.iran.liara.run/public"} />
+              </div>
+            </div>
             <div className="dropdown">
               <div tabIndex={1} role="button" className="badge badge-success cursor-pointer">
                 {username.toUpperCase()}

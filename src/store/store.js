@@ -12,7 +12,13 @@ const store = configureStore({
     post: postReducer,
     theme: themeReducer,
   },
-  middleware: (getDefaultMiddleware) => [...getDefaultMiddleware(), api],
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ["api/callBegan"],
+        ignoredActionPaths: ["payload.data"],
+      },
+    }).concat(api),
 });
 
 export default store;

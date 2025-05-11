@@ -145,3 +145,17 @@ export const updateUser = (userData) => {
     accessTokenNeeded: true,
   });
 };
+
+export const updateAvatar = (avatarData) => {
+  return apiCallBegan({
+    url: "user/avatar",
+    method: "POST",
+    data: avatarData,
+    onStart: apiRequested.type,
+    onSuccess: storeLoginData.type,
+    onError: apiRequestFailed.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
+    isMultipartData: true,
+  });
+};

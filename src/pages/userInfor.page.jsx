@@ -7,8 +7,9 @@ import { FaTiktok as Tiktok } from "react-icons/fa6";
 import { FaPhone } from "react-icons/fa6";
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { updateUser } from "../store/user";
+import { updateUser, updateAvatar } from "../store/user";
 import { useState } from "react";
+import imageCompression from "browser-image-compression";
 
 const iconMap = {
   Facebook,
@@ -16,10 +17,12 @@ const iconMap = {
   Thread,
   Tiktok,
 };
+const MAX_SIZE_MB = 0.5;
 
 const UserInfor = () => {
   const dispatch = useDispatch();
   const informationModalRef = useRef(null);
+  const imageElementRef = useRef(null);
   const user = useSelector((state) => state.user);
   const { residence, phone, socialMedia, avatar } = user;
   const showInformationModal = () => {
@@ -35,6 +38,10 @@ const UserInfor = () => {
       { platform: "Tiktok", link: "" },
     ],
   });
+
+  const handleUploadClick = () => {
+    imageElementRef.current.click();
+  };
 
   useEffect(() => {
     setInformation((prev) => ({
@@ -79,6 +86,20 @@ const UserInfor = () => {
     dispatch(updateUser(information));
     informationModalRef.current.close();
   };
+
+  const handleUploadChange = async (e) => {
+    const options = {
+      maxSizeMB: MAX_SIZE_MB,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+    const dataToSend = new FormData();
+    const file = e.target.files[0];
+    const compressedImage = await imageCompression(file, options);
+    dataToSend.append("avatar", compressedImage);
+    dispatch(updateAvatar(dataToSend));
+  };
+
   return (
     <section className="w-full h-full flex justify-center items-center p-4">
       <fieldset className="dark:bg-zinc-800 dark:border-zinc-900 dark:text-white bg-bright border border-base-300 fieldset h-full w-full max-w-[600px] p-4 m-4 rounded-box flex flex-col items-center">
@@ -87,14 +108,27 @@ const UserInfor = () => {
         <section className="w-full flex flex-col gap-4 items-center">
           <div className="flex justify-between items-center w-full">
             <header className="text-xl font-bold">Ảnh đại diện</header>
-            <button className="btn w-fit">Chỉnh sửa</button>
+            <input
+              onChange={handleUploadChange}
+              ref={imageElementRef}
+              type="file"
+              className="file-input hidden"
+              accept="image/*"
+            />
+            <button onClick={handleUploadClick} className="btn w-fit">
+              Chỉnh sửa
+            </button>
           </div>
           {avatar ? (
-            <div className="avatar">
-              <div className="col-span-2 size-42 rounded-full">
-                <img src={avatar} alt="avatar" className="rounded-full size-42 object-cover" />
+            !user.loading ? (
+              <div className="avatar">
+                <div className="col-span-2 size-42 rounded-full">
+                  <img src={avatar} alt="avatar" className="rounded-full size-42 object-cover" />
+                </div>
               </div>
-            </div>
+            ) : (
+              <span className="loading loading-infinity loading-xl"></span>
+            )
           ) : (
             <div className="skeleton size-42 rounded-full"></div>
           )}
@@ -112,7 +146,7 @@ const UserInfor = () => {
               <div className="text-lg flex gap-3 items-center">
                 <FaHouseChimney />
                 <p>
-                  Sống tại <span className="font-semibold">{residence}</span>
+                  Sống tại <span className="font-semibold capitalize">{residence}</span>
                 </p>
               </div>
               <div className="text-lg flex gap-3 items-center">
