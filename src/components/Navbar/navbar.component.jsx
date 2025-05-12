@@ -11,7 +11,7 @@ const Navbar = () => {
     navigate("/");
   };
   return (
-    <div className="navbar bg-base-100 shadow-sm">
+    <div className="navbar bg-base-100 shadow-sm px-6">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -36,13 +36,13 @@ const Navbar = () => {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
             <li>
-              <Link to="/create-post" className="btn">
+              <Link onClick={() => document.activeElement.blur()} to="/create-post" className="btn">
                 Đăng bài viết
               </Link>
             </li>
           </ul>
         </div>
-        <Link to="/" className="btn">
+        <Link onClick={() => document.activeElement.blur()} to="/" className="btn">
           Trang chủ
         </Link>
       </div>
@@ -57,7 +57,7 @@ const Navbar = () => {
       </div>
       <div className="navbar-end">
         {accessToken === "" ? (
-          <Link to="signin" className="btn">
+          <Link onClick={() => document.activeElement.blur()} to="signin" className="btn">
             Đăng ký / Đăng nhập
           </Link>
         ) : (
@@ -77,10 +77,14 @@ const Navbar = () => {
                 className="dropdown-content menu bg-base-100 rounded-box z-1 w-25 p-2 shadow-sm"
               >
                 <li>
-                  <Link to="/user/info">Thông tin</Link>
+                  <Link onClick={() => document.activeElement.blur()} to="/user/info">
+                    Thông tin
+                  </Link>
                 </li>
                 <li>
-                  <Link to="/user/posts">Bài viết</Link>
+                  <Link onClick={() => document.activeElement.blur()} to="/user/posts">
+                    Bài viết
+                  </Link>
                 </li>
               </ul>
             </div>

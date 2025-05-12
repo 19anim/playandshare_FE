@@ -7,21 +7,21 @@ import PostActionButtons from "../components/Post/postActionButtons.component";
 import PostStatus from "../components/Post/postStatus.component";
 import { useDispatch } from "react-redux";
 import { getLikes } from "../store/post";
+import fetchPostDetail from "../hooks/fetchPostDetail.hook";
 
 const ImageDetail = () => {
-  const { posts } = useSelector((state) => state.post);
   const [searchParams] = useSearchParams();
-  const location = useLocation();
-  const navigate = useNavigate();
   const postId = searchParams.get("postId");
   const imageId = searchParams.get("imageId");
+  const [loading, post] = fetchPostDetail({ postId });
+  const location = useLocation();
+  const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState();
   const [images, setImages] = useState();
   const [scrollToPostId, setScrollToPostId] = useState();
-  const currentPost = posts?.find((post) => post._id === postId);
-  const [currentLikeAmount, setCurrentLikeAmount] = useState(currentPost?.likes.length);
+  const [currentLikeAmount, setCurrentLikeAmount] = useState(post?.likes.length);
   const { userId } = useSelector((state) => state.user);
-  const [liked, setLiked] = useState(currentPost?.likes.indexOf(userId) !== -1);
+  const [liked, setLiked] = useState(post?.likes.indexOf(userId) !== -1);
   const dispatch = useDispatch();
 
   const onLikeHandler = async () => {
@@ -39,18 +39,19 @@ const ImageDetail = () => {
   };
 
   useEffect(() => {
-    setCurrentLikeAmount(currentPost?.likes.length);
-    setLiked(currentPost?.likes.indexOf(userId) !== -1);
-  }, [currentPost]);
+    setCurrentLikeAmount(post?.likes.length);
+    setLiked(post?.likes.indexOf(userId) !== -1);
+  }, [post]);
 
   useEffect(() => {
-    currentPost?.images.forEach((image, index) => {
+    post?.images.forEach((image, index) => {
+      console.log(image);
       if (image._id === imageId) setCurrentIndex(index);
     });
-    setImages(currentPost?.images);
+    setImages(post?.images);
 
     setScrollToPostId(location.state?.scrollToPostId);
-  }, [postId, imageId, currentPost]);
+  }, [postId, imageId, post]);
 
   return (
     <>
@@ -113,9 +114,9 @@ const ImageDetail = () => {
                 </div>
 
                 <div>
-                  <header className="font-bold text-lg">{currentPost?.author.username}</header>
+                  <header className="font-bold text-lg">{post?.author.username}</header>
                   <div className="flex gap-2 items-center textarea-sm">
-                    <p>{currentPost?.createdAt}</p>
+                    <p>{post?.createdAt}</p>
                     <i className="fa-regular fa-paper-plane"></i>
                   </div>
                 </div>
@@ -124,11 +125,11 @@ const ImageDetail = () => {
               </section>
               <PostStatus
                 currentLikeAmount={currentLikeAmount}
-                commentAmount={currentPost?.comments.length}
-                shareAmount={currentPost?.shares}
+                commentAmount={post?.comments.length}
+                shareAmount={post?.shares}
               />
               <PostActionButtons likeHandler={onLikeHandler} isLiked={liked} />
-              {currentPost?.comments?.map((comment) => {
+              {post?.comments?.map((comment) => {
                 return (
                   <PostComment
                     key={comment._id}

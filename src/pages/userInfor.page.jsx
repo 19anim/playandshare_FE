@@ -143,13 +143,13 @@ const UserInfor = () => {
           </div>
           {avatar ? (
             <section className="w-full">
-              <div className="text-lg flex gap-3 items-center">
+              <div className="textarea-md md:text-lg flex gap-3 items-center">
                 <FaHouseChimney />
                 <p>
                   Sống tại <span className="font-semibold capitalize">{residence}</span>
                 </p>
               </div>
-              <div className="text-lg flex gap-3 items-center">
+              <div className="textarea-md md:text-lg flex gap-3 items-center">
                 <FaPhone />
                 <p>
                   Số điện thoại <span className="font-semibold">{phone}</span>
@@ -158,7 +158,10 @@ const UserInfor = () => {
               {socialMedia.map((item) => {
                 const IconMedia = iconMap[item.platform];
                 return (
-                  <div key={item.platform} className="text-lg flex gap-3 items-center">
+                  <div
+                    key={item.platform}
+                    className="textarea-md md:text-lg flex gap-3 items-center"
+                  >
                     <IconMedia />
                     <p>
                       {item.link !== "" ? (

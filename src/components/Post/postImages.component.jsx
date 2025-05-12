@@ -19,7 +19,7 @@ const PostImages = ({ images, postId }) => {
                 key={`${image}_${index}`}
                 image={image.url}
                 onclickHandler={() =>
-                  navigate(`photo?postId=${postId}&imageId=${image._id}`, {
+                  navigate(`/photo?postId=${postId}&imageId=${image._id}`, {
                     state: { scrollToPostId: postId },
                   })
                 }
@@ -37,7 +37,7 @@ const PostImages = ({ images, postId }) => {
                     key={`${image}_${index}`}
                     image={image.url}
                     onclickHandler={() =>
-                      navigate(`photo?postId=${postId}&imageId=${image._id}`, {
+                      navigate(`/photo?postId=${postId}&imageId=${image._id}`, {
                         state: { scrollToPostId: postId },
                       })
                     }
@@ -56,7 +56,7 @@ const PostImages = ({ images, postId }) => {
                     isOverLayout={true}
                     overAmount={images.length - 5}
                     onclickHandler={() =>
-                      navigate(`photo?postId=${postId}&imageId=${image._id}`, {
+                      navigate(`/photo?postId=${postId}&imageId=${image._id}`, {
                         state: { scrollToPostId: postId },
                       })
                     }
@@ -68,7 +68,7 @@ const PostImages = ({ images, postId }) => {
                     key={`${image}_${index}`}
                     image={image.url}
                     onclickHandler={() =>
-                      navigate(`photo?postId=${postId}&imageId=${image._id}`, {
+                      navigate(`/photo?postId=${postId}&imageId=${image._id}`, {
                         state: { scrollToPostId: postId },
                       })
                     }

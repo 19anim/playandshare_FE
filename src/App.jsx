@@ -7,6 +7,7 @@ import SignUp from "./pages/signup.page";
 import Search from "./pages/search.page";
 import UserInfor from "./pages/userInfor.page";
 import UserPosts from "./pages/userPosts.page";
+import PostDetail from "./pages/postDetail.page";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import fetchSigninedUser from "./hooks/fetchSigninedUser.hook";
 import TestPage from "./pages/test.page";
@@ -51,6 +52,10 @@ const App = () => {
               element: acessToken !== "" ? <UserPosts /> : <Navigate to="/" replace />,
             },
           ],
+        },
+        {
+          path: "posts/:postId",
+          element: <PostDetail />,
         },
         { path: "create-post", element: <CreatePost /> },
         { path: "signin", element: username ? <Navigate to="/" replace /> : <SignIn /> },

@@ -5,6 +5,7 @@ const postReducer = createSlice({
   name: "post",
   initialState: {
     posts: [],
+    selfPosts: [],
     page: 1,
     hasMore: true,
     loading: false,
@@ -22,9 +23,14 @@ const postReducer = createSlice({
       state.page = page;
       state.loading = false;
     },
+    getSelfPostsSuccess: (state, action) => {
+      const { posts } = action.payload;
+      state.selfPosts = posts;
+      state.loading = false;
+    },
     getPostsFailure: (state, action) => {
       state.error = action.payload;
-      state.loading = false;
+      state.loading = flase;
     },
     storeComments: (state, action) => {
       const updatedPost = action.payload.post;
@@ -43,8 +49,14 @@ const postReducer = createSlice({
   },
 });
 
-export const { getPostsStart, getPostsSuccess, getPostsFailure, storeComments, storeLike } =
-  postReducer.actions;
+export const {
+  getPostsStart,
+  getPostsSuccess,
+  getSelfPostsSuccess,
+  getPostsFailure,
+  storeComments,
+  storeLike,
+} = postReducer.actions;
 export default postReducer.reducer;
 
 export const getPosts = (page = 1, limit = 5) => {
@@ -52,6 +64,17 @@ export const getPosts = (page = 1, limit = 5) => {
     url: `/post?page=${page}&limit=${limit}`,
     onStart: getPostsStart.type,
     onSuccess: getPostsSuccess.type,
+    onError: getPostsFailure.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
+  });
+};
+
+export const getSelfPosts = () => {
+  return apiCallBegan({
+    url: `/post/self-posts`,
+    onStart: getPostsStart.type,
+    onSuccess: getSelfPostsSuccess.type,
     onError: getPostsFailure.type,
     withCredentials: true,
     accessTokenNeeded: true,
