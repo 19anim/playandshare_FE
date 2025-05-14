@@ -4,9 +4,15 @@ import token from "../helper/token";
 import store from "../store/store";
 import { inititate } from "../store/user";
 
+const currentMode = import.meta.env.MODE;
+const apiUrl =
+  currentMode === "development"
+    ? "http://localhost:3000/api"
+    : "https://playandshare.onrender.com/api";
+
 const fetchSigninedUser = () => {
   const api = axios.create({
-    baseURL: "http://localhost:3000/api",
+    baseURL: apiUrl,
     withCredentials: true,
   });
 
@@ -38,7 +44,7 @@ const fetchSigninedUser = () => {
         try {
           const res = await axios.request({
             method: "POST",
-            url: "http://localhost:3000/api/auth/refresh",
+            url: `${apiUrl}/auth/refresh`,
             withCredentials: true,
           });
           const newAccessToken = res.data.accessToken;
@@ -63,7 +69,7 @@ const fetchSigninedUser = () => {
       try {
         const response = await api.request({
           method: "POST",
-          url: "http://localhost:3000/api/auth/verify",
+          url: `${apiUrl}/auth/verify`,
         });
 
         if (response) {

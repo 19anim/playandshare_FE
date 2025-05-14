@@ -2,6 +2,12 @@ import axios from "axios";
 import { apiCallBegan } from "../api";
 import apiWithToken from "../../helper/api";
 
+const currentMode = import.meta.env.MODE;
+const apiUrl =
+  currentMode === "development"
+    ? "http://localhost:3000/api"
+    : "https://playandshare.onrender.com/api";
+
 const api =
   ({ dispatch }) =>
   (next) =>
@@ -26,7 +32,7 @@ const api =
       let response = null;
 
       const config = {
-        baseURL: "http://localhost:3000/api",
+        baseURL: apiUrl,
         url,
         method,
         data,
