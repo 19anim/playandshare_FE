@@ -12,7 +12,7 @@ const PostImages = ({ images, postId }) => {
   return (
     <>
       {images.length <= 2 ? (
-        <div className="grow min-h-[500px] self-center w-full flex flex-col gap-y-0.5">
+        <div className="md:min-h-[500px] min-h-[300px] self-center w-full flex flex-col gap-y-0.5">
           <ImageLayout col={images.length}>
             {images.map((image, index) => (
               <Image
@@ -28,7 +28,7 @@ const PostImages = ({ images, postId }) => {
           </ImageLayout>
         </div>
       ) : (
-        <div className="grow min-h-[500px]  self-center w-full flex flex-col gap-y-0.5">
+        <div className="md:min-h-[500px] min-h-[300px] self-center w-full flex flex-col gap-y-0.5">
           <ImageLayout col={2}>
             {images.map((image, index) => {
               if (index < 2) {

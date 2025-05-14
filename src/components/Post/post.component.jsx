@@ -38,9 +38,7 @@ const Post = ({ post }) => {
 
   return (
     <div
-      className={`fieldset w-full ${
-        images.length > 0 ? "min-h-[950px]" : null
-      } max-w-[950px] bg-[#555] rounded-box self-center text-white flex flex-col grow`}
+      className={`fieldset w-full max-w-[950px] bg-[#555] rounded-box self-center text-white flex flex-col grow`}
     >
       <div className="card w-full">
         <div className="card-body">
