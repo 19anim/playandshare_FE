@@ -26,7 +26,6 @@ const PostSkeleton = () => (
 const Search = () => {
   const dispatch = useDispatch();
   const observerRef = useRef(null);
-
   const location = useLocation();
   const [scrollToPostId, setScrollToPostId] = useState();
   const [isUsingFilter, setIsUsingFilter] = useState(false);

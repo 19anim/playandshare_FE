@@ -76,9 +76,19 @@ const userReducer = createSlice({
       state.loading = false;
     },
     inititate: (state, action) => {
-      const { id, username, email, avatar, residence, phone, socialMedia, posts, comments, roles } =
-        action.payload;
-      state.userId = id;
+      const {
+        _id,
+        username,
+        email,
+        avatar,
+        residence,
+        phone,
+        socialMedia,
+        posts,
+        comments,
+        roles,
+      } = action.payload;
+      state.userId = _id;
       state.username = username;
       state.email = email;
       state.avatar = avatar;

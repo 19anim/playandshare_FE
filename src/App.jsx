@@ -24,8 +24,7 @@ import token from "./helper/token";
 const App = () => {
   const { mode } = useSelector((state) => state.theme);
   const { username } = useSelector((state) => state.user);
-  const acessToken = token.getAccessToken();
-  console.log(import.meta.env.MODE);
+  const accessToken = token.getAccessToken();
   useEffect(() => {
     store.dispatch(fetchCities());
     store.dispatch(fetchPlayTypes());
@@ -45,11 +44,11 @@ const App = () => {
           children: [
             {
               path: "info",
-              element: acessToken !== "" ? <UserInfor /> : <Navigate to="/" replace />,
+              element: accessToken !== "" ? <UserInfor /> : <Navigate to="/" replace />,
             },
             {
               path: "posts",
-              element: acessToken !== "" ? <UserPosts /> : <Navigate to="/" replace />,
+              element: accessToken !== "" ? <UserPosts /> : <Navigate to="/" replace />,
             },
           ],
         },
@@ -57,7 +56,10 @@ const App = () => {
           path: "posts/:postId",
           element: <PostDetail />,
         },
-        { path: "create-post", element: <CreatePost /> },
+        {
+          path: "create-post",
+          element: accessToken !== "" ? <CreatePost /> : <Navigate to="/" replace />,
+        },
         { path: "signin", element: username ? <Navigate to="/" replace /> : <SignIn /> },
         { path: "signup", element: username ? <Navigate to="/" replace /> : <SignUp /> },
       ],

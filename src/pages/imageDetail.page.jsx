@@ -45,7 +45,6 @@ const ImageDetail = () => {
 
   useEffect(() => {
     post?.images.forEach((image, index) => {
-      console.log(image);
       if (image._id === imageId) setCurrentIndex(index);
     });
     setImages(post?.images);
