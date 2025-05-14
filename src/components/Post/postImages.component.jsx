@@ -6,35 +6,33 @@ import { useNavigate } from "react-router-dom";
 
 const PostImages = ({ images, postId }) => {
   const navigate = useNavigate();
-  const [modalStartIndex, setModalStartIndex] = useState(0);
-  const modalRef = useRef(null);
 
   return (
-    <>
+    <div className="w-full">
       {images.length <= 2 ? (
-        <div className="md:min-h-[500px] min-h-[300px] self-center w-full flex flex-col gap-y-0.5">
+        <div className="grid gap-0.5 h-[300px] md:h-[500px]">
           <ImageLayout col={images.length}>
             {images.map((image, index) => (
-              <Image
-                key={`${image}_${index}`}
-                image={image.url}
-                onclickHandler={() =>
-                  navigate(`/photo?postId=${postId}&imageId=${image._id}`, {
-                    state: { scrollToPostId: postId },
-                  })
-                }
-              />
+              <div key={`${image._id}_${index}`} className="relative h-full">
+                <Image
+                  image={image.url}
+                  onclickHandler={() =>
+                    navigate(`/photo?postId=${postId}&imageId=${image._id}`, {
+                      state: { scrollToPostId: postId },
+                    })
+                  }
+                />
+              </div>
             ))}
           </ImageLayout>
         </div>
       ) : (
-        <div className="md:min-h-[500px] min-h-[300px] self-center w-full flex flex-col gap-y-0.5">
-          <ImageLayout col={2}>
-            {images.map((image, index) => {
-              if (index < 2) {
-                return (
+        <div className="grid gap-0.5">
+          <div className="h-[200px] md:h-[300px]">
+            <ImageLayout col={2}>
+              {images.slice(0, 2).map((image, index) => (
+                <div key={`${image._id}_${index}`} className="relative h-full">
                   <Image
-                    key={`${image}_${index}`}
                     image={image.url}
                     onclickHandler={() =>
                       navigate(`/photo?postId=${postId}&imageId=${image._id}`, {
@@ -42,18 +40,17 @@ const PostImages = ({ images, postId }) => {
                       })
                     }
                   />
-                );
-              }
-            })}
-          </ImageLayout>
-          <ImageLayout col={images.length > 5 ? 3 : images.length - 2}>
-            {images.map((image, index) => {
-              if (index === 4 && images.length > 5) {
-                return (
+                </div>
+              ))}
+            </ImageLayout>
+          </div>
+          <div className="h-[100px] md:h-[200px]">
+            <ImageLayout col={images.length > 5 ? 3 : images.length - 2}>
+              {images.slice(2, 5).map((image, index) => (
+                <div key={`${image._id}_${index}`} className="relative h-full">
                   <Image
-                    key={`${image}_${index}`}
                     image={image.url}
-                    isOverLayout={true}
+                    isOverLayout={index === 2 && images.length > 5}
                     overAmount={images.length - 5}
                     onclickHandler={() =>
                       navigate(`/photo?postId=${postId}&imageId=${image._id}`, {
@@ -61,26 +58,13 @@ const PostImages = ({ images, postId }) => {
                       })
                     }
                   />
-                );
-              } else if (index >= 2 && index <= 4) {
-                return (
-                  <Image
-                    key={`${image}_${index}`}
-                    image={image.url}
-                    onclickHandler={() =>
-                      navigate(`/photo?postId=${postId}&imageId=${image._id}`, {
-                        state: { scrollToPostId: postId },
-                      })
-                    }
-                  />
-                );
-              }
-            })}
-          </ImageLayout>
+                </div>
+              ))}
+            </ImageLayout>
+          </div>
         </div>
       )}
-      <ImageModal modalRef={modalRef} images={images} modalStartIndex={modalStartIndex} />
-    </>
+    </div>
   );
 };
 

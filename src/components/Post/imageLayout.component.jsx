@@ -1,8 +1,8 @@
 const ImageLayout = ({ children, col }) => {
   return (
     <div
-      style={{ gridTemplateColumns: `repeat(${col}, minmax(0px, 1fr))` }}
-      className="grid w-full grow gap-0.5"
+      style={{ gridTemplateColumns: `repeat(${col}, minmax(0, 1fr))` }}
+      className="grid w-full h-full gap-0.5"
     >
       {children}
     </div>

@@ -1,36 +1,23 @@
 import { useRef } from "react";
 
 const Image = ({ image, isOverLayout, overAmount, onclickHandler }) => {
-  // const modalRef = useRef(null);
-  // const handleImageClick = () => {
-  //   modalRef.current.showModal();
-  // };
-
   return (
-    <>
-      {isOverLayout ? (
-        <div className="relative w-full">
-          <img
-            className="w-full h-full object-cover brightness-50"
-            src={image}
-            alt="image_preview"
-          />
-          <span
-            onClick={onclickHandler}
-            className="absolute inset-0 flex justify-center items-center text-white text-3xl cursor-pointer"
-          >
-            +{overAmount}
-          </span>
-        </div>
-      ) : (
-        <img
-          className="w-full h-full object-cover"
+    <div className="absolute inset-0 w-full h-full">
+      <img
+        className={`w-full h-full object-cover ${isOverLayout ? "brightness-50" : ""}`}
+        onClick={onclickHandler}
+        src={image}
+        alt="image_preview"
+      />
+      {isOverLayout && (
+        <span
           onClick={onclickHandler}
-          src={image}
-          alt="image_preview"
-        />
+          className="absolute inset-0 flex justify-center items-center text-white text-3xl cursor-pointer"
+        >
+          +{overAmount}
+        </span>
       )}
-    </>
+    </div>
   );
 };
 
