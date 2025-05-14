@@ -25,7 +25,7 @@ const App = () => {
   const { mode } = useSelector((state) => state.theme);
   const { username } = useSelector((state) => state.user);
   const acessToken = token.getAccessToken();
-
+  console.log(import.meta.env.MODE);
   useEffect(() => {
     store.dispatch(fetchCities());
     store.dispatch(fetchPlayTypes());
