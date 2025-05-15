@@ -45,7 +45,7 @@ const Search = () => {
       if (observerRef.current) observerRef.current.disconnect();
 
       observerRef.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasMore && !isUsingFilter) {
+        if (entries[0].isIntersecting && hasMore) {
           dispatch(getPosts(page + 1));
         }
       });
