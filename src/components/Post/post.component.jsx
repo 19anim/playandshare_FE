@@ -37,9 +37,7 @@ const Post = ({ post }) => {
   };
 
   return (
-    <div
-      className={`fieldset w-full max-w-[950px] bg-[#555] rounded-box self-center text-white flex flex-col grow`}
-    >
+    <div className={`fieldset w-full max-w-[950px] bg-[#555] rounded-box self-center text-white flex flex-col grow`}>
       <div className="card w-full">
         <div className="card-body">
           <h2 className="card-title">
@@ -55,10 +53,7 @@ const Post = ({ post }) => {
           <p className="whitespace-pre-line">{content}</p>
           <div className="card-actions justify-end">
             {types.map((type) => (
-              <div
-                key={`${author}_${title}_${type.name}`}
-                className="badge badge-soft badge-neutral"
-              >
+              <div key={`${author}_${title}_${type.name}`} className="badge badge-soft badge-neutral dark:text-white">
                 {type.name}
               </div>
             ))}
@@ -69,24 +64,10 @@ const Post = ({ post }) => {
         </div>
       </div>
       {images.length > 0 ? <PostImages images={images} postId={_id} /> : null}
-      <PostStatus
-        currentLikeAmount={currentLikeAmount}
-        commentAmount={comments.length}
-        shareAmount={shares}
-      />
+      <PostStatus currentLikeAmount={currentLikeAmount} commentAmount={comments.length} shareAmount={shares} />
       <div className="divider my-0 before:bg-[#9d9d9d] after:bg-[#9d9d9d]"></div>
-      <PostActionButtons
-        likeHandler={onLikeHandler}
-        commentHandler={handleCommentClick}
-        isLiked={liked}
-      />
-      <PostModal
-        modalRef={modalRef}
-        post={post}
-        likeHandler={onLikeHandler}
-        currentLikeAmount={currentLikeAmount}
-        liked={liked}
-      />
+      <PostActionButtons likeHandler={onLikeHandler} commentHandler={handleCommentClick} isLiked={liked} />
+      <PostModal modalRef={modalRef} post={post} likeHandler={onLikeHandler} currentLikeAmount={currentLikeAmount} liked={liked} />
     </div>
   );
 };

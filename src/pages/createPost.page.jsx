@@ -149,68 +149,24 @@ const CreatePost = () => {
         <div className="divider my-0 before:bg-[#9d9d9d] before:h-[0.05rem] after:bg-[#9d9d9d] after:h-[0.05rem]"></div>
 
         <section className="flex flex-wrap gap-3 max-w-[750px] w-full self-center">
-          <SelectedFilter
-            selectedFilter={selectedTypes}
-            onClickHandler={onClickSelectedTypesHandler}
-          />
+          <SelectedFilter selectedFilter={selectedTypes} onClickHandler={onClickSelectedTypesHandler} />
         </section>
         <section className="flex flex-col max-w-[750px] w-full self-center md:flex-row gap-3 items-center">
           <section className="flex flex-col md:flex-row w-full gap-3">
-            <Filter
-              filterLabel="Thể loại ăn chơi"
-              filterData={playTypes}
-              onClickHandler={handleTypeFilter}
-            />
-            <Select
-              onchangeHandler={handleOnChangeFormData}
-              selectLable="Thành phố"
-              selectOptions={cities}
-              searchVisible={false}
-            />
+            <Filter filterLabel="Thể loại ăn chơi" filterData={playTypes} onClickHandler={handleTypeFilter} />
+            <Select onchangeHandler={handleOnChangeFormData} selectLable="Thành phố" selectOptions={cities} searchVisible={false} />
           </section>
         </section>
 
         <section className="flex flex-col w-full max-w-[750px] gap-y-2 relative">
-          <input
-            onChange={handleOnChangeFormData}
-            type="text"
-            placeholder="Tieu De"
-            name="title"
-            className="input w-full"
-          />
-          <textarea
-            onChange={handleOnChangeFormData}
-            className="textarea min-h-[200px] w-full"
-            name="content"
-            placeholder="Noi dung"
-          ></textarea>
-          <input
-            onChange={handleUploadChange}
-            ref={imageElementRef}
-            type="file"
-            className="hidden"
-            accept="image/*"
-            multiple
-          />
-          <div
-            onClick={handleUploadClick}
-            className={`flex items-center gap-2 ${
-              images.length < MAX_IMAGE_COUNT ? "cursor-pointer" : null
-            }`}
-          >
-            <i
-              className={`text-3xl fa-regular fa-images ${
-                images.length >= MAX_IMAGE_COUNT ? "text-gray-500" : null
-              }`}
-            ></i>
+          <input onChange={handleOnChangeFormData} type="text" placeholder="Tieu De" name="title" className="input w-full" />
+          <textarea onChange={handleOnChangeFormData} className="textarea min-h-[200px] w-full" name="content" placeholder="Noi dung"></textarea>
+          <input onChange={handleUploadChange} ref={imageElementRef} type="file" className="hidden" accept="image/*" multiple />
+          <div onClick={handleUploadClick} className={`flex items-center gap-2 ${images.length < MAX_IMAGE_COUNT ? "cursor-pointer" : null}`}>
+            <i className={`text-3xl fa-regular fa-images ${images.length >= MAX_IMAGE_COUNT ? "text-gray-500" : null}`}></i>
             {images.length >= MAX_IMAGE_COUNT ? (
               <div role="alert" className="alert alert-warning px-3 py-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 shrink-0 stroke-current"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -231,10 +187,7 @@ const CreatePost = () => {
             images.map((image, index) => (
               <div key={index} className="relative size-[80px] rounded-md overflow-hidden">
                 <img src={image} alt={`Preview ${index}`} className="w-full h-full object-cover" />
-                <button
-                  onClick={() => handleRemoveImage(index)}
-                  className="absolute top-0 right-0  text-white p-1 rounded-full cursor-pointer"
-                >
+                <button onClick={() => handleRemoveImage(index)} className="absolute top-0 right-0  text-white p-1 rounded-full cursor-pointer">
                   <i className="fa-solid fa-x"></i>
                 </button>
               </div>
@@ -245,17 +198,8 @@ const CreatePost = () => {
         <button onClick={handleSubmitPost} className="btn btn-primary" disabled={isCreating}>
           Đăng bài viết
         </button>
-        <SuccessModal
-          ref={successModalRef}
-          modalMessage="Bài viết đã được tạo thành công!"
-          modalNavigationLink="/"
-          modalNavigationText="Đến trang bài viết"
-        />
-        <ErrorModal
-          ref={errorModalRef}
-          modalMessage="Có lỗi trong quá trình tạo bài viết!"
-          modalErrorHandlerText="Trở lại tạo bài viết"
-        />
+        <SuccessModal ref={successModalRef} modalMessage="Bài viết đã được tạo thành công!" modalNavigationLink="/" modalNavigationText="Đến trang bài viết" />
+        <ErrorModal ref={errorModalRef} modalMessage="Có lỗi trong quá trình tạo bài viết!" modalErrorHandlerText="Trở lại tạo bài viết" />
       </fieldset>
     </section>
   );
