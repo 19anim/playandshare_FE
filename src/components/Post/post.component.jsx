@@ -53,7 +53,7 @@ const Post = ({ post }) => {
           <p className="whitespace-pre-line">{content}</p>
           <div className="card-actions justify-end">
             {types.map((type) => (
-              <div key={`${author}_${title}_${type.name}`} className="badge badge-soft badge-neutral dark:text-white">
+              <div key={`${author}_${title}_${type.name}`} className="badge badge-soft dark:text-white">
                 {type.name}
               </div>
             ))}

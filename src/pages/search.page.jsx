@@ -113,7 +113,7 @@ const Search = () => {
 
   // bg-bright
   return (
-    <section className="w-full h-full flex justify-center items-center ">
+    <section className="w-full h-full flex justify-center items-center">
       <fieldset className="fieldset h-full w-full max-w-[1300px] bg-base-300 border border-base-300 p-4 m-4 rounded-box flex flex-col">
         <legend className="fieldset-legend text-base">Tìm kiếm chỗ đi chơi thôi</legend>
 
