@@ -75,7 +75,7 @@ const App = () => {
   ]);
   return (
     <div className={`App w-screen ${mode === "dark" ? "dark" : ""}`}>
-      <ThemeToggle />
+      {/* <ThemeToggle /> */}
       <RouterProvider router={router} />
     </div>
   );
