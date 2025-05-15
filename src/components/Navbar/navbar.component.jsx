@@ -15,26 +15,12 @@ const Navbar = () => {
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {" "}
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h8m-8 6h16"
-              />{" "}
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />{" "}
             </svg>
           </div>
-          <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
-          >
+          <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
             <li>
               <Link onClick={() => document.activeElement.blur()} to="/create-post" className="btn">
                 Đăng bài viết
@@ -62,7 +48,6 @@ const Navbar = () => {
           </Link>
         ) : (
           <div className="flex items-center justify-center gap-2">
-            <p>Hello</p>
             <div className="avatar">
               <div className="w-8 rounded-full">
                 <img src={avatar !== "" ? avatar : "https://avatar.iran.liara.run/public"} />
@@ -72,10 +57,7 @@ const Navbar = () => {
               <div tabIndex={1} role="button" className="badge badge-success cursor-pointer">
                 {username.toUpperCase()}
               </div>
-              <ul
-                tabIndex={1}
-                className="dropdown-content menu bg-base-100 rounded-box z-1 w-25 p-2 shadow-sm"
-              >
+              <ul tabIndex={1} className="dropdown-content menu bg-base-100 rounded-box z-1 w-25 p-2 shadow-sm">
                 <li>
                   <Link onClick={() => document.activeElement.blur()} to="/user/info">
                     Thông tin
@@ -89,10 +71,7 @@ const Navbar = () => {
               </ul>
             </div>
 
-            <i
-              onClick={signOutHandler}
-              className="fa-solid fa-right-from-bracket cursor-pointer"
-            ></i>
+            <i onClick={signOutHandler} className="fa-solid fa-right-from-bracket cursor-pointer"></i>
           </div>
         )}
       </div>

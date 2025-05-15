@@ -68,9 +68,7 @@ const Search = () => {
     }
 
     if (selectedTypes.length > 0) {
-      filtered = filtered.filter((post) =>
-        post.types?.some((type) => selectedTypes.includes(type.name))
-      );
+      filtered = filtered.filter((post) => post.types?.some((type) => selectedTypes.includes(type.name)));
     }
 
     filtered.sort((a, b) => new Date(b.UpdatedAt) - new Date(a.UpdatedAt));
@@ -98,8 +96,7 @@ const Search = () => {
 
   const handleTypeFilter = (e) => {
     const currentType = e.target.text;
-    if (selectedTypes.indexOf(currentType) === -1 && currentType !== undefined)
-      setSelectedTypes([...selectedTypes, currentType]);
+    if (selectedTypes.indexOf(currentType) === -1 && currentType !== undefined) setSelectedTypes([...selectedTypes, currentType]);
   };
 
   const handleCityFilter = (e) => {
@@ -114,42 +111,27 @@ const Search = () => {
     setSelectedTypes([...newSelectedTypes]);
   };
 
+  // bg-bright
   return (
-    <section className="w-full h-full flex justify-center items-center ">
-      <fieldset className="fieldset h-full w-full max-w-[1300px] bg-bright border border-base-300 p-4 m-4 rounded-box flex flex-col">
+    <section className="w-full h-full flex justify-center items-center">
+      <fieldset className="fieldset h-full w-full max-w-[1300px] bg-base-300 border border-base-300 p-4 m-4 rounded-box flex flex-col">
         <legend className="fieldset-legend text-base">Tìm kiếm chỗ đi chơi thôi</legend>
 
         <section className="flex flex-col max-w-[950px] w-full self-center md:flex-row gap-3 items-center">
-          <button
-            onClick={onclickFilterHandler}
-            className={`btn self-start ${isUsingFilter ? "btn-accent" : null}`}
-          >
+          <button onClick={onclickFilterHandler} className={`btn self-start ${isUsingFilter ? "btn-accent" : null}`}>
             Bộ lọc <i className="fa-solid fa-arrow-down-short-wide"></i>
           </button>
           {isUsingFilter ? (
             <section className="flex flex-col md:flex-row w-full gap-3">
-              <Filter
-                filterLabel="Thể loại ăn chơi"
-                filterData={playTypes}
-                onClickHandler={handleTypeFilter}
-              />
-              <Select
-                ref={cityRef}
-                searchVisible={false}
-                selectLable="Thành phố"
-                selectOptions={cities}
-                onchangeHandler={handleCityFilter}
-              />
+              <Filter filterLabel="Thể loại ăn chơi" filterData={playTypes} onClickHandler={handleTypeFilter} />
+              <Select ref={cityRef} searchVisible={false} selectLable="Thành phố" selectOptions={cities} onchangeHandler={handleCityFilter} />
             </section>
           ) : null}
         </section>
 
         {isUsingFilter ? (
           <section className="flex flex-wrap gap-3 max-w-[950px] w-full self-center">
-            <SelectedFilter
-              selectedFilter={selectedTypes}
-              onClickHandler={onClickSelectedTypesHandler}
-            />
+            <SelectedFilter selectedFilter={selectedTypes} onClickHandler={onClickSelectedTypesHandler} />
           </section>
         ) : null}
 
@@ -181,9 +163,7 @@ const Search = () => {
           </>
         )}
 
-        {!loading && postsWithFilter.length === 0 && (
-          <div className="text-center py-4">No posts found</div>
-        )}
+        {!loading && postsWithFilter.length === 0 && <div className="text-center py-4">No posts found</div>}
       </fieldset>
     </section>
   );
