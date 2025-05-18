@@ -34,7 +34,7 @@ const UserPosts = () => {
                 />
               </div>
               <div>
-                <div className="font-semibold text-sm capitalize">{post.author.username}</div>
+                <div className="font-semibold text-sm capitalize">{post.author.displayName}</div>
                 <div className="text-xs uppercase font-semibold opacity-60">{post.title}</div>
                 <p className="list-col-wrap text-xs">
                   {post.content.length > 100 ? `${post.content.slice(0, 100)}...` : post.content}

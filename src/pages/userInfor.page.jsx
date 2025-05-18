@@ -4,6 +4,7 @@ import { FaFacebookF as Facebook } from "react-icons/fa6";
 import { FaThreads as Thread } from "react-icons/fa6";
 import { FaInstagram as Instagram } from "react-icons/fa6";
 import { FaTiktok as Tiktok } from "react-icons/fa6";
+import { FaRegIdCard as DisplayName } from "react-icons/fa6";
 import { FaPhone } from "react-icons/fa6";
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
@@ -24,18 +25,19 @@ const UserInfor = () => {
   const informationModalRef = useRef(null);
   const imageElementRef = useRef(null);
   const user = useSelector((state) => state.user);
-  const { residence, phone, socialMedia, avatar } = user;
+  const { displayName, residence, phone, socialMedia, avatar } = user;
   const showInformationModal = () => {
     informationModalRef.current.showModal();
   };
   const [information, setInformation] = useState({
-    residence: "",
-    phone: "",
+    displayName: user.displayName ? user.displayName : "",
+    residence: user.residence ? user.residence : "",
+    phone: user.phone ? user.phone : "",
     socialMedia: [
-      { platform: "Facebook", link: "" },
-      { platform: "Instagram", link: "" },
-      { platform: "Thread", link: "" },
-      { platform: "Tiktok", link: "" },
+      { platform: "Facebook", link: user.socialMedia[0].link ? user.socialMedia[0].link : "" },
+      { platform: "Instagram", link: user.socialMedia[1].link ? user.socialMedia[1].link : "" },
+      { platform: "Thread", link: user.socialMedia[2].link ? user.socialMedia[2].link : "" },
+      { platform: "Tiktok", link: user.socialMedia[3].link ? user.socialMedia[3].link : "" },
     ],
   });
 
@@ -144,6 +146,12 @@ const UserInfor = () => {
           {avatar ? (
             <section className="w-full">
               <div className="textarea-md md:text-lg flex gap-3 items-center">
+                <DisplayName />
+                <p>
+                  Tên hiển thị <span className="font-semibold">{displayName}</span>
+                </p>
+              </div>
+              <div className="textarea-md md:text-lg flex gap-3 items-center">
                 <FaHouseChimney />
                 <p>
                   Sống tại <span className="font-semibold capitalize">{residence}</span>
@@ -152,7 +160,11 @@ const UserInfor = () => {
               <div className="textarea-md md:text-lg flex gap-3 items-center">
                 <FaPhone />
                 <p>
-                  Số điện thoại <span className="font-semibold">{phone}</span>
+                  {phone ? (
+                    <span className="font-semibold">{phone}</span>
+                  ) : (
+                    <span>Chưa có thông tin</span>
+                  )}
                 </p>
               </div>
               {socialMedia.map((item) => {
@@ -200,6 +212,17 @@ const UserInfor = () => {
             <button className="btn btn-sm btn-circle btn-ghost">✕</button>
           </form>
           <form onSubmit={handleSubmit} className="flex flex-col gap-2 w-fit">
+            <label className="input w-full">
+              <FaHouseChimney className="text-xl" />
+              <span className="label">Tên hiển thị:</span>
+              <input
+                type="text"
+                name="displayName"
+                onChange={handleChange}
+                value={information.displayName}
+              />
+            </label>
+
             <label className="input w-full">
               <FaHouseChimney className="text-xl" />
               <span className="label">Thành phố:</span>

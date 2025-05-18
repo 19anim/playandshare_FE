@@ -7,6 +7,7 @@ const userReducer = createSlice({
   initialState: {
     userId: "",
     username: "",
+    displayName: "",
     email: "",
     avatar: "",
     residence: "",
@@ -41,6 +42,7 @@ const userReducer = createSlice({
       state.loading = false;
       state.userId = "";
       state.username = "";
+      state.displayName = "";
       state.email = "";
       state.accessToken = "";
       state.avatar = "";
@@ -63,6 +65,7 @@ const userReducer = createSlice({
       state.accessToken = accessToken;
       state.userId = user._id;
       state.username = user.username;
+      state.displayName = user.displayName;
       state.email = user.email;
       state.avatar = user.avatar;
       state.residence = user.residence;
@@ -79,6 +82,7 @@ const userReducer = createSlice({
       const {
         _id,
         username,
+        displayName,
         email,
         avatar,
         residence,
@@ -90,6 +94,7 @@ const userReducer = createSlice({
       } = action.payload;
       state.userId = _id;
       state.username = username;
+      state.displayName = displayName;
       state.email = email;
       state.avatar = avatar;
       state.residence = residence;

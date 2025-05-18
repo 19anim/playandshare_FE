@@ -11,6 +11,7 @@ const SignUp = () => {
   const dispatch = useDispatch();
   const [signUpData, setSignUpData] = useState({
     username: "",
+    displayName: "",
     password: "",
     email: "",
   });
@@ -52,6 +53,26 @@ const SignUp = () => {
                 className="input w-full"
                 placeholder="abcxyz"
               />
+              {signUpData.username &&
+                !/^[A-Za-z][A-Za-z0-9\-]{5,19}$/.test(signUpData.username) && (
+                  <p className="text-red-500 text-sm">
+                    Must be 6 to 20 characters
+                    <br />
+                    containing only letters, numbers or dash and must start with a letter
+                  </p>
+                )}
+
+              <label className="fieldset-label">Tên hiển thị</label>
+              <input
+                name="displayName"
+                onChange={onChangeHandler}
+                type="text"
+                className="input w-full"
+                placeholder="abcxyz"
+              />
+              {signUpData.displayName && !/^.{6,20}$/.test(signUpData.displayName) && (
+                <p className="text-red-500 text-sm">Must be 6 to 20 characters</p>
+              )}
 
               <label className="fieldset-label">Email</label>
               <input
@@ -61,6 +82,9 @@ const SignUp = () => {
                 className="input w-full"
                 placeholder="abcxyz@mail.com"
               />
+              {signUpData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signUpData.email) && (
+                <p className="text-red-500 text-sm">Please input correct email type</p>
+              )}
 
               <label className="fieldset-label">Mật khẩu</label>
               <input
@@ -70,6 +94,19 @@ const SignUp = () => {
                 className="input w-full"
                 placeholder="***"
               />
+              {signUpData.password &&
+                !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/.test(signUpData.password) && (
+                  <p className="text-red-500 text-sm">
+                    Password must be at least 8 characters
+                    <br />
+                    Password must include at least one uppercase letter.
+                    <br />
+                    Password must include at least one lowercase letter.
+                    <br />
+                    Password must include at least one number.
+                  </p>
+                )}
+
               <button className="btn btn-neutral mt-4">Let's go</button>
             </fieldset>
           </form>

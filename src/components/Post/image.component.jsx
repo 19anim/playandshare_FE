@@ -4,7 +4,9 @@ const Image = ({ image, isOverLayout, overAmount, onclickHandler }) => {
   return (
     <div className="absolute inset-0 w-full h-full">
       <img
-        className={`w-full h-full object-cover ${isOverLayout ? "brightness-50" : ""}`}
+        className={`w-full h-full object-cover cursor-pointer ${
+          isOverLayout ? "brightness-50" : ""
+        }`}
         onClick={onclickHandler}
         src={image}
         alt="image_preview"
