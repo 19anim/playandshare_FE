@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
-  const { accessToken } = useSelector((state) => state.user);
+  const { accessToken, loading, error } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [signUpData, setSignUpData] = useState({
     username: "",
@@ -110,6 +110,7 @@ const SignUp = () => {
               <button className="btn btn-neutral mt-4">Let's go</button>
             </fieldset>
           </form>
+          <p className="text-red-500">{error !== null ? error : null}</p>
           <p>
             Bạn đã có tài khoản ?{" "}
             <Link className="text-blue-600" to="/signin">

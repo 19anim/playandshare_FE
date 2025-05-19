@@ -20,6 +20,7 @@ import ThemeToggle from "./components/ThemeToggle/themeToggle.component";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import token from "./helper/token";
+import Schedule from "./pages/schedule.page";
 
 const App = () => {
   const { mode } = useSelector((state) => state.theme);
@@ -59,6 +60,10 @@ const App = () => {
         {
           path: "create-post",
           element: accessToken !== "" ? <CreatePost /> : <Navigate to="/" replace />,
+        },
+        {
+          path: "schedule",
+          element: accessToken !== "" ? <Schedule /> : <Navigate to="/" replace />,
         },
         { path: "signin", element: username ? <Navigate to="/" replace /> : <SignIn /> },
         { path: "signup", element: username ? <Navigate to="/" replace /> : <SignUp /> },
