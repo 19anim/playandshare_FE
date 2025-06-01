@@ -76,7 +76,7 @@ const fetchSigninedUser = () => {
           store.dispatch(inititate({ ...response.data.user }));
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
 
