@@ -1,14 +1,22 @@
 import { FaAngleDown } from "react-icons/fa6";
 import { FaTreeCity } from "react-icons/fa6";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import SuccessModal from "../../components/Modal/success.component";
+import ErrorModal from "../../components/Modal/error.component";
+import { createSchedule } from "../../store/schedule";
 
 const NewSchedule = () => {
+  const successModalRef = useRef(null);
+  const errorModalRef = useRef(null);
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.schedule);
   const [information, setInformation] = useState({
-    city: "",
-    tasks: [],
-    startDate: "",
-    endDate: "",
+    location: "",
+    departureDate: "",
+    returnDate: "",
   });
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,6 +25,34 @@ const NewSchedule = () => {
       [name]: value,
     }));
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!information.location?.trim() || !information.departureDate || !information.returnDate) {
+      errorModalRef.current.showModal();
+      return;
+    }
+
+    setHasSubmitted(true);
+    dispatch(createSchedule(information));
+  };
+
+  useEffect(() => {
+    if (hasSubmitted && loading === false) {
+      if (error) {
+        errorModalRef.current.showModal();
+      } else {
+        successModalRef.current.showModal();
+        setInformation({
+          location: "",
+          departureDate: "",
+          returnDate: "",
+        });
+      }
+      setHasSubmitted(false);
+    }
+  }, [loading, error, hasSubmitted]);
 
   return (
     <div className="collapse bg-base-100 border-base-300 border">
@@ -29,7 +65,7 @@ const NewSchedule = () => {
         <label className="input w-full md:col-span-2 md:gap-1 md:px-3 gap-0.5 px-2">
           <FaTreeCity className="text-xl" />
           <span className="label !px-2 !md:px-3">Thành phố:</span>
-          <input type="text" name="city" onChange={handleChange} value={information.city} />
+          <input type="text" name="location" onChange={handleChange} value={information.location} />
         </label>
 
         <label className="input w-full md:gap-1 md:px-3 gap-0.5 px-2">
@@ -37,22 +73,40 @@ const NewSchedule = () => {
           <span className="label !px-2 !md:px-3">Ngày đi:</span>
           <input
             type="date"
-            name="startDate"
+            name="departureDate"
             onChange={handleChange}
-            value={information.startDate}
+            value={information.departureDate}
           />
         </label>
 
         <label className="input w-full md:gap-1 md:px-3 gap-0.5 px-2">
           <FaTreeCity className="text-xl" />
           <span className="label !px-2 !md:px-3">Ngày về:</span>
-          <input type="date" name="endDate" onChange={handleChange} value={information.endDate} />
+          <input
+            type="date"
+            name="returnDate"
+            onChange={handleChange}
+            value={information.returnDate}
+          />
         </label>
 
         <div className="md:col-span-2 flex justify-center">
-          <button className="btn w-full md:w-[calc(50%-0.25rem)]">Default</button>
+          <button onClick={handleSubmit} className="btn w-full md:w-[calc(50%-0.25rem)]">
+            Tạo mới
+          </button>
         </div>
       </div>
+
+      <SuccessModal
+        ref={successModalRef}
+        modalMessage="Timeline đã được tạo thành công!"
+        closeModalFunction={true}
+      />
+      <ErrorModal
+        ref={errorModalRef}
+        modalMessage={error ? error : "Có lỗi trong quá trình tạo timeline!"}
+        modalErrorHandlerText="Trở lại tạo timeline"
+      />
     </div>
   );
 };

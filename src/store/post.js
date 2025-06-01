@@ -18,7 +18,6 @@ const postReducer = createSlice({
     getPostsSuccess: (state, action) => {
       const { posts, hasMore, page } = action.payload;
       state.posts = page === 1 ? posts : [...state.posts, ...posts];
-      //state.posts = state.posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
       state.hasMore = hasMore;
       state.page = page;
       state.loading = false;

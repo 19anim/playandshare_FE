@@ -1,7 +1,13 @@
 import SuccessSign from "../../assets/modal/success_sign.png";
 import { Link } from "react-router-dom";
 
-const SuccessModal = ({ ref, modalMessage, modalNavigationLink, modalNavigationText }) => {
+const SuccessModal = ({
+  ref,
+  modalMessage,
+  modalNavigationLink,
+  modalNavigationText,
+  closeModalFunction = false,
+}) => {
   return (
     <dialog ref={ref} className="modal">
       <div className="modal-box">
@@ -10,11 +16,15 @@ const SuccessModal = ({ ref, modalMessage, modalNavigationLink, modalNavigationT
           <h3 className="font-bold text-lg">{modalMessage}</h3>
         </div>
         <div className="modal-action">
-          <form method="dialog">
-            <button className="btn">
-              <Link to={modalNavigationLink}>{modalNavigationText}</Link>
+          {closeModalFunction ? (
+            <button onClick={() => ref.current.close()} className="btn btn-primary">
+              Đóng
             </button>
-          </form>
+          ) : (
+            <Link to={modalNavigationLink} className="btn btn-primary">
+              {modalNavigationText}
+            </Link>
+          )}
         </div>
       </div>
     </dialog>

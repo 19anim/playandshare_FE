@@ -37,24 +37,40 @@ const api =
         method,
         data,
         withCredentials,
+        headers: isMultipartData ? { "Content-Type": "multipart/form-data" } : {},
+        validateStatus: function (status) {
+          return true;
+        },
       };
 
-      // Set multipart headers if needed
-      if (isMultipartData) {
-        config.headers = { "Content-Type": "multipart/form-data" };
-      }
+      response = !accessTokenNeeded
+        ? await axios.request(config)
+        : await apiWithToken.request(config);
 
-      if (!accessTokenNeeded) {
-        response = await axios.request(config);
-      } else {
-        response = await apiWithToken.request(config);
+      if (response.status >= 400) {
+        if (onError) {
+          dispatch({ type: onError, payload: response.data });
+        }
+        return;
       }
 
       dispatch({ type: onSuccess, payload: response.data });
       next(action);
     } catch (error) {
-      if (onError) dispatch({ type: onError, payload: { error: error.response.data } });
-      dispatch({ type: "SHOW_ERROR", payload: { error: error.response.data } });
+      console.log("API Error:", {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message,
+      });
+
+      const errorMessage = error.response?.data || {
+        success: "false",
+        message: "Có lỗi xảy ra, vui lòng thử lại.",
+      };
+
+      if (onError) {
+        dispatch({ type: onError, payload: errorMessage });
+      }
     }
   };
 
