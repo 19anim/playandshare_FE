@@ -45,11 +45,11 @@ const App = () => {
           children: [
             {
               path: "info",
-              element: accessToken !== "" ? <UserInfor /> : <Navigate to="/" replace />,
+              element: accessToken !== "" ? <UserInfor /> : <Navigate to="/signin" replace />,
             },
             {
               path: "posts",
-              element: accessToken !== "" ? <UserPosts /> : <Navigate to="/" replace />,
+              element: accessToken !== "" ? <UserPosts /> : <Navigate to="/signin" replace />,
             },
           ],
         },
@@ -59,14 +59,14 @@ const App = () => {
         },
         {
           path: "create-post",
-          element: accessToken !== "" ? <CreatePost /> : <Navigate to="/" replace />,
+          element: accessToken !== "" ? <CreatePost /> : <Navigate to="/signin" replace />,
         },
         {
           path: "schedule",
-          element: accessToken !== "" ? <Schedule /> : <Navigate to="/" replace />,
+          element: accessToken !== "" ? <Schedule /> : <Navigate to="/signin" replace />,
         },
-        { path: "signin", element: username ? <Navigate to="/" replace /> : <SignIn /> },
-        { path: "signup", element: username ? <Navigate to="/" replace /> : <SignUp /> },
+        { path: "signin", element: username ? <Navigate to="/signin" replace /> : <SignIn /> },
+        { path: "signup", element: username ? <Navigate to="/signin" replace /> : <SignUp /> },
       ],
     },
     {

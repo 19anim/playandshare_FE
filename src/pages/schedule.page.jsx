@@ -39,7 +39,6 @@ const Schedule = () => {
                 {schedule.map((item, index) => {
                   let departureDate = new Date(item.departureDate);
                   let returnDate = new Date(item.returnDate);
-                  if (index === 0) console.log(returnDate, today, returnDate < today);
                   return (
                     <tr key={item._id}>
                       <th>{index + 1}</th>
