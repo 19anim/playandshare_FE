@@ -61,7 +61,7 @@ const userReducer = createSlice({
     },
     storeLoginData: (state, action) => {
       const { accessToken, user } = action.payload;
-      token.setAccessToken(accessToken);
+      if (accessToken) token.setAccessToken(accessToken);
       state.accessToken = accessToken;
       state.userId = user._id;
       state.username = user.username;
