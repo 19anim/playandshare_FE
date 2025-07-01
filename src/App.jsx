@@ -21,6 +21,8 @@ import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import token from "./helper/token";
 import Schedule from "./pages/schedule.page";
+import ScheduleDetail from "./pages/scheduleDetail.page";
+import { fetchSchedule } from "./store/schedule";
 
 const App = () => {
   const { mode } = useSelector((state) => state.theme);
@@ -30,6 +32,7 @@ const App = () => {
     store.dispatch(fetchCities());
     store.dispatch(fetchPlayTypes());
     store.dispatch(getPosts());
+    store.dispatch(fetchSchedule());
   }, []);
   fetchSigninedUser();
   const router = createBrowserRouter([
@@ -55,7 +58,7 @@ const App = () => {
         },
         {
           path: "posts/:postId",
-          element: <PostDetail />,
+          element: accessToken !== "" ? <PostDetail /> : <Navigate to="/signin" replace />,
         },
         {
           path: "create-post",
@@ -64,6 +67,10 @@ const App = () => {
         {
           path: "schedule",
           element: accessToken !== "" ? <Schedule /> : <Navigate to="/signin" replace />,
+        },
+        {
+          path: "schedule/:scheduleId",
+          element: accessToken !== "" ? <ScheduleDetail /> : <Navigate to="/signin" replace />,
         },
         { path: "signin", element: username ? <Navigate to="/signin" replace /> : <SignIn /> },
         { path: "signup", element: username ? <Navigate to="/signin" replace /> : <SignUp /> },

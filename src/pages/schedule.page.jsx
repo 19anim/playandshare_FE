@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { fetchSchedule } from "../store/schedule";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const Schedule = () => {
   const dispatch = useDispatch();
@@ -32,7 +33,8 @@ const Schedule = () => {
                 <tr>
                   <th>#</th>
                   <th>Timeline</th>
-                  <th>Trạng thái</th>
+                  <th className="hidden md:table-cell">Trạng thái</th>
+                  <th>Hành động</th>
                 </tr>
               </thead>
               <tbody>
@@ -40,16 +42,16 @@ const Schedule = () => {
                   let departureDate = new Date(item.departureDate);
                   let returnDate = new Date(item.returnDate);
                   return (
-                    <tr key={item._id}>
+                    <tr className="odd:bg-white even:bg-gray-100" key={item._id}>
                       <th>{index + 1}</th>
                       <td>
                         <div className="flex flex-col">
-                          <p className="text-lg font-bold">{item.location}</p>
+                          <p className="text-lg font-bold cursor-p">{item.location}</p>
                           <p className="text-sm text-gray-500">Từ {item.departureDate}</p>
                           <p className="text-sm text-gray-500">Đến {item.returnDate}</p>
                         </div>
                       </td>
-                      <td>
+                      <td className="hidden md:table-cell">
                         {returnDate < today ? (
                           <span className="w-16 md:w-fit h-fit badge badge-soft badge-secondary text-xs md:textarea-md py-1">
                             Đã hoàn thành
@@ -63,6 +65,11 @@ const Schedule = () => {
                             Đang đi chơi
                           </span>
                         )}
+                      </td>
+                      <td>
+                        <button className="btn">
+                          <Link to={item._id}>Chi tiết</Link>
+                        </button>
                       </td>
                     </tr>
                   );
