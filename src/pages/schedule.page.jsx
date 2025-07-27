@@ -67,9 +67,9 @@ const Schedule = () => {
                         )}
                       </td>
                       <td>
-                        <button className="btn">
-                          <Link to={item._id}>Chi tiết</Link>
-                        </button>
+                        <Link className="btn" to={item._id}>
+                          Chi tiết
+                        </Link>
                       </td>
                     </tr>
                   );
