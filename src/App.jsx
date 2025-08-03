@@ -16,13 +16,13 @@ import store from "./store/store";
 import ImageDetail from "./pages/imageDetail.page";
 import { getPosts } from "./store/post";
 import { useEffect } from "react";
-import ThemeToggle from "./components/ThemeToggle/themeToggle.component";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import token from "./helper/token";
 import Schedule from "./pages/schedule.page";
 import ScheduleDetail from "./pages/scheduleDetail.page";
 import { fetchSchedule } from "./store/schedule";
+import EditScheduleDetail from "./pages/editSchedultDetail.page";
 
 const App = () => {
   const { mode } = useSelector((state) => state.theme);
@@ -71,6 +71,10 @@ const App = () => {
         {
           path: "schedule/:scheduleId",
           element: accessToken !== "" ? <ScheduleDetail /> : <Navigate to="/signin" replace />,
+        },
+        {
+          path: "schedule/edit/:scheduleId",
+          element: accessToken !== "" ? <EditScheduleDetail /> : <Navigate to="/signin" replace />,
         },
         { path: "signin", element: username ? <Navigate to="/signin" replace /> : <SignIn /> },
         { path: "signup", element: username ? <Navigate to="/signin" replace /> : <SignUp /> },
