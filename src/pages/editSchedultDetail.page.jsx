@@ -8,15 +8,13 @@ const EditScheduleDetail = () => {
   const { scheduleId } = useParams();
   const { schedule } = useSelector((state) => state.schedule);
   // const currentSchedule = schedule.find((item) => item._id === scheduleId);
-  // console.log(currentSchedule);
   const currentSchedule = {
     additionalInformation: [
-      { _id: "1", title: "Phương tiện di chuyển", content: "Máy bay" },
-      { _id: "2", title: "Nơi ở", content: "Khách sạn ABC" },
+      { title: "Phương tiện di chuyển", content: "Máy bay" },
+      { title: "Nơi ở", content: "Khách sạn ABC" },
     ],
     tasks: [
       {
-        _id: "task1",
         name: "Tham quan bảo tàng",
         fromDate: "2023-10-02",
         toDate: "2023-10-02",
@@ -25,7 +23,6 @@ const EditScheduleDetail = () => {
         description: "Tham quan bảo tàng lịch sử quốc gia.",
       },
       {
-        _id: "task2",
         name: "Ăn trưa tại nhà hàng XYZ",
         fromDate: "2023-10-02",
         toDate: "2023-10-02",
@@ -40,7 +37,6 @@ const EditScheduleDetail = () => {
   };
 
   const [newSchedule, setNewSchedule] = useState(currentSchedule);
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewSchedule((prev) => ({
@@ -50,12 +46,26 @@ const EditScheduleDetail = () => {
   };
 
   const handleAdditionalInfoChange = (e, index) => {
-    const { value } = e.target;
+    const { name, value } = e.target;
     setNewSchedule((prev) => {
       const updatedInfo = [...prev.additionalInformation];
-      updatedInfo[index] = { ...updatedInfo[index], content: value };
+      updatedInfo[index] = { ...updatedInfo[index], [name]: value };
       return { ...prev, additionalInformation: updatedInfo };
     });
+  };
+
+  const handleRemoveAdditionalInfo = (index) => {
+    setNewSchedule((prev) => {
+      const updatedInfo = prev.additionalInformation.filter((_, i) => i !== index);
+      return { ...prev, additionalInformation: updatedInfo };
+    });
+  };
+
+  const handleAddAdditionalInfo = () => {
+    setNewSchedule((prev) => ({
+      ...prev,
+      additionalInformation: [...prev.additionalInformation, { title: "", content: "" }],
+    }));
   };
 
   return (
@@ -100,23 +110,29 @@ const EditScheduleDetail = () => {
                 placeholder="Chọn ngày về"
               />
               {newSchedule.additionalInformation.map((infor, index) => (
-                // <p key={infor._id} className="text-sm text-gray-500">
-                //   {infor.title}: {infor.content}
-                // </p>
                 <InputComponent
-                  key={infor._id}
+                  key={index}
                   label={infor.title}
-                  inputName="additionalInformation"
+                  inputName="content"
                   inputType="text"
                   value={infor.content}
                   onChangeHandler={(e) => handleAdditionalInfoChange(e, index)}
                   placeholder={`Nhập ${infor.title.toLowerCase()}`}
+                  additionalInformation={{
+                    isAdditional: true,
+                    inputNameOfAdditional: "title",
+                    onRemoveHandler: () => handleRemoveAdditionalInfo(index),
+                  }}
                 />
               ))}
+              <button className="cursor-pointer btn" onClick={handleAddAdditionalInfo}>
+                <i className="fa-solid text-success fa-circle-plus text-3xl"></i>
+                Thêm thông tin
+              </button>
               <p className="text-sm text-gray-500">Lịch trình:</p>
-              {currentSchedule.tasks.map((task) => {
+              {currentSchedule.tasks.map((task, index) => {
                 return (
-                  <div key={task._id} className="collapse bg-[#e5d5bf] border-base-300 border">
+                  <div key={index} className="collapse bg-[#e5d5bf] border-base-300 border">
                     <input type="checkbox" />
                     <div className="collapse-title font-semibold">{task.name}</div>
                     <div className="collapse-content text-sm">
