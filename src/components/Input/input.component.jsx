@@ -8,14 +8,18 @@ const InputComponent = ({
   additionalInformation = null,
 }) => {
   return (
-    <section className="flex justify-center items-center gap-4 mb-4">
+    <section
+      className={`grid grid-cols-3 md:flex justify-center items-center gap-4 mb-4 ${
+        additionalInformation && "bg-[#e5d5bf] p-3 rounded"
+      }`}
+    >
       {!additionalInformation ? (
-        <p className="flex-1/3">{label}</p>
+        <p className="col-span-1 md:flex-1/3">{label}</p>
       ) : (
         <input
           type="text"
           name={additionalInformation.inputNameOfAdditional}
-          className="input flex-1/4"
+          className="input col-span-3 md:flex-1/4"
           placeholder="Chủ đề"
           value={label}
           onChange={onChangeHandler}
@@ -23,7 +27,9 @@ const InputComponent = ({
       )}
       <input
         type={inputType}
-        className={`input ${additionalInformation ? "flex-2/4" : "flex-2/3"}`}
+        className={`input ${
+          additionalInformation ? "col-span-2 md:flex-2/4" : "col-span-2 md:flex-2/3"
+        }`}
         placeholder={placeholder}
         name={inputName}
         value={value}

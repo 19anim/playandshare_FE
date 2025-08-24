@@ -7,7 +7,6 @@ import InputComponent from "../components/Input/input.component";
 const EditScheduleDetail = () => {
   const { scheduleId } = useParams();
   const { schedule } = useSelector((state) => state.schedule);
-  // const currentSchedule = schedule.find((item) => item._id === scheduleId);
   const currentSchedule = {
     additionalInformation: [
       { title: "Phương tiện di chuyển", content: "Máy bay" },
@@ -37,6 +36,7 @@ const EditScheduleDetail = () => {
   };
 
   const [newSchedule, setNewSchedule] = useState(currentSchedule);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewSchedule((prev) => ({
@@ -69,7 +69,7 @@ const EditScheduleDetail = () => {
   };
 
   return (
-    <section className="w-full h-full flex flex-col justify-center items-center p-4 ">
+    <section className="w-full h-full flex flex-col justify-center items-center p-4">
       <div className="self-end flex gap-2 mb-3">
         <Link to={`/schedule/${scheduleId}`} className="btn btn-success">
           Save
@@ -78,80 +78,84 @@ const EditScheduleDetail = () => {
           Cancel
         </Link>
       </div>
-      <div className="card w-full max-w-2xl bg-[#faebd7] shadow-xl">
-        <div className="card-body">
-          <h1 className="text-2xl font-bold">Chỉnh sửa lịch trình</h1>
-          {/* <h2 className="card-title">Chi tiết lịch trình</h2> */}
-          {currentSchedule ? (
-            <>
-              <InputComponent
-                label="Nơi du lịch"
-                inputName="location"
-                inputType="text"
-                value={newSchedule.location}
-                onChangeHandler={handleInputChange}
-                placeholder="Hồ Chí Minh"
-                className="text-xl"
-              />
-              <InputComponent
-                label="Ngày đi"
-                inputName="departureDate"
-                inputType="date"
-                value={newSchedule.departureDate}
-                onChangeHandler={handleInputChange}
-                placeholder="Chọn ngày đi"
-              />
-              <InputComponent
-                label="Ngày về"
-                inputName="returnDate"
-                inputType="date"
-                value={newSchedule.returnDate}
-                onChangeHandler={handleInputChange}
-                placeholder="Chọn ngày về"
-              />
-              {newSchedule.additionalInformation.map((infor, index) => (
+      <div className="card max-w-7xl w-full bg-[#faebd7] shadow-xl p-6">
+        <div className="grid md:grid-cols-2 grid-cols-1 gap-8">
+          <div className="bg-[#fff5e6] rounded-lg p-6 shadow-sm">
+            <h1 className="text-2xl font-bold mb-6">Chỉnh sửa lịch trình</h1>
+            {currentSchedule ? (
+              <>
                 <InputComponent
-                  key={index}
-                  label={infor.title}
-                  inputName="content"
+                  label="Nơi du lịch"
+                  inputName="location"
                   inputType="text"
-                  value={infor.content}
-                  onChangeHandler={(e) => handleAdditionalInfoChange(e, index)}
-                  placeholder={`Nhập ${infor.title.toLowerCase()}`}
-                  additionalInformation={{
-                    isAdditional: true,
-                    inputNameOfAdditional: "title",
-                    onRemoveHandler: () => handleRemoveAdditionalInfo(index),
-                  }}
+                  value={newSchedule.location}
+                  onChangeHandler={handleInputChange}
+                  placeholder="Hồ Chí Minh"
+                  className="text-xl"
                 />
-              ))}
-              <button className="cursor-pointer btn" onClick={handleAddAdditionalInfo}>
-                <i className="fa-solid text-success fa-circle-plus text-3xl"></i>
-                Thêm thông tin
-              </button>
-              <p className="text-sm text-gray-500">Lịch trình:</p>
-              {currentSchedule.tasks.map((task, index) => {
-                return (
-                  <div key={index} className="collapse bg-[#e5d5bf] border-base-300 border">
-                    <input type="checkbox" />
-                    <div className="collapse-title font-semibold">{task.name}</div>
-                    <div className="collapse-content text-sm">
-                      <p>
-                        Từ: {new Date(task.fromDate).toLocaleDateString()} - Đến:{" "}
-                        {new Date(task.toDate).toLocaleDateString()}
-                      </p>
-                      <p>
-                        Giờ: {task.startTime} - {task.endTime}
-                      </p>
-                      <p>{task.description}</p>
-                    </div>
+                <InputComponent
+                  label="Ngày đi"
+                  inputName="departureDate"
+                  inputType="date"
+                  value={newSchedule.departureDate}
+                  onChangeHandler={handleInputChange}
+                  placeholder="Chọn ngày đi"
+                />
+                <InputComponent
+                  label="Ngày về"
+                  inputName="returnDate"
+                  inputType="date"
+                  value={newSchedule.returnDate}
+                  onChangeHandler={handleInputChange}
+                  placeholder="Chọn ngày về"
+                />
+                {newSchedule.additionalInformation.map((infor, index) => (
+                  <InputComponent
+                    key={index}
+                    label={infor.title}
+                    inputName="content"
+                    inputType="text"
+                    value={infor.content}
+                    onChangeHandler={(e) => handleAdditionalInfoChange(e, index)}
+                    placeholder={`Nhập ${infor.title.toLowerCase()}`}
+                    additionalInformation={{
+                      isAdditional: true,
+                      inputNameOfAdditional: "title",
+                      onRemoveHandler: () => handleRemoveAdditionalInfo(index),
+                    }}
+                  />
+                ))}
+                <button className="cursor-pointer btn" onClick={handleAddAdditionalInfo}>
+                  <i className="fa-solid text-success fa-circle-plus text-3xl"></i>
+                  Thêm thông tin
+                </button>
+              </>
+            ) : (
+              <p className="text-red-500">Không tìm thấy lịch trình.</p>
+            )}
+          </div>
+
+          <div className="bg-[#fff5e6] rounded-lg p-6 shadow-sm">
+            <h2 className="text-xl font-bold mb-6">Lịch trình</h2>
+            <div className="flex flex-col gap-3">
+              {currentSchedule.tasks.map((task, index) => (
+                <div key={index} className="collapse bg-[#e5d5bf] border-base-300 border">
+                  <input type="checkbox" />
+                  <div className="collapse-title font-semibold">{task.name}</div>
+                  <div className="collapse-content text-sm">
+                    <p>
+                      Từ: {new Date(task.fromDate).toLocaleDateString()} - Đến:{" "}
+                      {new Date(task.toDate).toLocaleDateString()}
+                    </p>
+                    <p>
+                      Giờ: {task.startTime} - {task.endTime}
+                    </p>
+                    <p>{task.description}</p>
                   </div>
-                );
-              })}
-            </>
-          ) : (
-            <p className="text-red-500">Không tìm thấy lịch trình.</p>
-          )}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
