@@ -1,5 +1,7 @@
 import { useSelector } from "react-redux";
 import { useParams, Link } from "react-router-dom";
+import ScheduleTasks from "../components/schedule/scheduleTasks.component";
+import { useState } from "react";
 
 const ScheduleDetail = () => {
   const { scheduleId } = useParams();
@@ -8,12 +10,12 @@ const ScheduleDetail = () => {
     additionalInformation: [
       { _id: "1", title: "Phương tiện di chuyển", content: "Máy bay" },
       { _id: "2", title: "Nơi ở", content: "Khách sạn ABC" },
-      { _id: "1", title: "Phương tiện di chuyển", content: "Máy bay" },
-      { _id: "2", title: "Nơi ở", content: "Khách sạn ABC" },
+      { _id: "3", title: "Phương tiện di chuyển", content: "Máy bay" },
+      { _id: "4", title: "Nơi ở", content: "Khách sạn ABC" },
     ],
     tasks: [
       {
-        _id: "task1",
+        _id: "5",
         name: "Tham quan bảo tàng",
         fromDate: "2023-10-02",
         toDate: "2023-10-02",
@@ -22,7 +24,7 @@ const ScheduleDetail = () => {
         description: "Tham quan bảo tàng lịch sử quốc gia.",
       },
       {
-        _id: "task2",
+        _id: "6",
         name: "Ăn trưa tại nhà hàng XYZ",
         fromDate: "2023-10-02",
         toDate: "2023-10-02",
@@ -36,6 +38,7 @@ const ScheduleDetail = () => {
     returnDate: "2023-10-10",
   };
 
+  const [newSchedule, setNewSchedule] = useState(currentSchedule);
   return (
     <section className="w-full h-full flex flex-col justify-center items-center p-4">
       <div className="self-end flex gap-2 mb-3">
@@ -51,7 +54,7 @@ const ScheduleDetail = () => {
         >
           <i className="fa fa-arrow-left" aria-hidden="true"></i> Quay lại
         </Link>
-        <div className="grid md:grid-cols-2 grid-cols-1 gap-8">
+        <div className="grid lg:grid-cols-2 grid-cols-1 gap-8">
           <div className="bg-[#fff5e6] rounded-lg p-6 shadow-sm">
             <h1 className="text-2xl font-bold mb-6">Thông tin chung</h1>
             {currentSchedule ? (
@@ -90,27 +93,7 @@ const ScheduleDetail = () => {
             )}
           </div>
 
-          <div className="bg-[#fff5e6] rounded-lg p-6 shadow-sm">
-            <h2 className="text-xl font-bold mb-6">Lịch trình</h2>
-            <div className="flex flex-col gap-3">
-              {currentSchedule.tasks.map((task) => (
-                <div key={task._id} className="collapse bg-[#e5d5bf] border-base-300 border">
-                  <input type="checkbox" />
-                  <div className="collapse-title font-semibold">{task.name}</div>
-                  <div className="collapse-content text-sm">
-                    <p>
-                      Từ: {new Date(task.fromDate).toLocaleDateString()} - Đến:{" "}
-                      {new Date(task.toDate).toLocaleDateString()}
-                    </p>
-                    <p>
-                      Giờ: {task.startTime} - {task.endTime}
-                    </p>
-                    <p>{task.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <ScheduleTasks tasks={newSchedule.tasks} handleSetTasks={setNewSchedule} />
         </div>
       </div>
     </section>

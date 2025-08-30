@@ -6,10 +6,11 @@ const InputComponent = ({
   onChangeHandler,
   placeholder,
   additionalInformation = null,
+  className = "",
 }) => {
   return (
     <section
-      className={`grid grid-cols-3 md:flex justify-center items-center gap-4 mb-4 ${
+      className={`grid grid-cols-3 md:flex justify-center items-center gap-4 mb-3 ${className} ${
         additionalInformation && "bg-[#e5d5bf] p-3 rounded"
       }`}
     >

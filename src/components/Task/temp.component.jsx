@@ -1,0 +1,38 @@
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
+const Temp = ({ item }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="bg-[#e5d5bf] border-base-300 border px-2 py-4 rounded-lg shadow-md touch-manipulation"
+      onTouchStart={(e) => {
+        // Prevent scrolling while dragging on mobile
+        if (e.target === e.currentTarget) {
+          e.preventDefault();
+        }
+      }}
+    >
+      <div className="font-semibold">{item.name}</div>
+      <p>
+        Từ: {new Date(item.fromDate).toLocaleDateString()} - Đến:{" "}
+        {new Date(item.toDate).toLocaleDateString()}
+      </p>
+      <p>
+        Giờ: {item.startTime} - {item.endTime}
+      </p>
+      <p>{item.description}</p>
+    </div>
+  );
+};
+
+export default Temp;

@@ -1,41 +1,25 @@
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InputComponent from "../components/Input/input.component";
+import { DndContext } from "@dnd-kit/core";
+import { SortableContext } from "@dnd-kit/sortable";
+import Temp from "../components/Task/temp.component";
+import TempSortable from "../components/Task/tempSortable.component";
+import ScheduleTasks from "../components/schedule/scheduleTasks.component";
 
 const EditScheduleDetail = () => {
   const { scheduleId } = useParams();
   const { schedule } = useSelector((state) => state.schedule);
-  const currentSchedule = {
-    additionalInformation: [
-      { title: "Phương tiện di chuyển", content: "Máy bay" },
-      { title: "Nơi ở", content: "Khách sạn ABC" },
-    ],
-    tasks: [
-      {
-        name: "Tham quan bảo tàng",
-        fromDate: "2023-10-02",
-        toDate: "2023-10-02",
-        startTime: "09:00",
-        endTime: "11:00",
-        description: "Tham quan bảo tàng lịch sử quốc gia.",
-      },
-      {
-        name: "Ăn trưa tại nhà hàng XYZ",
-        fromDate: "2023-10-02",
-        toDate: "2023-10-02",
-        startTime: "12:00",
-        endTime: "13:30",
-        description: "Ăn trưa tại nhà hàng nổi tiếng XYZ.",
-      },
-    ],
-    location: "Hà Nội",
-    departureDate: "2023-10-01",
-    returnDate: "2023-10-10",
-  };
 
-  const [newSchedule, setNewSchedule] = useState(currentSchedule);
+  const [newSchedule, setNewSchedule] = useState(
+    schedule.filter((item) => item._id === scheduleId)[0]
+  );
+
+  useEffect(() => {
+    setNewSchedule(schedule.filter((item) => item._id === scheduleId)[0]);
+  }, [schedule, scheduleId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -68,6 +52,24 @@ const EditScheduleDetail = () => {
     }));
   };
 
+  const handleAddTask = () => {
+    setNewSchedule((prev) => ({
+      ...prev,
+      tasks: [
+        ...prev.tasks,
+        {
+          id: prev.tasks.length + 1,
+          name: "Tiêu đề",
+          fromDate: new Date().toISOString().split("T")[0],
+          toDate: new Date().toISOString().split("T")[0],
+          startTime: "hh:mm",
+          endTime: "hh:mm",
+          description: "Mô tả chi tiết",
+        },
+      ],
+    }));
+  };
+
   return (
     <section className="w-full h-full flex flex-col justify-center items-center p-4">
       <div className="self-end flex gap-2 mb-3">
@@ -79,10 +81,10 @@ const EditScheduleDetail = () => {
         </Link>
       </div>
       <div className="card max-w-7xl w-full bg-[#faebd7] shadow-xl p-6">
-        <div className="grid md:grid-cols-2 grid-cols-1 gap-8">
+        <div className="grid lg:grid-cols-2 grid-cols-1 gap-8">
           <div className="bg-[#fff5e6] rounded-lg p-6 shadow-sm">
             <h1 className="text-2xl font-bold mb-6">Chỉnh sửa lịch trình</h1>
-            {currentSchedule ? (
+            {newSchedule ? (
               <>
                 <InputComponent
                   label="Nơi du lịch"
@@ -91,7 +93,6 @@ const EditScheduleDetail = () => {
                   value={newSchedule.location}
                   onChangeHandler={handleInputChange}
                   placeholder="Hồ Chí Minh"
-                  className="text-xl"
                 />
                 <InputComponent
                   label="Ngày đi"
@@ -125,9 +126,12 @@ const EditScheduleDetail = () => {
                     }}
                   />
                 ))}
-                <button className="cursor-pointer btn" onClick={handleAddAdditionalInfo}>
-                  <i className="fa-solid text-success fa-circle-plus text-3xl"></i>
-                  Thêm thông tin
+                <button
+                  className="btn btn-outline btn-success hover:bg-success/10 flex items-center gap-2 transition-all duration-300 group"
+                  onClick={handleAddAdditionalInfo}
+                >
+                  <i className="fa-solid fa-circle-plus text-2xl group-hover:rotate-90 transition-transform duration-300"></i>
+                  <span className="font-medium">Thêm thông tin</span>
                 </button>
               </>
             ) : (
@@ -135,27 +139,24 @@ const EditScheduleDetail = () => {
             )}
           </div>
 
-          <div className="bg-[#fff5e6] rounded-lg p-6 shadow-sm">
-            <h2 className="text-xl font-bold mb-6">Lịch trình</h2>
-            <div className="flex flex-col gap-3">
-              {currentSchedule.tasks.map((task, index) => (
-                <div key={index} className="collapse bg-[#e5d5bf] border-base-300 border">
-                  <input type="checkbox" />
-                  <div className="collapse-title font-semibold">{task.name}</div>
-                  <div className="collapse-content text-sm">
-                    <p>
-                      Từ: {new Date(task.fromDate).toLocaleDateString()} - Đến:{" "}
-                      {new Date(task.toDate).toLocaleDateString()}
-                    </p>
-                    <p>
-                      Giờ: {task.startTime} - {task.endTime}
-                    </p>
-                    <p>{task.description}</p>
-                  </div>
-                </div>
-              ))}
+          {newSchedule && (
+            <div className="bg-[#fff5e6] rounded-lg p-6 shadow-sm">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold">Lịch trình</h2>
+                <button
+                  className="btn btn-outline btn-success hover:bg-success/10 flex items-center gap-2 transition-all duration-300 group"
+                  onClick={handleAddTask}
+                >
+                  <i className="fa-solid fa-circle-plus text-2xl group-hover:rotate-90 transition-transform duration-300"></i>
+                </button>
+              </div>
+              <ScheduleTasks
+                tasks={newSchedule.tasks}
+                handleSetTasks={setNewSchedule}
+                isEditScreen={true}
+              />
             </div>
-          </div>
+          )}
         </div>
       </div>
     </section>
