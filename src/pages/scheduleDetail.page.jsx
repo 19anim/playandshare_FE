@@ -1,44 +1,20 @@
 import { useSelector } from "react-redux";
 import { useParams, Link } from "react-router-dom";
 import ScheduleTasks from "../components/schedule/scheduleTasks.component";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const ScheduleDetail = () => {
   const { scheduleId } = useParams();
   const { schedule } = useSelector((state) => state.schedule);
-  const currentSchedule = {
-    additionalInformation: [
-      { _id: "1", title: "Phương tiện di chuyển", content: "Máy bay" },
-      { _id: "2", title: "Nơi ở", content: "Khách sạn ABC" },
-      { _id: "3", title: "Phương tiện di chuyển", content: "Máy bay" },
-      { _id: "4", title: "Nơi ở", content: "Khách sạn ABC" },
-    ],
-    tasks: [
-      {
-        _id: "5",
-        name: "Tham quan bảo tàng",
-        fromDate: "2023-10-02",
-        toDate: "2023-10-02",
-        startTime: "09:00",
-        endTime: "11:00",
-        description: "Tham quan bảo tàng lịch sử quốc gia.",
-      },
-      {
-        _id: "6",
-        name: "Ăn trưa tại nhà hàng XYZ",
-        fromDate: "2023-10-02",
-        toDate: "2023-10-02",
-        startTime: "12:00",
-        endTime: "13:30",
-        description: "Ăn trưa tại nhà hàng nổi tiếng XYZ.",
-      },
-    ],
-    location: "Hà Nội",
-    departureDate: "2023-10-01",
-    returnDate: "2023-10-10",
-  };
 
-  const [newSchedule, setNewSchedule] = useState(currentSchedule);
+  const [currentSchedule, setCurrentSchedule] = useState(
+    schedule.filter((item) => item._id === scheduleId)[0]
+  );
+
+  useEffect(() => {
+    setCurrentSchedule(schedule.filter((item) => item._id === scheduleId)[0]);
+  }, [schedule, scheduleId]);
+
   return (
     <section className="w-full h-full flex flex-col justify-center items-center p-4">
       <div className="self-end flex gap-2 mb-3">
@@ -93,7 +69,7 @@ const ScheduleDetail = () => {
             )}
           </div>
 
-          <ScheduleTasks tasks={newSchedule.tasks} handleSetTasks={setNewSchedule} />
+          {currentSchedule && <ScheduleTasks tasks={currentSchedule.tasks} />}
         </div>
       </div>
     </section>

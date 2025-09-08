@@ -3,22 +3,21 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import InputComponent from "../components/Input/input.component";
-import { DndContext } from "@dnd-kit/core";
-import { SortableContext } from "@dnd-kit/sortable";
-import Temp from "../components/Task/temp.component";
-import TempSortable from "../components/Task/tempSortable.component";
 import ScheduleTasks from "../components/schedule/scheduleTasks.component";
+import { useDispatch } from "react-redux";
+import { updateSchedule } from "../store/schedule";
 
 const EditScheduleDetail = () => {
   const { scheduleId } = useParams();
   const { schedule } = useSelector((state) => state.schedule);
+  const dispatch = useDispatch();
 
   const [newSchedule, setNewSchedule] = useState(
-    schedule.filter((item) => item._id === scheduleId)[0]
+    schedule ? schedule.filter((item) => item._id === scheduleId)[0] : null
   );
 
   useEffect(() => {
-    setNewSchedule(schedule.filter((item) => item._id === scheduleId)[0]);
+    setNewSchedule(schedule ? schedule.filter((item) => item._id === scheduleId)[0] : null);
   }, [schedule, scheduleId]);
 
   const handleInputChange = (e) => {
@@ -30,6 +29,8 @@ const EditScheduleDetail = () => {
   };
 
   const handleAdditionalInfoChange = (e, index) => {
+    if (!setNewSchedule) return;
+
     const { name, value } = e.target;
     setNewSchedule((prev) => {
       const updatedInfo = [...prev.additionalInformation];
@@ -70,12 +71,16 @@ const EditScheduleDetail = () => {
     }));
   };
 
+  const handleSubmit = () => {
+    dispatch(updateSchedule(scheduleId, newSchedule));
+  };
+
   return (
     <section className="w-full h-full flex flex-col justify-center items-center p-4">
       <div className="self-end flex gap-2 mb-3">
-        <Link to={`/schedule/${scheduleId}`} className="btn btn-success">
+        <button onClick={handleSubmit} className="btn btn-success">
           Save
-        </Link>
+        </button>
         <Link to={`/schedule/${scheduleId}`} className="btn btn-error">
           Cancel
         </Link>
@@ -153,7 +158,7 @@ const EditScheduleDetail = () => {
               <ScheduleTasks
                 tasks={newSchedule.tasks}
                 handleSetTasks={setNewSchedule}
-                isEditScreen={true}
+                isEditMode={true}
               />
             </div>
           )}

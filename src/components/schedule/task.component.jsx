@@ -64,20 +64,23 @@ const Task = ({ task, index, handleSetTasks }) => {
     >
       {!isEditMode ? (
         <>
-          <div className="flex justify-end gap-2">
-            <button
-              type="button"
-              className="btn btn-sm btn-outline btn-primary transition-all duration-300 group"
-              onClick={toggleEditMode}
-            >
-              <i className="fa-solid fa-pen text-sm group-hover:rotate-45 transition-transform duration-300"></i>
-            </button>
+          <div className="flex justify-end md:justify-between gap-2">
+            <div className="hidden md:block font-semibold text-lg">{task.name}</div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                className="btn btn-sm btn-outline btn-primary transition-all duration-300 group"
+                onClick={toggleEditMode}
+              >
+                <i className="fa-solid fa-pen text-sm group-hover:rotate-45 transition-transform duration-300"></i>
+              </button>
 
-            <button type="button" className="btn btn-error btn-sm" onClick={handleRemoveTask}>
-              <i className="fa-solid fa-trash"></i>
-            </button>
+              <button type="button" className="btn btn-error btn-sm" onClick={handleRemoveTask}>
+                <i className="fa-solid fa-trash"></i>
+              </button>
+            </div>
           </div>
-          <div className="flex justify-between items-center">
+          <div className="flex md:hidden justify-between items-center">
             <div className="font-semibold text-lg">{task.name}</div>
           </div>
           <p>

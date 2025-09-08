@@ -25,6 +25,13 @@ const scheduleReducer = createSlice({
       state.schedule.unshift(action.payload.schedule);
       state.loading = false;
     },
+    updateScheduleSuccess: (state, action) => {
+      const index = state.schedule.findIndex((s) => s._id === action.payload.updatedSchedule._id);
+      if (index !== -1) {
+        state.schedule[index] = action.payload.updatedSchedule;
+      }
+      state.loading = false;
+    },
   },
 });
 
@@ -33,6 +40,7 @@ export const {
   fetchScheduleSuccess,
   fetchScheduleFailure,
   createScheduleSuccess,
+  updateScheduleSuccess,
 } = scheduleReducer.actions;
 export default scheduleReducer.reducer;
 
@@ -54,6 +62,19 @@ export const createSchedule = (data) => {
     data,
     onStart: fetchScheduleStart.type,
     onSuccess: createScheduleSuccess.type,
+    onError: fetchScheduleFailure.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
+  });
+};
+
+export const updateSchedule = (scheduleId, newSchedule) => {
+  return apiCallBegan({
+    url: `schedule/${scheduleId}`,
+    method: "POST",
+    data: newSchedule,
+    onStart: fetchScheduleStart.type,
+    onSuccess: updateScheduleSuccess.type,
     onError: fetchScheduleFailure.type,
     withCredentials: true,
     accessTokenNeeded: true,
