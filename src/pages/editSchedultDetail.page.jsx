@@ -1,32 +1,26 @@
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import InputComponent from "../components/Input/input.component";
 import ScheduleTasks from "../components/schedule/scheduleTasks.component";
 import { useDispatch } from "react-redux";
 import { updateSchedule } from "../store/schedule";
+import SuccessModal from "../components/Modal/success.component";
+import ErrorModal from "../components/Modal/error.component";
 
 const EditScheduleDetail = () => {
   const { scheduleId } = useParams();
   const { schedule } = useSelector((state) => state.schedule);
+  const successModalRef = useRef(null);
+  const errorModalRef = useRef(null);
+  const { loading, error } = useSelector((state) => state.schedule);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const dispatch = useDispatch();
 
   const [newSchedule, setNewSchedule] = useState(
     schedule ? schedule.filter((item) => item._id === scheduleId)[0] : null
   );
-
-  useEffect(() => {
-    setNewSchedule(schedule ? schedule.filter((item) => item._id === scheduleId)[0] : null);
-  }, [schedule, scheduleId]);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewSchedule((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
   const handleAdditionalInfoChange = (e, index) => {
     if (!setNewSchedule) return;
@@ -72,8 +66,31 @@ const EditScheduleDetail = () => {
   };
 
   const handleSubmit = () => {
+    setHasSubmitted(true);
     dispatch(updateSchedule(scheduleId, newSchedule));
   };
+
+  useEffect(() => {
+    setNewSchedule(schedule ? schedule.filter((item) => item._id === scheduleId)[0] : null);
+  }, [schedule, scheduleId]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewSchedule((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  useEffect(() => {
+    if (hasSubmitted && loading === false) {
+      if (error) {
+        errorModalRef.current.showModal();
+      } else {
+        successModalRef.current.showModal();
+      }
+    }
+  }, [loading, error, hasSubmitted]);
 
   return (
     <section className="w-full h-full flex flex-col justify-center items-center p-4">
@@ -164,6 +181,17 @@ const EditScheduleDetail = () => {
           )}
         </div>
       </div>
+      <SuccessModal
+        ref={successModalRef}
+        modalMessage="Lịch trình đã được cập nhật thành công!"
+        modalNavigationLink={`/schedule/${scheduleId}`}
+        modalNavigationText="Quay về chi tiết"
+      />
+      <ErrorModal
+        ref={errorModalRef}
+        modalMessage={error ? error : "Có lỗi trong quá trình cập nhật lịch trình!"}
+        closeModalFunction={true}
+      />
     </section>
   );
 };

@@ -29,7 +29,7 @@ const postReducer = createSlice({
     },
     getPostsFailure: (state, action) => {
       state.error = action.payload;
-      state.loading = flase;
+      state.loading = false;
     },
     storeComments: (state, action) => {
       const updatedPost = action.payload.post;
