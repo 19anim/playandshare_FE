@@ -20,8 +20,7 @@ const ScheduleTasks = ({ tasks, handleSetTasks = null, isEditMode }) => {
   const ids = useMemo(() => tasks.map((i) => i.id), [tasks]);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 100, tolerance: 5 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(TouchSensor, { activationConstraint: { delay: 100, tolerance: 5 } })
   );
 
   function handleDragEnd(event) {

@@ -7,7 +7,12 @@ const SuccessModal = ({
   modalNavigationLink,
   modalNavigationText,
   closeModalFunction = false,
+  additionalFunction = null,
 }) => {
+  const modalCloseHandler = () => {
+    additionalFunction && additionalFunction(false);
+    ref.current.close();
+  };
   return (
     <dialog ref={ref} className="modal">
       <div className="modal-box">
@@ -17,7 +22,7 @@ const SuccessModal = ({
         </div>
         <div className="modal-action">
           {closeModalFunction ? (
-            <button onClick={() => ref.current.close()} className="btn btn-primary">
+            <button onClick={modalCloseHandler} className="btn btn-primary">
               Đóng
             </button>
           ) : (

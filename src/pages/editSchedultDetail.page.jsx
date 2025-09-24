@@ -190,7 +190,7 @@ const EditScheduleDetail = () => {
       <ErrorModal
         ref={errorModalRef}
         modalMessage={error ? error : "Có lỗi trong quá trình cập nhật lịch trình!"}
-        closeModalFunction={true}
+        modalErrorHandlerText="Trở lại chỉnh sửa timeline"
       />
     </section>
   );

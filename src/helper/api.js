@@ -32,11 +32,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (
-      error.response.data.message === "Token is invalid or Expired" &&
-      error.response.status === 403 &&
-      !originalRequest._retry
-    ) {
+    if (error.response?.status === 403 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
@@ -45,10 +41,12 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return api(originalRequest);
       } catch (err) {
-        console.log("ERROR");
+        console.log("ERROR", err);
+        localStorage.removeItem("access_token");
         return Promise.reject(err);
       }
     }
+    return Promise.reject(error);
   }
 );
 

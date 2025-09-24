@@ -32,6 +32,16 @@ const scheduleReducer = createSlice({
       }
       state.loading = false;
     },
+    deleteScheduleSuccess: (state, action) => {
+      state.schedule = state.schedule.filter((s) => s._id !== action.payload.deletedSchedule._id);
+      state.loading = false;
+    },
+    deleteMultipleSchedulesSuccess: (state, action) => {
+      state.schedule = state.schedule.filter(
+        (s) => !action.payload.deletedScheduleIds.includes(s._id)
+      );
+      state.loading = false;
+    },
   },
 });
 
@@ -41,6 +51,8 @@ export const {
   fetchScheduleFailure,
   createScheduleSuccess,
   updateScheduleSuccess,
+  deleteScheduleSuccess,
+  deleteMultipleSchedulesSuccess,
 } = scheduleReducer.actions;
 export default scheduleReducer.reducer;
 
@@ -75,6 +87,31 @@ export const updateSchedule = (scheduleId, newSchedule) => {
     data: newSchedule,
     onStart: fetchScheduleStart.type,
     onSuccess: updateScheduleSuccess.type,
+    onError: fetchScheduleFailure.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
+  });
+};
+
+export const deleteSchedule = (scheduleId) => {
+  return apiCallBegan({
+    url: `schedule/${scheduleId}`,
+    method: "DELETE",
+    onStart: fetchScheduleStart.type,
+    onSuccess: deleteScheduleSuccess.type,
+    onError: fetchScheduleFailure.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
+  });
+};
+
+export const deleteMultipleSchedules = (scheduleIds) => {
+  return apiCallBegan({
+    url: `schedule/`,
+    method: "DELETE",
+    data: { scheduleIds },
+    onStart: fetchScheduleStart.type,
+    onSuccess: deleteMultipleSchedulesSuccess.type,
     onError: fetchScheduleFailure.type,
     withCredentials: true,
     accessTokenNeeded: true,

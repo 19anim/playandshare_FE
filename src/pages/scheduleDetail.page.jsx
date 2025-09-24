@@ -1,19 +1,42 @@
 import { useSelector } from "react-redux";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import ScheduleTasks from "../components/schedule/scheduleTasks.component";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import ConfirmationModal from "../components/Modal/confirmation.component";
+import { useDispatch } from "react-redux";
+import { deleteSchedule } from "../store/schedule";
 
 const ScheduleDetail = () => {
   const { scheduleId } = useParams();
-  const { schedule } = useSelector((state) => state.schedule);
+  const navigate = useNavigate();
+  const { schedule, loading, error } = useSelector((state) => state.schedule);
+  const dispatch = useDispatch();
+  const deleteModalRef = useRef(null);
 
   const [currentSchedule, setCurrentSchedule] = useState(
     schedule.filter((item) => item._id === scheduleId)[0]
   );
 
+  const handleDelete = () => {
+    dispatch(deleteSchedule(scheduleId));
+  };
+
   useEffect(() => {
     setCurrentSchedule(schedule.filter((item) => item._id === scheduleId)[0]);
   }, [schedule, scheduleId]);
+
+  useEffect(() => {
+    if (error) {
+      deleteModalRef.current.close();
+      alert("Xóa lịch trình thất bại. Vui lòng thử lại.");
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (!loading && !error && !currentSchedule) {
+      navigate("/schedule", { replace: true });
+    }
+  }, [loading, error, currentSchedule]);
 
   return (
     <section className="w-full h-full flex flex-col justify-center items-center p-4">
@@ -21,7 +44,14 @@ const ScheduleDetail = () => {
         <Link to={`/schedule/edit/${scheduleId}`} className="btn btn-primary">
           Edit
         </Link>
-        <Link className="btn btn-error">Delete</Link>
+        <button
+          className="btn btn-error"
+          onClick={() => {
+            deleteModalRef.current.showModal();
+          }}
+        >
+          Delete
+        </button>
       </div>
       <div className="card max-w-7xl w-full bg-[#faebd7] shadow-xl p-6">
         <Link
@@ -72,6 +102,15 @@ const ScheduleDetail = () => {
           {currentSchedule && <ScheduleTasks tasks={currentSchedule.tasks} />}
         </div>
       </div>
+      <ConfirmationModal
+        ref={deleteModalRef}
+        isDeleting={loading}
+        title="Xóa lịch trình"
+        message="Bạn đồng ý xóa lịch trình này?"
+        agreeMessage="Xóa"
+        disagreeMessage="Hủy bỏ"
+        onAgree={handleDelete}
+      />
     </section>
   );
 };

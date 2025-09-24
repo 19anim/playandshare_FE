@@ -4,6 +4,7 @@ import InputComponent from "../Input/input.component";
 import { useState } from "react";
 
 const Task = ({ task, index, handleSetTasks }) => {
+  const [isEditMode, setIsEditMode] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: task.id,
   });
@@ -16,7 +17,6 @@ const Task = ({ task, index, handleSetTasks }) => {
     userSelect: "none",
     opacity: isDragging ? 0.5 : 1,
   };
-  const [isEditMode, setIsEditMode] = useState(false);
 
   const toggleEditMode = () => {
     setIsEditMode((prev) => !prev);
