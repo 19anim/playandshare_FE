@@ -31,6 +31,7 @@ const userReducer = createSlice({
     },
     apiRequestFailed: (state, action) => {
       state.error = action.payload;
+      state.accessToken = "";
       state.loading = false;
     },
     apiRequestedDone: (state, action) => {

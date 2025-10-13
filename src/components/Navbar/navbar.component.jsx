@@ -45,6 +45,11 @@ const Navbar = () => {
                 Tạo timeline du lịch
               </Link>
             </li>
+            <li>
+              <Link onClick={() => document.activeElement.blur()} to="/calculator" className="btn">
+                Chia tiền du lịch
+              </Link>
+            </li>
           </ul>
         </div>
         <Link onClick={() => document.activeElement.blur()} to="/" className="btn">
@@ -61,6 +66,11 @@ const Navbar = () => {
           <li>
             <Link to="/schedule" className="btn">
               Tạo timeline du lịch
+            </Link>
+          </li>
+          <li>
+            <Link to="/calculator" className="btn">
+              Chia tiền du lịch
             </Link>
           </li>
         </ul>

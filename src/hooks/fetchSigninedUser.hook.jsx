@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import token from "../helper/token";
 import store from "../store/store";
-import { inititate } from "../store/user";
+import { inititate, userDataClearance } from "../store/user";
 
 const currentMode = import.meta.env.MODE;
 const apiUrl =
@@ -57,6 +57,7 @@ const fetchSigninedUser = () => {
         } catch (refreshError) {
           console.log("Session expired. Please log in again.");
           localStorage.removeItem("access_token");
+          store.dispatch(userDataClearance());
         }
       }
 
