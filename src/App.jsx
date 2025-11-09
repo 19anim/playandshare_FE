@@ -16,6 +16,7 @@ import Schedule from "./pages/schedule.page";
 import ScheduleDetail from "./pages/scheduleDetail.page";
 import EditScheduleDetail from "./pages/editSchedultDetail.page";
 import Calculator from "./pages/calculator.page";
+import CalculatorDetail from "./components/calculator/calculatorDetail.component";
 import NotFound from "./pages/notFound.page";
 
 import store from "./store/store";
@@ -91,7 +92,11 @@ const App = () => {
         },
         {
           path: "calculator",
-          element: <Calculator />,
+          element: accessToken ? <Calculator /> : <Navigate to="/signin" replace />,
+        },
+        {
+          path: "calculator/detailID",
+          element: accessToken ? <CalculatorDetail /> : <Navigate to="/signin" replace />,
         },
       ],
     },
