@@ -1,9 +1,31 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { LuCirclePlus } from "react-icons/lu";
+import { LuCircleMinus } from "react-icons/lu";
+import { LuCircleCheck } from "react-icons/lu";
 
 const Calculator = () => {
-  const [selectAll, setSelectAll] = useState(false);
+  const [multiSelect, setMultiSelect] = useState(false);
   const rows = [
+    {
+      id: 1,
+      title: "Chi tiêu đà lạt 11/2025",
+      participants: "Zemlak, Daniel and Leannonw, Zemlak, Daniel and Leannonw",
+      balance: "1000000 VND",
+    },
+    {
+      id: 1,
+      title: "Chi tiêu đà lạt 11/2025",
+      participants: "Zemlak, Daniel and Leannonw, Zemlak, Daniel and Leannonw",
+      balance: "1000000 VND",
+    },
+    {
+      id: 1,
+      title:
+        "Chi tiêu đà lạt 11/2025Chi tiêu đà lạt 11/2025Chi tiêu đà lạt 11/2025Chi tiêu đà lạt 11/2025Chi tiêu đà lạt 11/2025Chi tiêu đà lạt 11/2025Chi tiêu đà lạt 11/2025Chi tiêu đà lạt 11/2025Chi tiêu đà lạt 11/2025 Chi tiêu đà lạt 11/2025",
+      participants: "Zemlak, Daniel and Leannonw, Zemlak, Daniel and Leannonw",
+      balance: "1000000 VND",
+    },
     {
       id: 1,
       title: "Chi tiêu đà lạt 11/2025",
@@ -14,10 +36,50 @@ const Calculator = () => {
   return (
     <section className="w-full h-full flex justify-center items-start p-4">
       <div className="overflow-x-auto w-full hidden md:block">
+        {!multiSelect ? (
+          <>
+            <button
+              className="ml-4 mt-4 btn btn-success btn-sm text-xl self-start hover:scale-110 hover:animate-wiggle transition-all duration-300"
+              title="Thêm mục chi"
+            >
+              <LuCirclePlus /> <span className="textarea-md">Thêm mục chi</span>
+            </button>
+            <button
+              className="ml-4 mt-4 btn btn-error btn-sm text-xl self-start hover:scale-110 hover:animate-wiggle transition-all duration-300"
+              title="Xóa nhiều mục"
+              onClick={() => setMultiSelect(true)}
+            >
+              <LuCircleMinus /> <span className="textarea-md">Xóa nhiều mục</span>
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className="ml-4 mt-4 btn btn-error btn-sm text-xl self-start hover:scale-110 hover:animate-wiggle transition-all duration-300"
+              title="Tiến hành xóa"
+              onClick={() => {}}
+            >
+              <LuCircleCheck /> <span className="textarea-md">Tiến hành xóa</span>
+            </button>
+            <button
+              className="ml-4 mt-4 btn btn-sm text-xl self-start hover:scale-110 hover:animate-wiggle transition-all duration-300"
+              title="Hủy bỏ"
+              onClick={() => setMultiSelect(false)}
+            >
+              <LuCircleCheck /> <span className="textarea-md">Hủy bỏ</span>
+            </button>
+          </>
+        )}
         <table className="table w-full">
           <thead>
             <tr>
-              <th>
+              <th
+                className={`transition-all duration-300 ease-in-out transform origin-left ${
+                  multiSelect
+                    ? "opacity-100 scale-100 w-12 px-2"
+                    : "opacity-0 scale-75 w-0 px-0 pointer-events-none"
+                }`}
+              >
                 <label>
                   <input type="checkbox" className="checkbox" />
                 </label>
@@ -31,12 +93,18 @@ const Calculator = () => {
           <tbody>
             {rows.map((r) => (
               <tr key={r.id}>
-                <th>
+                <th
+                  className={`transition-all duration-300 ease-in-out transform origin-left ${
+                    multiSelect
+                      ? "opacity-100 scale-100 w-12 px-2"
+                      : "opacity-0 scale-75 w-0 px-0 pointer-events-none"
+                  }`}
+                >
                   <label>
                     <input type="checkbox" className="checkbox" />
                   </label>
                 </th>
-                <td>
+                <td className="max-w-[220px]">
                   <div className="flex items-center gap-3">
                     <div>
                       <div className="font-bold">{r.title}</div>
@@ -67,6 +135,12 @@ const Calculator = () => {
       </div>
 
       <div className="w-full flex flex-col gap-3 md:hidden">
+        <button
+          className="btn btn-success btn-sm text-xl self-start hover:scale-110 hover:animate-wiggle transition-all duration-300"
+          title="Thêm khoản chi"
+        >
+          <LuCirclePlus />
+        </button>
         {rows.map((r) => (
           <article
             key={r.id}
