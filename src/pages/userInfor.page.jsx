@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { updateUser, updateAvatar } from "../store/user";
 import { useState } from "react";
 import imageCompression from "browser-image-compression";
+import ErrorModal from "../components/Modal/error.component.jsx";
 
 const iconMap = {
   Facebook,
@@ -19,26 +20,38 @@ const iconMap = {
   Tiktok,
 };
 const MAX_SIZE_MB = 0.5;
+const ERROR_MESSAGE_RETURNED =
+  "User validation failed: displayName: Path `displayName` is required.";
+const ERROR_MESSAGE_DEFAULT = "Vui lòng nhập tên hiển thị.";
 
 const UserInfor = () => {
   const dispatch = useDispatch();
+  const errorModalRef = useRef(null);
   const informationModalRef = useRef(null);
   const imageElementRef = useRef(null);
   const user = useSelector((state) => state.user);
-  const { displayName, residence, phone, socialMedia, avatar } = user;
+  const { displayName, residence, phone, socialMedia, avatar, error } = user;
   const showInformationModal = () => {
     informationModalRef.current.showModal();
   };
+  const [errorMessage, setErrorMessage] = useState("");
   const [information, setInformation] = useState({
     displayName: user.displayName ? user.displayName : "",
     residence: user.residence ? user.residence : "",
     phone: user.phone ? user.phone : "",
-    socialMedia: [
-      { platform: "Facebook", link: user.socialMedia[0].link ? user.socialMedia[0].link : "" },
-      { platform: "Instagram", link: user.socialMedia[1].link ? user.socialMedia[1].link : "" },
-      { platform: "Thread", link: user.socialMedia[2].link ? user.socialMedia[2].link : "" },
-      { platform: "Tiktok", link: user.socialMedia[3].link ? user.socialMedia[3].link : "" },
-    ],
+    socialMedia: user.socialMedia
+      ? [
+          { platform: "Facebook", link: user.socialMedia[0].link ? user.socialMedia[0].link : "" },
+          { platform: "Instagram", link: user.socialMedia[1].link ? user.socialMedia[1].link : "" },
+          { platform: "Thread", link: user.socialMedia[2].link ? user.socialMedia[2].link : "" },
+          { platform: "Tiktok", link: user.socialMedia[3].link ? user.socialMedia[3].link : "" },
+        ]
+      : [
+          { platform: "Facebook", link: "" },
+          { platform: "Instagram", link: "" },
+          { platform: "Thread", link: "" },
+          { platform: "Tiktok", link: "" },
+        ],
   });
 
   const handleUploadClick = () => {
@@ -60,6 +73,16 @@ const UserInfor = () => {
           ],
     }));
   }, [user]);
+
+  useEffect(() => {
+    if (error) {
+      setErrorMessage(error.message);
+      if (error.message === ERROR_MESSAGE_RETURNED) {
+        setErrorMessage(ERROR_MESSAGE_DEFAULT);
+      }
+      errorModalRef.current.showModal();
+    }
+  }, [error]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -143,7 +166,7 @@ const UserInfor = () => {
               Chỉnh sửa
             </button>
           </div>
-          {avatar ? (
+          {!user.loading ? (
             <section className="w-full">
               <div className="textarea-md md:text-lg flex gap-3 items-center">
                 <DisplayName />
@@ -167,34 +190,36 @@ const UserInfor = () => {
                   )}
                 </p>
               </div>
-              {socialMedia.map((item) => {
-                const IconMedia = iconMap[item.platform];
-                return (
-                  <div
-                    key={item.platform}
-                    className="textarea-md md:text-lg flex gap-3 items-center"
-                  >
-                    <IconMedia />
-                    <p>
-                      {item.link !== "" ? (
-                        <a
-                          target="_blank"
-                          className="text-blue-500"
-                          href={`https://${item.platform}.com/${
-                            item.platform === "Tiktok" ? "@" : ""
-                          }${item.link}`}
-                        >
-                          <span className="font-semibold">{item.link}</span>
-                        </a>
-                      ) : (
-                        <>
-                          Chưa có <span className="font-semibold">{item.platform}</span> nào
-                        </>
-                      )}
-                    </p>
-                  </div>
-                );
-              })}
+              {socialMedia
+                ? socialMedia.map((item) => {
+                    const IconMedia = iconMap[item.platform];
+                    return (
+                      <div
+                        key={item.platform}
+                        className="textarea-md md:text-lg flex gap-3 items-center"
+                      >
+                        <IconMedia />
+                        <p>
+                          {item.link !== "" ? (
+                            <a
+                              target="_blank"
+                              className="text-blue-500"
+                              href={`https://${item.platform}.com/${
+                                item.platform === "Tiktok" ? "@" : ""
+                              }${item.link}`}
+                            >
+                              <span className="font-semibold">{item.link}</span>
+                            </a>
+                          ) : (
+                            <>
+                              Chưa có <span className="font-semibold">{item.platform}</span> nào
+                            </>
+                          )}
+                        </p>
+                      </div>
+                    );
+                  })
+                : null}
             </section>
           ) : (
             <div className="flex w-[70%] flex-col gap-4">
@@ -214,7 +239,7 @@ const UserInfor = () => {
           <form onSubmit={handleSubmit} className="flex flex-col gap-2 w-fit">
             <label className="input w-full">
               <FaHouseChimney className="text-xl" />
-              <span className="label">Tên hiển thị:</span>
+              <span className="label">Tên hiển thị*:</span>
               <input
                 type="text"
                 name="displayName"
@@ -289,6 +314,8 @@ const UserInfor = () => {
           </form>
         </div>
       </dialog>
+
+      <ErrorModal ref={errorModalRef} modalMessage={errorMessage} modalErrorHandlerText="Đóng" />
     </section>
   );
 };

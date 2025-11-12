@@ -40,9 +40,9 @@ const UserPosts = () => {
                   {post.content.length > 100 ? `${post.content.slice(0, 100)}...` : post.content}
                 </p>
               </div>
-              <button className="btn btn-square btn-ghost bg-[#dfdfdf] w-fit px-4 hover:bg-zinc-300">
-                <Link to={`/posts/${post._id}`}>Chi tiết</Link>
-              </button>
+              <Link className="btn" to={`/posts/${post._id}`}>
+                Chi tiết
+              </Link>
             </li>
           ))
         )}
