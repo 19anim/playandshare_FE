@@ -1,11 +1,19 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { LuCirclePlus } from "react-icons/lu";
 import { LuCircleMinus } from "react-icons/lu";
 import { LuCircleCheck } from "react-icons/lu";
+import { useSelector } from "react-redux";
+import AddCalculatorModal from "../components/Modal/addCalculatorModal.component";
 
 const Calculator = () => {
+  const user = useSelector((state) => state.user);
   const [multiSelect, setMultiSelect] = useState(false);
+  const addNewCalculatorModalRef = useRef(null);
+  const [newCalculator, setNewCalculator] = useState({
+    title: "",
+    participants: [],
+  });
   const rows = [
     {
       id: 1,
@@ -14,25 +22,36 @@ const Calculator = () => {
       balance: "1000000 VND",
     },
     {
-      id: 1,
+      id: 2,
       title: "Chi tiêu đà lạt 11/2025",
       participants: "Zemlak, Daniel and Leannonw, Zemlak, Daniel and Leannonw",
       balance: "1000000 VND",
     },
     {
-      id: 1,
+      id: 3,
       title:
         "Chi tiêu đà lạt 11/2025Chi tiêu đà lạt 11/2025Chi tiêu đà lạt 11/2025Chi tiêu đà lạt 11/2025Chi tiêu đà lạt 11/2025Chi tiêu đà lạt 11/2025Chi tiêu đà lạt 11/2025Chi tiêu đà lạt 11/2025Chi tiêu đà lạt 11/2025 Chi tiêu đà lạt 11/2025",
       participants: "Zemlak, Daniel and Leannonw, Zemlak, Daniel and Leannonw",
       balance: "1000000 VND",
     },
     {
-      id: 1,
+      id: 4,
       title: "Chi tiêu đà lạt 11/2025",
       participants: "Zemlak, Daniel and Leannonw, Zemlak, Daniel and Leannonw",
       balance: "1000000 VND",
     },
   ];
+  const [calculators, setCalculators] = useState(rows);
+
+  const handleAddNewCalculator = () => {
+    if (user) {
+      setNewCalculator((prev) => {
+        return { ...prev, participants: [user.displayName] };
+      });
+    }
+
+    addNewCalculatorModalRef.current.showModal();
+  };
   return (
     <section className="w-full h-full flex justify-center items-start p-4">
       <div className="overflow-x-auto w-full hidden md:block">
@@ -41,6 +60,7 @@ const Calculator = () => {
             <button
               className="ml-4 mt-4 btn btn-success btn-sm text-xl self-start hover:scale-110 hover:animate-wiggle transition-all duration-300"
               title="Thêm mục chi"
+              onClick={handleAddNewCalculator}
             >
               <LuCirclePlus /> <span className="textarea-md">Thêm mục chi</span>
             </button>
@@ -91,7 +111,7 @@ const Calculator = () => {
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => (
+            {calculators.map((r) => (
               <tr key={r.id}>
                 <th
                   className={`transition-all duration-300 ease-in-out transform origin-left ${
@@ -141,7 +161,7 @@ const Calculator = () => {
         >
           <LuCirclePlus />
         </button>
-        {rows.map((r) => (
+        {calculators.map((r) => (
           <article
             key={r.id}
             className="bg-base-200 border border-base-300 rounded-lg p-3 shadow-sm"
@@ -171,6 +191,12 @@ const Calculator = () => {
           </article>
         ))}
       </div>
+      <AddCalculatorModal
+        ref={addNewCalculatorModalRef}
+        calculatorData={newCalculator}
+        setCalculatorData={setNewCalculator}
+        setCalculators={setCalculators}
+      />
     </section>
   );
 };

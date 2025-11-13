@@ -19,13 +19,13 @@ const AddCalculatorParticipantModal = ({ ref }) => {
           <div>
             <label className="input focus:outline-none focus-within:outline-none">
               Số tiền đóng vào:
-              <input type="number" className="grow" placeholder="Nguyễn Văn A" />
+              <input type="number" className="grow" placeholder="1000000" />
             </label>
           </div>
           <div>
             <label className="input focus:outline-none focus-within:outline-none">
               Đơn vị tiền tệ:
-              <input type="text" className="grow" placeholder="Nguyễn Văn A" list="currency" />
+              <input type="text" className="grow" placeholder="VND" list="currency" />
               <datalist id="currency">
                 <option value="VND"></option>
                 <option value="USD"></option>
