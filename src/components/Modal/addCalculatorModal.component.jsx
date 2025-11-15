@@ -1,12 +1,17 @@
 import { IoMdCheckmark } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { createExpense } from "../../store/expense";
+import { useEffect } from "react";
 
-const AddCalculatorModal = ({ ref, calculatorData, setCalculatorData, setCalculators }) => {
+const AddCalculatorModal = ({ ref, calculatorData, setCalculatorData }) => {
+  const dispatch = useDispatch();
+  const { error, loading } = useSelector((state) => state.expense);
+  const { userId } = useSelector((state) => state.user);
   const [errorMessage, setErrorMessage] = useState("");
   const handleAdd = () => {
     if (calculatorData.title.trim() === "") {
-      console.log("DONE");
       setErrorMessage("Tên chi tiêu không được để trống");
     } else if (
       calculatorData.participants.length === 0 ||
@@ -15,18 +20,24 @@ const AddCalculatorModal = ({ ref, calculatorData, setCalculatorData, setCalcula
       setErrorMessage("Vui lòng thêm ít nhất một người tham gia");
     } else {
       setErrorMessage("");
-      setCalculators((prev) => [
-        ...prev,
-        {
-          id: prev.length + 1,
-          title: calculatorData.title,
-          participants: calculatorData.participants.join(", "),
-          balance: "0 VND",
-        },
-      ]);
-      ref.current.close();
+      dispatch(
+        createExpense({
+          ...calculatorData,
+          createdBy: userId,
+        })
+      );
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      setErrorMessage("Đã có lỗi xảy ra. Vui lòng thử lại.");
+    } else if (!loading && !error) {
+      setCalculatorData((prev) => ({ title: "", participants: [], createdBy: null }));
+      ref.current.close();
+    }
+  }, [error, loading]);
+
   return (
     <dialog ref={ref} className="modal">
       <div className="modal-box flex flex-col w-[320px] md:w-[500px]">
@@ -36,16 +47,18 @@ const AddCalculatorModal = ({ ref, calculatorData, setCalculatorData, setCalcula
         <h3 className="font-bold text-lg">Thêm chi tiêu</h3>
         <div className="flex flex-col gap-1 pt-2">
           <div>
-            <label
-              onChange={(event) => {
-                setErrorMessage("");
-                setCalculatorData((prev) => ({ ...prev, title: event.target.value }));
-              }}
-              value={calculatorData.title}
-              className="input focus:outline-none focus-within:outline-none w-full"
-            >
+            <label className="input focus:outline-none focus-within:outline-none w-full">
               Tên chi tiêu:
-              <input type="text" className="grow" placeholder="Du lịch Đà Lạt 11/2025" />
+              <input
+                type="text"
+                className="grow"
+                placeholder="Du lịch Đà Lạt 11/2025"
+                value={calculatorData.title}
+                onChange={(event) => {
+                  setErrorMessage("");
+                  setCalculatorData((prev) => ({ ...prev, title: event.target.value }));
+                }}
+              />
             </label>
           </div>
           <fieldset className="fieldset ">
@@ -67,12 +80,14 @@ const AddCalculatorModal = ({ ref, calculatorData, setCalculatorData, setCalcula
         {errorMessage && <div className="text-red-500 mt-2">{errorMessage}</div>}
         <div className="flex flex-row gap-2 self-end">
           <button
+            disabled={loading}
             onClick={handleAdd}
             className="btn btn-success mt-4 flex gap-2 hover:scale-105 transition-all duration-300"
           >
             <IoMdCheckmark className="textarea-md" />
           </button>
           <button
+            disabled={loading}
             onClick={() => ref.current.close()}
             className="btn btn-error mt-4 flex gap-2 hover:scale-105 transition-all duration-300"
           >

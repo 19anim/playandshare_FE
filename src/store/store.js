@@ -4,6 +4,7 @@ import postUtilReducer from "./postUtil";
 import postReducer from "./post";
 import scheduleReducer from "./schedule";
 import themeReducer from "./theme";
+import expenseReducer from "./expense";
 import api from "./middleware/api";
 
 const store = configureStore({
@@ -13,6 +14,7 @@ const store = configureStore({
     post: postReducer,
     schedule: scheduleReducer,
     theme: themeReducer,
+    expense: expenseReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

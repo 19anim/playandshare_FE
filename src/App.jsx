@@ -25,6 +25,7 @@ import { getPosts } from "./store/post";
 import { fetchSchedule } from "./store/schedule";
 import { fetchCities, fetchPlayTypes } from "./store/postUtil";
 import fetchSigninedUser from "./hooks/fetchSigninedUser.hook";
+import { fetchExpenses } from "./store/expense";
 
 const App = () => {
   const { mode } = useSelector((state) => state.theme);
@@ -36,6 +37,7 @@ const App = () => {
     store.dispatch(fetchPlayTypes());
     store.dispatch(getPosts());
     store.dispatch(fetchSchedule());
+    store.dispatch(fetchExpenses());
   }, []);
 
   fetchSigninedUser();
