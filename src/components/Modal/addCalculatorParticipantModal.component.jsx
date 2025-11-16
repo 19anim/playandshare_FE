@@ -1,7 +1,67 @@
 import { IoMdCheckmark } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
+import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { updatedExpense } from "../../store/expense";
+import { useSelector, useDispatch } from "react-redux";
 
 const AddCalculatorParticipantModal = ({ ref }) => {
+  const dispatch = useDispatch();
+  const { calculatorId } = useParams();
+  const { expenses } = useSelector((state) => state.expense);
+  const currentCalculator = expenses.find((item) => item._id === calculatorId);
+
+  const currencyOptions = ["VND", "USD", "EUR", "YEN", "WON"];
+  const [participantData, setParticipantData] = useState({
+    name: "",
+    balance: 0,
+    currency: "VND",
+  });
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setParticipantData((prev) => ({
+      ...prev,
+      [name]: name === "balance" ? Number(value) : value,
+    }));
+  };
+
+  const handleAddParticipant = () => {
+    console.log(participantData);
+    if (participantData.name.trim() === "") {
+      setErrorMessage("Tên người tham gia không được để trống");
+      return;
+    } else if (isNaN(participantData.balance) || participantData.balance < 0) {
+      setErrorMessage("Số tiền đóng vào không hợp lệ");
+      return;
+    } else if (!currencyOptions.includes(participantData.currency)) {
+      setErrorMessage("Đơn vị tiền tệ không hợp lệ");
+      return;
+    }
+
+    setErrorMessage("");
+    const tempData = JSON.parse(JSON.stringify(currentCalculator));
+    tempData.participants.push(participantData);
+    dispatch(updatedExpense(calculatorId, tempData));
+    setParticipantData({
+      name: "",
+      balance: 0,
+      currency: "VND",
+    });
+    ref.current.close();
+  };
+
+  const handleClose = () => {
+    setParticipantData({
+      name: "",
+      balance: 0,
+      currency: "VND",
+    });
+    setErrorMessage("");
+    ref.current.close();
+  };
+
   return (
     <dialog ref={ref} className="modal">
       <div className="modal-box flex flex-col w-auto">
@@ -13,19 +73,41 @@ const AddCalculatorParticipantModal = ({ ref }) => {
           <div>
             <label className="input focus:outline-none focus-within:outline-none">
               Tên người tham gia:
-              <input type="text" className="grow" placeholder="Nguyễn Văn A" />
+              <input
+                onChange={handleChange}
+                name="name"
+                type="text"
+                className="grow"
+                placeholder="Nguyễn Văn A"
+                value={participantData.name}
+              />
             </label>
           </div>
           <div>
             <label className="input focus:outline-none focus-within:outline-none">
               Số tiền đóng vào:
-              <input type="number" className="grow" placeholder="1000000" />
+              <input
+                onChange={handleChange}
+                name="balance"
+                type="number"
+                className="grow"
+                placeholder="1000000"
+                value={participantData.balance}
+              />
             </label>
           </div>
           <div>
             <label className="input focus:outline-none focus-within:outline-none">
               Đơn vị tiền tệ:
-              <input type="text" className="grow" placeholder="VND" list="currency" />
+              <input
+                onChange={handleChange}
+                name="currency"
+                type="text"
+                className="grow"
+                placeholder="VND"
+                list="currency"
+                value={participantData.currency}
+              />
               <datalist id="currency">
                 <option value="VND"></option>
                 <option value="USD"></option>
@@ -36,12 +118,16 @@ const AddCalculatorParticipantModal = ({ ref }) => {
             </label>
           </div>
         </div>
+        {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
         <div className="flex flex-row gap-2 self-end">
-          <button className="btn btn-success mt-4 flex gap-2 hover:scale-105 transition-all duration-300">
+          <button
+            onClick={handleAddParticipant}
+            className="btn btn-success mt-4 flex gap-2 hover:scale-105 transition-all duration-300"
+          >
             <IoMdCheckmark className="textarea-md" />
           </button>
           <button
-            onClick={() => ref.current.close()}
+            onClick={handleClose}
             className="btn btn-error mt-4 flex gap-2 hover:scale-105 transition-all duration-300"
           >
             <IoMdClose className="textarea-md" />

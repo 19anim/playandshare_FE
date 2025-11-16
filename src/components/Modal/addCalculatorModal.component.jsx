@@ -15,7 +15,8 @@ const AddCalculatorModal = ({ ref, calculatorData, setCalculatorData }) => {
       setErrorMessage("Tên chi tiêu không được để trống");
     } else if (
       calculatorData.participants.length === 0 ||
-      (calculatorData.participants.length === 1 && calculatorData.participants[0].trim() === "")
+      (calculatorData.participants.length === 1 &&
+        calculatorData.participants[0].name.trim() === "")
     ) {
       setErrorMessage("Vui lòng thêm ít nhất một người tham gia");
     } else {
@@ -27,6 +28,19 @@ const AddCalculatorModal = ({ ref, calculatorData, setCalculatorData }) => {
         })
       );
     }
+  };
+
+  const handleChangeParticipants = (e) => {
+    const participantsArray = e.target.value.split("\n");
+    const participantsMapping = participantsArray.map((name) => ({
+      name: name,
+      balance: 0,
+      paid: 0,
+    }));
+    setCalculatorData((prev) => ({
+      ...prev,
+      participants: participantsMapping,
+    }));
   };
 
   useEffect(() => {
@@ -65,14 +79,8 @@ const AddCalculatorModal = ({ ref, calculatorData, setCalculatorData }) => {
             <legend className="fieldset-legend">Danh sách người tham gia</legend>
             <textarea
               className="textarea h-24 w-full focus:outline-none focus-within:outline-none"
-              value={calculatorData.participants.join("\n")}
-              onChange={(e) => {
-                const participantsArray = e.target.value.split("\n");
-                setCalculatorData((prev) => ({
-                  ...prev,
-                  participants: participantsArray,
-                }));
-              }}
+              value={calculatorData.participants.map((p) => p.name).join("\n")}
+              onChange={handleChangeParticipants}
             ></textarea>
             <div className="label">Xuống hàng để thêm người tham gia</div>
           </fieldset>

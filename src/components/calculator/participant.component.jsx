@@ -1,27 +1,26 @@
 import { useMemo } from "react";
 import { GoPencil } from "react-icons/go";
 
-const Participant = ({ name, moneyPaid, moneySpent, currency }) => {
-  const balance = useMemo(() => {
-    return parseInt(moneyPaid) - parseInt(moneySpent);
-  }, [moneyPaid, moneySpent]);
+const Participant = ({ name, balance, paid, currency }) => {
+  const finalBalance = useMemo(() => {
+    return parseInt(balance) - parseInt(paid);
+  }, [balance, paid]);
 
   return (
     <li className="list-row items-center">
       <div>
         <div>{name}</div>
         <div className="text-xs uppercase">
-          Tiền đã đóng:{" "}
-          <strong className="text-success-content">{`${moneyPaid} ${currency}`}</strong>
+          Tiền đã đóng: <strong className="text-success-content">{`${balance} ${currency}`}</strong>
         </div>
         <div className="text-xs uppercase">
-          Tiền đã chi: <strong className="text-error-content">{`${moneySpent} ${currency}`}</strong>
+          Tiền đã chi: <strong className="text-error-content">{`${paid} ${currency}`}</strong>
         </div>
         <div className="text-xs uppercase">
           Số dư:{" "}
-          <strong className={`text-${balance >= 0 ? "success" : "error"}-content`}>{`${
-            parseInt(moneyPaid) - parseInt(moneySpent)
-          } ${currency}`}</strong>
+          <strong
+            className={`text-${balance >= 0 ? "success" : "error"}-content`}
+          >{`${finalBalance} ${currency}`}</strong>
         </div>
       </div>
       <div className="flex gap-1 justify-end">

@@ -20,7 +20,7 @@ const Calculator = () => {
   const handleAddNewCalculator = () => {
     if (user) {
       setNewCalculator((prev) => {
-        return { ...prev, participants: [user.displayName] };
+        return { ...prev, participants: [{ name: user.displayName, balance: 0, paid: 0 }] };
       });
     }
 
@@ -129,7 +129,7 @@ const Calculator = () => {
                       className="truncate whitespace-nowrap overflow-hidden"
                       title={r.participants}
                     >
-                      {r.participants.join(", ")}
+                      {r.participants.map((p) => p.name).join(", ")}
                     </div>
                   </td>
                   <td className="max-w-[120px]">
@@ -137,7 +137,7 @@ const Calculator = () => {
                   </td>
 
                   <th>
-                    <Link className="btn btn-ghost btn-xs" to="detailID">
+                    <Link className="btn btn-ghost btn-xs" to={r._id}>
                       Chi tiết
                     </Link>
                   </th>
@@ -194,7 +194,7 @@ const Calculator = () => {
               <div className="text-sm text-gray-600 mb-2">
                 <div className="font-semibold text-xs mb-1">Người tham gia</div>
                 <div className="truncate w-full max-w-[300px]" title={r.participants}>
-                  {r.participants.join(", ")}
+                  {r.participants.map((p) => p.name).join(", ")}
                 </div>
               </div>
 
@@ -204,7 +204,7 @@ const Calculator = () => {
                   <div className="font-medium">{r.balance}</div>
                 </div>
 
-                <Link className="btn btn-s" to="detailID">
+                <Link className="btn btn-s" to={r._id}>
                   Chi tiết
                 </Link>
               </div>

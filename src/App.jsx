@@ -97,7 +97,7 @@ const App = () => {
           element: accessToken ? <Calculator /> : <Navigate to="/signin" replace />,
         },
         {
-          path: "calculator/detailID",
+          path: "calculator/:calculatorId",
           element: accessToken ? <CalculatorDetail /> : <Navigate to="/signin" replace />,
         },
       ],

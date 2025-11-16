@@ -30,10 +30,30 @@ const expenseReducer = createSlice({
       state.loading = false;
       state.error = null;
     },
+    updateExpenseSuccess: (state, action) => {
+      const index = state.expenses.findIndex((exp) => exp._id === action.payload._id);
+      if (index !== -1) {
+        state.expenses[index] = action.payload;
+      }
+      state.loading = false;
+      state.error = null;
+    },
+    deleteExpenseSuccess: (state, action) => {
+      state.expenses = state.expenses.filter((exp) => exp._id !== action.payload.id);
+      state.loading = false;
+      state.error = null;
+    },
   },
 });
-export const { apiRequested, apiRequestFailed, apiRequestedDone, setExpenses, creatSuccess } =
-  expenseReducer.actions;
+export const {
+  apiRequested,
+  apiRequestFailed,
+  apiRequestedDone,
+  setExpenses,
+  creatSuccess,
+  updateExpenseSuccess,
+  deleteExpenseSuccess,
+} = expenseReducer.actions;
 
 export const fetchExpenses = () =>
   apiCallBegan({
@@ -53,6 +73,29 @@ export const createExpense = (data) =>
     data,
     onStart: apiRequested.type,
     onSuccess: creatSuccess.type,
+    onError: apiRequestFailed.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
+  });
+
+export const updatedExpense = (id, data) =>
+  apiCallBegan({
+    url: `/expense/${id}`,
+    method: "put",
+    data,
+    onStart: apiRequested.type,
+    onSuccess: updateExpenseSuccess.type,
+    onError: apiRequestFailed.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
+  });
+
+export const removeExpense = (id) =>
+  apiCallBegan({
+    url: `/expense/${id}`,
+    method: "delete",
+    onStart: apiRequested.type,
+    onSuccess: deleteExpenseSuccess.type,
     onError: apiRequestFailed.type,
     withCredentials: true,
     accessTokenNeeded: true,
