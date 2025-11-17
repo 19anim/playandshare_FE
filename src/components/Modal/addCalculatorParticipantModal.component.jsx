@@ -1,7 +1,7 @@
 import { IoMdCheckmark } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { updatedExpense } from "../../store/expense";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -9,15 +9,26 @@ const AddCalculatorParticipantModal = ({ ref }) => {
   const dispatch = useDispatch();
   const { calculatorId } = useParams();
   const { expenses } = useSelector((state) => state.expense);
+  const { rates } = useSelector((state) => state.currencyRate);
   const currentCalculator = expenses.find((item) => item._id === calculatorId);
 
-  const currencyOptions = ["VND", "USD", "EUR", "YEN", "WON"];
+  const currencyOptions = ["VND", "USD", "EUR", "THB", "JPY", "KRW", "GBP"];
   const [participantData, setParticipantData] = useState({
     name: "",
     balance: 0,
     currency: "VND",
   });
   const [errorMessage, setErrorMessage] = useState("");
+  const exchangeToVND = useMemo(() => {
+    let result = 0;
+    if (participantData.currency === "VND") {
+      return result;
+    }
+
+    const selectedRate = rates.filter((rate) => rate.currency === participantData.currency);
+    result = selectedRate[0].compareToVND * participantData.balance;
+    return result;
+  }, [participantData.currency, participantData.balance]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,12 +75,12 @@ const AddCalculatorParticipantModal = ({ ref }) => {
 
   return (
     <dialog ref={ref} className="modal">
-      <div className="modal-box flex flex-col w-auto">
+      <div className="modal-box flex flex-col w-auto overflow-visible">
         <form method="dialog">
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
         </form>
         <h3 className="font-bold text-lg">Thêm người chia tiền!</h3>
-        <div className="flex flex-col gap-1 pt-2">
+        <div className="flex flex-col gap-1 pt-2 overflow-visible">
           <div>
             <label className="input focus:outline-none focus-within:outline-none">
               Tên người tham gia:
@@ -95,28 +106,35 @@ const AddCalculatorParticipantModal = ({ ref }) => {
                 value={participantData.balance}
               />
             </label>
+          </div>{" "}
+          <div className="dropdown dropdown-end w-full overflow-visible">
+            <div tabIndex="0" role="button" className="btn rounded-field w-full">
+              Đơn vị tiền tệ: {participantData.currency}{" "}
+              <i className="fa-solid fa-caret-down ml-2"></i>
+            </div>
+            <ul
+              tabIndex="-1"
+              className="menu dropdown-content bg-gradient-to-b from-base-100 to-base-200 rounded-lg z-[9999] mt-2 w-32 p-3 shadow-lg border border-base-300 overflow-y-auto"
+            >
+              {currencyOptions.map((currency) => (
+                <li
+                  className="text-center font-semibold hover:bg-primary hover:text-white rounded-md px-4 py-2"
+                  key={currency}
+                  onClick={() => setParticipantData((prev) => ({ ...prev, currency: currency }))}
+                >
+                  {currency}
+                </li>
+              ))}
+            </ul>
           </div>
-          <div>
-            <label className="input focus:outline-none focus-within:outline-none">
-              Đơn vị tiền tệ:
-              <input
-                onChange={handleChange}
-                name="currency"
-                type="text"
-                className="grow"
-                placeholder="VND"
-                list="currency"
-                value={participantData.currency}
-              />
-              <datalist id="currency">
-                <option value="VND"></option>
-                <option value="USD"></option>
-                <option value="EUR"></option>
-                <option value="YEN"></option>
-                <option value="WON"></option>
-              </datalist>
-            </label>
-          </div>
+          {participantData.currency !== "VND" && (
+            <input
+              type="text"
+              placeholder={`Số tiền quy đổi sang VND: ${exchangeToVND}`}
+              className="input"
+              disabled
+            />
+          )}
         </div>
         {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
         <div className="flex flex-row gap-2 self-end">

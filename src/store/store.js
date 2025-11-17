@@ -5,6 +5,7 @@ import postReducer from "./post";
 import scheduleReducer from "./schedule";
 import themeReducer from "./theme";
 import expenseReducer from "./expense";
+import currencyRateReducer from "./currenyRate";
 import api from "./middleware/api";
 
 const store = configureStore({
@@ -15,6 +16,7 @@ const store = configureStore({
     schedule: scheduleReducer,
     theme: themeReducer,
     expense: expenseReducer,
+    currencyRate: currencyRateReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

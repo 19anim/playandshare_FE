@@ -22,6 +22,7 @@ import NotFound from "./pages/notFound.page";
 import store from "./store/store";
 import token from "./helper/token";
 import { getPosts } from "./store/post";
+import { getCurrencyRates } from "./store/currenyRate";
 import { fetchSchedule } from "./store/schedule";
 import { fetchCities, fetchPlayTypes } from "./store/postUtil";
 import fetchSigninedUser from "./hooks/fetchSigninedUser.hook";
@@ -38,6 +39,7 @@ const App = () => {
     store.dispatch(getPosts());
     store.dispatch(fetchSchedule());
     store.dispatch(fetchExpenses());
+    store.dispatch(getCurrencyRates());
   }, []);
 
   fetchSigninedUser();

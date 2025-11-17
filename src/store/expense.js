@@ -43,6 +43,12 @@ const expenseReducer = createSlice({
       state.loading = false;
       state.error = null;
     },
+    deleteMultiExpensesSuccess: (state, action) => {
+      const idsToDelete = action.payload.ids;
+      state.expenses = state.expenses.filter((exp) => !idsToDelete.includes(exp._id));
+      state.loading = false;
+      state.error = null;
+    },
   },
 });
 export const {
@@ -53,6 +59,7 @@ export const {
   creatSuccess,
   updateExpenseSuccess,
   deleteExpenseSuccess,
+  deleteMultiExpensesSuccess,
 } = expenseReducer.actions;
 
 export const fetchExpenses = () =>
@@ -96,6 +103,18 @@ export const removeExpense = (id) =>
     method: "delete",
     onStart: apiRequested.type,
     onSuccess: deleteExpenseSuccess.type,
+    onError: apiRequestFailed.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
+  });
+
+export const removeMultiExpenses = (data) =>
+  apiCallBegan({
+    url: `/expense/bulk`,
+    method: "post",
+    data,
+    onStart: apiRequested.type,
+    onSuccess: deleteMultiExpensesSuccess.type,
     onError: apiRequestFailed.type,
     withCredentials: true,
     accessTokenNeeded: true,
