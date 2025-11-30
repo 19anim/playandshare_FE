@@ -13,6 +13,7 @@ const expenseReducer = createSlice({
       state.loading = true;
     },
     apiRequestFailed: (state, action) => {
+      console.log(action.type);
       state.error = action.payload;
       state.loading = false;
     },

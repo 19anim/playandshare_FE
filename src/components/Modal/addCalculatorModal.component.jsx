@@ -48,6 +48,7 @@ const AddCalculatorModal = ({ ref, calculatorData, setCalculatorData }) => {
       setErrorMessage("Đã có lỗi xảy ra. Vui lòng thử lại.");
     } else if (!loading && !error) {
       setCalculatorData((prev) => ({ title: "", participants: [], createdBy: null }));
+      setErrorMessage("");
       ref.current.close();
     }
   }, [error, loading]);

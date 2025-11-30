@@ -34,6 +34,7 @@ const App = () => {
   const accessToken = token.getAccessToken();
 
   useEffect(() => {
+    console.log("Fetching initial data...");
     store.dispatch(fetchCities());
     store.dispatch(fetchPlayTypes());
     store.dispatch(getPosts());

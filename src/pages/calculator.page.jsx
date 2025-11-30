@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { removeMultiExpenses } from "../store/expense";
 import AddCalculatorModal from "../components/Modal/addCalculatorModal.component";
 import ConfirmationModal from "../components/Modal/confirmation.component";
+import { fetchExpenses } from "../store/expense";
 
 const Calculator = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,10 @@ const Calculator = () => {
   });
   const [selectedCalculators, setSelectedCalculators] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchExpenses());
+  }, []);
 
   const handleAddNewCalculator = () => {
     if (user) {
@@ -74,9 +79,6 @@ const Calculator = () => {
               className="ml-4 mt-4 btn btn-success btn-sm text-xl self-start hover:scale-110 hover:animate-wiggle transition-all duration-300"
               title="Thêm mục chi"
               onClick={handleAddNewCalculator}
-              onKeyDown={(e) => {
-                console.log(e.target);
-              }}
             >
               <LuCirclePlus /> <span className="textarea-md">Thêm mục chi</span>
             </button>
