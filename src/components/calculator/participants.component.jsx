@@ -33,6 +33,7 @@ const Participants = ({ data }) => {
                 balance={participant.balance}
                 paid={participant.paid}
                 currency={participant.currency}
+                id={participant._id}
               />
             </div>
           ))}

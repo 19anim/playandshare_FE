@@ -5,20 +5,16 @@ import { useMemo, useState } from "react";
 import { updatedExpense } from "../../store/expense";
 import { useSelector, useDispatch } from "react-redux";
 
-const AddCalculatorParticipantModal = ({ ref }) => {
+const EditCalculatorParticipantModal = ({ ref, name, balance, currency, id }) => {
   const dispatch = useDispatch();
   const { calculatorId } = useParams();
   const { expenses } = useSelector((state) => state.expense);
   const { rates } = useSelector((state) => state.currencyRate);
   const currentCalculator = expenses.find((item) => item._id === calculatorId);
+  const currentParticipant = currentCalculator.participants.find((part) => part._id === id);
 
   const currencyOptions = ["VND", "USD", "EUR", "THB", "JPY", "KRW", "GBP"];
-  const [participantData, setParticipantData] = useState({
-    name: "",
-    balance: 0,
-    balanceInVND: 0,
-    currency: "VND",
-  });
+  const [participantData, setParticipantData] = useState(currentParticipant);
   const [errorMessage, setErrorMessage] = useState("");
   const exchangeToVND = useMemo(() => {
     let result = 0;
@@ -50,7 +46,6 @@ const AddCalculatorParticipantModal = ({ ref }) => {
   };
 
   const handleAddParticipant = () => {
-    console.log(participantData);
     if (participantData.name.trim() === "") {
       setErrorMessage("Tên người tham gia không được để trống");
       return;
@@ -64,22 +59,13 @@ const AddCalculatorParticipantModal = ({ ref }) => {
 
     setErrorMessage("");
     const tempData = JSON.parse(JSON.stringify(currentCalculator));
-    tempData.participants.push(participantData);
+    const participantIndex = tempData.participants.findIndex((part) => part._id === id);
+    tempData.participants[participantIndex] = { ...participantData };
     dispatch(updatedExpense(calculatorId, tempData));
-    setParticipantData({
-      name: "",
-      balance: 0,
-      currency: "VND",
-    });
     ref.current.close();
   };
 
   const handleClose = () => {
-    setParticipantData({
-      name: "",
-      balance: 0,
-      currency: "VND",
-    });
     setErrorMessage("");
     ref.current.close();
   };
@@ -90,7 +76,7 @@ const AddCalculatorParticipantModal = ({ ref }) => {
         <form method="dialog">
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
         </form>
-        <h3 className="font-bold text-lg">Thêm người chia tiền!</h3>
+        <h3 className="font-bold text-lg">Chỉnh sửa người chia tiền!</h3>
         <div className="flex flex-col gap-1 pt-2 overflow-visible">
           <div>
             <label className="input focus:outline-none focus-within:outline-none">
@@ -167,4 +153,4 @@ const AddCalculatorParticipantModal = ({ ref }) => {
   );
 };
 
-export default AddCalculatorParticipantModal;
+export default EditCalculatorParticipantModal;
