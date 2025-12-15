@@ -2,9 +2,11 @@ import { useMemo } from "react";
 import { GoPencil } from "react-icons/go";
 import { useRef } from "react";
 import EditCalculatorParticipantModal from "../Modal/editCalculatorParticipantModal.component";
+import DeleteCalculatorParticipantModal from "../Modal/deleteCalculatorParticipantModal.component";
 
 const Participant = ({ name, balance, paid, currency, id }) => {
   const editUserRef = useRef(null);
+  const deleteUserRef = useRef(null);
   const finalBalance = useMemo(() => {
     return parseInt(balance) - parseInt(paid);
   }, [balance, paid]);
@@ -41,12 +43,16 @@ const Participant = ({ name, balance, paid, currency, id }) => {
           <button
             className="btn btn-square btn-ghost hover:scale-110 hover:animate-wiggle transition-all duration-300"
             title="Xóa người tham gia"
+            onClick={() => {
+              deleteUserRef.current.showModal();
+            }}
           >
             <i className="fa-regular fa-trash-can"></i>
           </button>
         </div>
       </li>
       <EditCalculatorParticipantModal ref={editUserRef} id={id} />
+      <DeleteCalculatorParticipantModal ref={deleteUserRef} id={id} />
     </>
   );
 };

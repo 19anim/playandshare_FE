@@ -71,7 +71,7 @@ const EditCalculatorParticipantModal = ({ ref, name, balance, currency, id }) =>
   };
 
   return (
-    <dialog ref={ref} className="modal">
+    <dialog ref={ref} className="modal duration-0">
       <div className="modal-box flex flex-col w-auto overflow-visible">
         <form method="dialog">
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
