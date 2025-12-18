@@ -52,7 +52,7 @@ const CalculatorDetail = () => {
           {currentCalculator ? (
             <>
               <Participants data={currentCalculator.participants} expense />
-              <Payments data={currentCalculator.payments} />
+              <Payments data={currentCalculator} />
             </>
           ) : (
             <span className="loading loading-bars loading-lg"></span>
