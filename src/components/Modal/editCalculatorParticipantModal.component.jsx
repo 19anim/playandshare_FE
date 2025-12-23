@@ -11,7 +11,7 @@ const EditCalculatorParticipantModal = ({ ref, name, balance, currency, id }) =>
   const { expenses } = useSelector((state) => state.expense);
   const { rates } = useSelector((state) => state.currencyRate);
   const currentCalculator = expenses.find((item) => item._id === calculatorId);
-  const currentParticipant = currentCalculator.participants.find((part) => part._id === id);
+  const currentParticipant = currentCalculator?.participants?.find((part) => part._id === id);
 
   const currencyOptions = ["VND", "USD", "EUR", "THB", "JPY", "KRW", "GBP"];
   const [participantData, setParticipantData] = useState(currentParticipant);

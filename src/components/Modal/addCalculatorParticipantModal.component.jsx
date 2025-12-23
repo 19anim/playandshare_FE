@@ -129,9 +129,12 @@ const AddCalculatorParticipantModal = ({ ref }) => {
             >
               {currencyOptions.map((currency) => (
                 <li
-                  className="text-center font-semibold hover:bg-primary hover:text-white rounded-md px-4 py-2"
+                  className="text-center font-semibold hover:bg-primary hover:text-white rounded-md px-4 py-2 cursor-pointer"
                   key={currency}
-                  onClick={() => setParticipantData((prev) => ({ ...prev, currency: currency }))}
+                  onClick={() => {
+                    document.activeElement.blur();
+                    setParticipantData((prev) => ({ ...prev, currency: currency }));
+                  }}
                 >
                   {currency}
                 </li>

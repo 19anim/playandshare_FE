@@ -50,6 +50,14 @@ const expenseReducer = createSlice({
       state.loading = false;
       state.error = null;
     },
+    addPaymentToExpenseSuccess: (state, action) => {
+      const index = state.expenses.findIndex((exp) => exp._id === action.payload._id);
+      if (index !== -1) {
+        state.expenses[index] = action.payload;
+      }
+      state.loading = false;
+      state.error = null;
+    },
   },
 });
 export const {
@@ -61,6 +69,7 @@ export const {
   updateExpenseSuccess,
   deleteExpenseSuccess,
   deleteMultiExpensesSuccess,
+  addPaymentToExpenseSuccess,
 } = expenseReducer.actions;
 
 export const fetchExpenses = () =>
@@ -116,6 +125,18 @@ export const removeMultiExpenses = (data) =>
     data,
     onStart: apiRequested.type,
     onSuccess: deleteMultiExpensesSuccess.type,
+    onError: apiRequestFailed.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
+  });
+
+export const addPaymentToExpense = (id, data) =>
+  apiCallBegan({
+    url: `/expense/${id}/payment`,
+    method: "post",
+    data,
+    onStart: apiRequested.type,
+    onSuccess: addPaymentToExpenseSuccess.type,
     onError: apiRequestFailed.type,
     withCredentials: true,
     accessTokenNeeded: true,

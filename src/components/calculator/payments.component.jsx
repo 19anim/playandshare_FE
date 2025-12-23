@@ -9,15 +9,6 @@ const Payments = ({ data }) => {
   const MAXIMUM_PAYMENTS_PER_PAGE = 4;
   const addPaymentRef = useRef(null);
   const { payments, participants } = data;
-  const paymentss = [
-    {
-      name: "Ăn uống",
-      description: "Tiền ăn trưa ngày 20/10",
-      amount: 200000,
-      currency: "VND",
-      participants: ["Nguyễn Văn A", "Trần Thị B"],
-    },
-  ];
 
   return (
     <section className="bg-gray-200 rounded-box p-2 lg:p-4 flex flex-col gap-3">
@@ -38,10 +29,10 @@ const Payments = ({ data }) => {
       </div>
       <ul className="list bg-base-100 rounded-box shadow-md">
         <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Thông tin chi tiết</li>
-        {paymentss.length === 0 ? (
+        {payments.length === 0 ? (
           <li className="p-4 text-center text-gray-500">Chưa có khoản chi nào</li>
         ) : (
-          paymentss
+          payments
             .slice(
               currentPage * MAXIMUM_PAYMENTS_PER_PAGE - MAXIMUM_PAYMENTS_PER_PAGE,
               currentPage * MAXIMUM_PAYMENTS_PER_PAGE
@@ -49,7 +40,7 @@ const Payments = ({ data }) => {
             .map((payment, index) => (
               <Payment
                 key={index}
-                paymentType={payment.name}
+                paymentType={payment.title}
                 paymentDes={payment.description}
                 paymentAmount={payment.amount}
                 currency={payment.currency}

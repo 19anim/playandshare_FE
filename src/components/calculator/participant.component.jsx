@@ -26,7 +26,7 @@ const Participant = ({ name, balance, paid, currency, id }) => {
           <div className="text-xs uppercase">
             Số dư:{" "}
             <strong
-              className={`text-${balance >= 0 ? "success" : "error"}-content`}
+              className={`text-${finalBalance >= 0 ? "success" : "error"}-content`}
             >{`${finalBalance} ${currency}`}</strong>
           </div>
         </div>
