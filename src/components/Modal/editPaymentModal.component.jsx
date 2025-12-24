@@ -1,9 +1,10 @@
-import { useState, useMemo } from "react";
+// LOGIC FOR EDIT PAYMENT MODAL IS WRONG, NEED TO STORE THE OLD PAYMENT DATA BEFORE EDITING TO CALCULATE THE DIFFERENCE AND UPDATE PARTICIPANTS' PAID AMOUNTS ACCORDINGLY
+import { useState, useMemo, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addPaymentToExpense } from "../../store/expense";
+import { updatePaymentInExpense } from "../../store/expense";
 import { useParams } from "react-router-dom";
 
-const AddPaymentModal = ({ ref, participants }) => {
+const EditPaymentModal = ({ ref, participants, payment }) => {
   const currencyOptions = ["VND", "USD", "EUR", "THB", "JPY", "KRW", "GBP"];
   const expenseID = useParams().calculatorId;
   const dispatch = useDispatch();
@@ -14,9 +15,24 @@ const AddPaymentModal = ({ ref, participants }) => {
     currency: "VND",
     participants: [],
   });
+  const [originalPaymentData, setOriginalPaymentData] = useState(null);
   const [updatedParticipants, setUpdatedParticipants] = useState(participants);
   const [error, setError] = useState("");
   const { rates } = useSelector((state) => state.currencyRate);
+
+  useEffect(() => {
+    if (payment) {
+      const paymentDataObj = {
+        title: payment.title,
+        description: payment.description,
+        amount: String(payment.amount),
+        currency: payment.currency,
+        participants: payment.participants,
+      };
+      setPaymentData(paymentDataObj);
+      setOriginalPaymentData({ ...paymentDataObj });
+    }
+  }, [payment]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,26 +69,75 @@ const AddPaymentModal = ({ ref, participants }) => {
 
     setError("");
 
-    const equalShare = exchangeToVND / paymentData.participants.length;
+    // Calculate old and new amounts in VND
+    const oldExchangeToVND =
+      originalPaymentData.currency === "VND"
+        ? parseFloat(originalPaymentData.amount)
+        : (rates.find((rate) => rate.currency === originalPaymentData.currency)?.compareToVND ||
+            1) * parseFloat(originalPaymentData.amount);
+
+    const newExchangeToVND = exchangeToVND;
+
+    // Calculate the difference in VND
+    const amountDifference = newExchangeToVND - oldExchangeToVND;
+
+    // Get the old participants
+    const oldParticipants = originalPaymentData.participants;
+
+    // Calculate shares
+    const oldSharePerPerson = oldExchangeToVND / oldParticipants.length;
+    const newSharePerPerson = newExchangeToVND / paymentData.participants.length;
 
     const updatedParts = updatedParticipants.map((part) => {
-      if (paymentData.participants.includes(part.name)) {
+      const wasInOldPayment = oldParticipants.includes(part.name);
+      const isInNewPayment = paymentData.participants.includes(part.name);
+
+      if (wasInOldPayment && !isInNewPayment) {
+        // Participant was removed from payment - deduct their share
         return {
           ...part,
           paid:
             part.currency === "VND"
-              ? part.paid + equalShare
+              ? part.paid - oldSharePerPerson
+              : part.paid -
+                (oldSharePerPerson /
+                  rates.find((rate) => rate.currency === part.currency)?.compareToVND || 1),
+          paidInVND: part.paidInVND - oldSharePerPerson,
+        };
+      } else if (!wasInOldPayment && isInNewPayment) {
+        // Participant was added to payment - add their new share
+        return {
+          ...part,
+          paid:
+            part.currency === "VND"
+              ? part.paid + newSharePerPerson
               : part.paid +
-                equalShare / rates.find((rate) => rate.currency === part.currency).compareToVND,
-          paidInVND: part.paidInVND + equalShare,
+                (newSharePerPerson /
+                  rates.find((rate) => rate.currency === part.currency)?.compareToVND || 1),
+          paidInVND: part.paidInVND + newSharePerPerson,
+        };
+      } else if (wasInOldPayment && isInNewPayment) {
+        // Participant was in both - update with the difference
+        return {
+          ...part,
+          paid:
+            part.currency === "VND"
+              ? part.paid - oldSharePerPerson + newSharePerPerson
+              : part.paid -
+                (oldSharePerPerson /
+                  rates.find((rate) => rate.currency === part.currency)?.compareToVND || 1) +
+                (newSharePerPerson /
+                  rates.find((rate) => rate.currency === part.currency)?.compareToVND || 1),
+          paidInVND: part.paidInVND - oldSharePerPerson + newSharePerPerson,
         };
       }
+
       return part;
     });
 
     setUpdatedParticipants(updatedParts);
     dispatch(
-      addPaymentToExpense(expenseID, {
+      updatePaymentInExpense(expenseID, payment._id, {
         payment: paymentData,
         updatedParticipants: updatedParts,
       })
@@ -251,4 +316,4 @@ const AddPaymentModal = ({ ref, participants }) => {
   );
 };
 
-export default AddPaymentModal;
+export default EditPaymentModal;

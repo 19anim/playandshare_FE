@@ -3,12 +3,20 @@ import { IoExpand } from "react-icons/io5";
 import { useRef, useState } from "react";
 import Payment from "./payment.component";
 import AddPaymentModal from "../Modal/addPaymentModal.component";
+import EditPaymentModal from "../Modal/editPaymentModal.component";
 
 const Payments = ({ data }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const MAXIMUM_PAYMENTS_PER_PAGE = 4;
   const addPaymentRef = useRef(null);
+  const editPaymentRef = useRef(null);
   const { payments, participants } = data;
+  const [paymentsToEdit, setPaymentsToEdit] = useState(null);
+
+  const handleEditPayment = (payment) => {
+    setPaymentsToEdit(payment);
+    editPaymentRef.current.showModal();
+  };
 
   return (
     <section className="bg-gray-200 rounded-box p-2 lg:p-4 flex flex-col gap-3">
@@ -45,6 +53,7 @@ const Payments = ({ data }) => {
                 paymentAmount={payment.amount}
                 currency={payment.currency}
                 paymentParticipant={payment.participants.join(", ")}
+                handleEditPayment={() => handleEditPayment(payment)}
               />
             ))
         )}
@@ -64,6 +73,7 @@ const Payments = ({ data }) => {
         ))}
       </div>
       <AddPaymentModal ref={addPaymentRef} participants={participants} />
+      <EditPaymentModal ref={editPaymentRef} participants={participants} payment={paymentsToEdit} />
     </section>
   );
 };

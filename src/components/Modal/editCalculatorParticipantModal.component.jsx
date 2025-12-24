@@ -27,7 +27,7 @@ const EditCalculatorParticipantModal = ({ ref, name, balance, currency, id }) =>
     }
 
     const selectedRate = rates.filter((rate) => rate.currency === participantData.currency);
-    result = selectedRate[0].compareToVND * participantData.balance;
+    result = selectedRate.length > 0 ? selectedRate[0].compareToVND * participantData.balance : 0;
     setParticipantData((prev) => ({
       ...prev,
       balanceInVND: result,
