@@ -53,43 +53,49 @@ const ScheduleDetail = () => {
           Delete
         </button>
       </div>
-      <div className="card max-w-7xl w-full bg-[#faebd7] shadow-xl p-6">
+      <div className="card max-w-7xl w-full bg-base-100 dark:bg-base-800 shadow-xl p-6">
         <Link
           to="/schedule"
-          className="flex items-center gap-2 text-gray-600 mb-4 hover:text-gray-800"
+          className="flex items-center gap-2 text-base-600 dark:text-base-400 mb-4 hover:text-base-800 dark:hover:text-base-200 transition-colors"
         >
           <i className="fa fa-arrow-left" aria-hidden="true"></i> Quay lại
         </Link>
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-8">
-          <div className="bg-[#fff5e6] rounded-lg p-6 shadow-sm">
-            <h1 className="text-2xl font-bold mb-6">Thông tin chung</h1>
+          <div className="bg-base-50 dark:bg-base-700 rounded-lg p-6 shadow-sm">
+            <h1 className="text-2xl font-bold mb-6 text-base-900 dark:text-base-50">
+              Thông tin chung
+            </h1>
             {currentSchedule ? (
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-semibold text-lg">Địa điểm</h3>
-                  <p className="text-gray-700">{currentSchedule.location}</p>
+                  <h3 className="font-semibold text-lg text-base-900 dark:text-base-50">
+                    Địa điểm
+                  </h3>
+                  <p className="text-base-700 dark:text-base-300">{currentSchedule.location}</p>
                 </div>
                 <div>
-                  <h3 className="font-semibold">Thời gian</h3>
-                  <p className="text-gray-700">
+                  <h3 className="font-semibold text-base-900 dark:text-base-50">Thời gian</h3>
+                  <p className="text-base-700 dark:text-base-300">
                     Từ: {new Date(currentSchedule.departureDate).toLocaleDateString()}
                   </p>
-                  <p className="text-gray-700">
+                  <p className="text-base-700 dark:text-base-300">
                     Đến: {new Date(currentSchedule.returnDate).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="font-semibold text-lg mb-4">Thông tin thêm</h3>
+                  <h3 className="font-semibold text-lg mb-4 text-base-900 dark:text-base-50">
+                    Thông tin thêm
+                  </h3>
                   {currentSchedule.additionalInformation.map((infor) => (
                     <div
                       key={infor._id}
-                      className="grid grid-cols-2 gap-2 mb-3 pb-3 border-b border-[#d4c4ae] last:border-b-0"
+                      className="grid grid-cols-2 gap-2 mb-3 pb-3 border-b border-base-300 dark:border-base-600 last:border-b-0"
                     >
-                      <div className="text-gray-600 font-medium flex items-center gap-2">
-                        <i className="fa-solid fa-circle-info text-gray-500"></i>
+                      <div className="text-base-600 dark:text-base-400 font-medium flex items-center gap-2">
+                        <i className="fa-solid fa-circle-info text-base-500 dark:text-base-400"></i>
                         {infor.title}
                       </div>
-                      <div className="text-gray-700">{infor.content}</div>
+                      <div className="text-base-700 dark:text-base-300">{infor.content}</div>
                     </div>
                   ))}
                 </div>

@@ -108,7 +108,10 @@ const Schedule = () => {
                   let departureDate = new Date(item.departureDate);
                   let returnDate = new Date(item.returnDate);
                   return (
-                    <tr className="odd:bg-white even:bg-gray-100" key={item._id}>
+                    <tr
+                      className="dark:bg-base-800 border-b border-base-300 dark:border-base-700 hover:bg-base-100 dark:hover:bg-base-700 transition-colors"
+                      key={item._id}
+                    >
                       {!isMultiDeleteMode ? (
                         <th>{index + 1}</th>
                       ) : (
