@@ -15,7 +15,11 @@ const SortableTask = ({ task, id }) => {
 
   return (
     <div ref={setNodeRef} style={style} className={`mb-2 ${isDragging ? "opacity-50" : ""}`}>
-      <div className="collapse bg-[#e5d5bf] border-base-300 border" {...attributes} {...listeners}>
+      <div
+        className="collapse bg-base-200 dark:bg-stone-700 border border-base-300 dark:border-stone-600"
+        {...attributes}
+        {...listeners}
+      >
         <input type="checkbox" />
         <div className="collapse-title font-semibold flex items-center gap-2">
           <i className="fa-solid fa-grip-vertical cursor-grab active:cursor-grabbing"></i>

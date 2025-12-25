@@ -55,7 +55,7 @@ const Task = ({ task, index, handleSetTasks }) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-[#e5d5bf] border-base-300 border px-4 py-2 rounded-lg shadow-md touch-manipulation"
+      className="bg-base-200 dark:bg-stone-700 border border-base-300 dark:border-stone-600 px-4 py-2 rounded-lg shadow-md touch-manipulation"
       onTouchStart={(e) => {
         if (e.target === e.currentTarget) {
           e.preventDefault();

@@ -11,7 +11,8 @@ const InputComponent = ({
   return (
     <section
       className={`grid grid-cols-3 md:flex justify-center items-center gap-4 mb-3 ${className} ${
-        additionalInformation && "bg-[#e5d5bf] p-3 rounded"
+        additionalInformation &&
+        "bg-base-200 dark:bg-stone-700 p-3 rounded border border-base-300 dark:border-stone-600"
       }`}
     >
       {!additionalInformation ? (

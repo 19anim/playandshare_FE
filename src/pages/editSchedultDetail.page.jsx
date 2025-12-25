@@ -102,10 +102,10 @@ const EditScheduleDetail = () => {
           Cancel
         </Link>
       </div>
-      <div className="card max-w-7xl w-full bg-stone-50 dark:bg-stone-800 shadow-xl p-6">
+      <div className="card max-w-7xl w-full bg-base-100 dark:bg-stone-800 shadow-xl p-6">
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-8">
-          <div className="bg-stone-50 dark:bg-stone-700 rounded-lg p-6 shadow-sm border border-stone-300 dark:border-stone-600">
-            <h1 className="text-2xl font-bold mb-6 text-stone-900 dark:text-stone-50">
+          <div className="bg-base-100 dark:bg-stone-700 rounded-lg p-6 shadow-sm border border-base-300 dark:border-stone-600">
+            <h1 className="text-2xl font-bold mb-6 text-base-900 dark:text-base-50">
               Chỉnh sửa lịch trình
             </h1>
             {newSchedule ? (
@@ -164,9 +164,9 @@ const EditScheduleDetail = () => {
           </div>
 
           {newSchedule && (
-            <div className="bg-stone-50 dark:bg-stone-700 rounded-lg p-6 shadow-sm border border-stone-300 dark:border-stone-600">
+            <div className="bg-base-100 dark:bg-stone-700 rounded-lg p-6 shadow-sm border border-base-300 dark:border-stone-600">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-bold text-stone-900 dark:text-stone-50">Lịch trình</h2>
+                <h2 className="text-xl font-bold text-base-900 dark:text-base-50">Lịch trình</h2>
                 <button
                   className="btn btn-outline btn-success hover:bg-success/10 flex items-center gap-2 transition-all duration-300 group"
                   onClick={handleAddTask}

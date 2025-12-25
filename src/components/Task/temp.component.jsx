@@ -14,7 +14,7 @@ const Temp = ({ item }) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-[#e5d5bf] border-base-300 border px-2 py-4 rounded-lg shadow-md touch-manipulation"
+      className="bg-base-200 dark:bg-stone-700 border border-base-300 dark:border-stone-600 px-2 py-4 rounded-lg shadow-md touch-manipulation"
       onTouchStart={(e) => {
         // Prevent scrolling while dragging on mobile
         if (e.target === e.currentTarget) {
