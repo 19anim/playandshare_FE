@@ -47,11 +47,11 @@ const ScheduleTasks = ({ tasks, handleSetTasks = null, isEditMode }) => {
             ))}
           </div>
         ) : (
-          <div className="space-y-4 bg-base-100 dark:bg-base-800 p-6 rounded-lg border border-base-300 dark:border-base-700 shadow-sm">
+          <div className="space-y-4 bg-base-100 dark:bg-stone-800 p-6 rounded-lg border border-base-300 dark:border-stone-600 shadow-sm">
             {tasks.map((task, index) => (
               <div
                 key={task.id}
-                className="p-4 border border-base-300 dark:border-base-700 rounded-lg bg-base-50 dark:bg-base-700 shadow-sm hover:shadow-md transition-shadow"
+                className="p-4 border border-base-300 dark:border-stone-600 rounded-lg bg-base-50 dark:bg-stone-700 shadow-sm hover:shadow-md transition-shadow"
               >
                 <h3 className="text-lg font-semibold mb-2 text-base-900 dark:text-base-50">
                   {task.name}

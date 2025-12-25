@@ -18,6 +18,7 @@ import EditScheduleDetail from "./pages/editSchedultDetail.page";
 import Calculator from "./pages/calculator.page";
 import CalculatorDetail from "./components/calculator/calculatorDetail.component";
 import NotFound from "./pages/notFound.page";
+import ThemeToggle from "./components/ThemeToggle/themeToggle.component";
 
 import store from "./store/store";
 import token from "./helper/token";
@@ -122,6 +123,7 @@ const App = () => {
   return (
     <div className={`App w-screen ${mode === "dark" ? "dark" : ""}`}>
       <RouterProvider router={router} />
+      <ThemeToggle />
     </div>
   );
 };

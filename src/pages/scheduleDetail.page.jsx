@@ -61,7 +61,7 @@ const ScheduleDetail = () => {
           <i className="fa fa-arrow-left" aria-hidden="true"></i> Quay lại
         </Link>
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-8">
-          <div className="bg-base-100 dark:bg-base-800 rounded-lg p-6 shadow-sm border border-base-300 dark:border-base-700">
+          <div className="bg-base-100 dark:bg-stone-800 rounded-lg p-6 shadow-sm border border-base-300 dark:border-stone-600">
             <h1 className="text-2xl font-bold mb-6 text-base-900 dark:text-base-50">
               Thông tin chung
             </h1>
@@ -71,14 +71,14 @@ const ScheduleDetail = () => {
                   <h3 className="font-semibold text-lg text-base-900 dark:text-base-50">
                     Địa điểm
                   </h3>
-                  <p className="text-base-700 dark:text-base-300">{currentSchedule.location}</p>
+                  <p className="text-base-700">{currentSchedule.location}</p>
                 </div>
                 <div>
                   <h3 className="font-semibold text-base-900 dark:text-base-50">Thời gian</h3>
-                  <p className="text-base-700 dark:text-base-300">
+                  <p className="text-base-700">
                     Từ: {new Date(currentSchedule.departureDate).toLocaleDateString()}
                   </p>
-                  <p className="text-base-700 dark:text-base-300">
+                  <p className="text-base-700">
                     Đến: {new Date(currentSchedule.returnDate).toLocaleDateString()}
                   </p>
                 </div>
@@ -91,11 +91,11 @@ const ScheduleDetail = () => {
                       key={infor._id}
                       className="grid grid-cols-2 gap-2 mb-3 pb-3 border-b border-base-300 dark:border-base-700 last:border-b-0"
                     >
-                      <div className="text-base-600 dark:text-base-300 font-medium flex items-center gap-2">
+                      <div className="text-base-600 font-medium flex items-center gap-2">
                         <i className="fa-solid fa-circle-info text-base-500 dark:text-base-400"></i>
                         {infor.title}
                       </div>
-                      <div className="text-base-700 dark:text-base-300">{infor.content}</div>
+                      <div className="text-base-700">{infor.content}</div>
                     </div>
                   ))}
                 </div>
