@@ -7,14 +7,22 @@ const Payment = ({
   currency,
   paymentParticipant,
   handleEditPayment,
+  handleDeletePayment,
 }) => {
+  const formatNumber = (num) => {
+    return parseFloat(num).toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+  };
+
   return (
     <li className="list-row">
       <div className="list-col-grow">
         <div>{paymentType}</div>
         <div className="font-semibold opacity-60">{paymentDes}</div>
         <div className="text-error-content font-semibold">
-          {paymentAmount} {currency}
+          {formatNumber(paymentAmount)} {currency}
         </div>
         <div className="max-w-[200px] sm:max-w-[300px] truncate" title={paymentParticipant}>
           {paymentParticipant}
@@ -30,6 +38,7 @@ const Payment = ({
       <button
         className="btn btn-square btn-ghost hover:scale-110 hover:animate-wiggle transition-all duration-300"
         title="Xóa khoản chi"
+        onClick={handleDeletePayment}
       >
         <i className="fa-regular fa-trash-can"></i>
       </button>

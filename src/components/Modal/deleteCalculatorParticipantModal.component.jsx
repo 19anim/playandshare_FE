@@ -7,6 +7,7 @@ const DeleteCalculatorParticipantModal = ({ ref, id }) => {
   const dispatch = useDispatch();
   const { calculatorId } = useParams();
   const { error, loading, expenses } = useSelector((state) => state.expense);
+  const { rates } = useSelector((state) => state.currencyRate);
   const [isDeleting, setIsDeleting] = useState(false);
   const currentCalculator = expenses.find((item) => item._id === calculatorId);
 
@@ -14,7 +15,13 @@ const DeleteCalculatorParticipantModal = ({ ref, id }) => {
     setIsDeleting(true);
     const tempData = JSON.parse(JSON.stringify(currentCalculator));
     tempData.participants = tempData.participants.filter((part) => part._id !== id);
-    dispatch(updatedExpense(calculatorId, tempData));
+    dispatch(
+      updatedExpense(calculatorId, {
+        updatedData: tempData,
+        rates,
+        Type: "deleteParticipant",
+      })
+    );
   };
 
   useEffect(() => {

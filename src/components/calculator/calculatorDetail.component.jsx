@@ -51,7 +51,7 @@ const CalculatorDetail = () => {
         <section className="w-full grid lg:grid-cols-[max-content_1fr] gap-3">
           {currentCalculator ? (
             <>
-              <Participants data={currentCalculator.participants} expense />
+              <Participants data={currentCalculator.participants} />
               <Payments data={currentCalculator} />
             </>
           ) : (

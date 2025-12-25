@@ -8,8 +8,15 @@ const Participant = ({ name, balance, paid, currency, id }) => {
   const editUserRef = useRef(null);
   const deleteUserRef = useRef(null);
   const finalBalance = useMemo(() => {
-    return parseInt(balance) - parseInt(paid);
+    return parseFloat((balance - paid).toFixed(2));
   }, [balance, paid]);
+
+  const formatNumber = (num) => {
+    return parseFloat(num).toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+  };
 
   return (
     <>
@@ -18,16 +25,19 @@ const Participant = ({ name, balance, paid, currency, id }) => {
           <div>{name}</div>
           <div className="text-xs uppercase">
             Tiền đã đóng:{" "}
-            <strong className="text-success-content">{`${balance} ${currency}`}</strong>
+            <strong className="text-success-content">{`${formatNumber(
+              balance
+            )} ${currency}`}</strong>
           </div>
           <div className="text-xs uppercase">
-            Tiền đã chi: <strong className="text-error-content">{`${paid} ${currency}`}</strong>
+            Tiền đã chi:{" "}
+            <strong className="text-error-content">{`${formatNumber(paid)} ${currency}`}</strong>
           </div>
           <div className="text-xs uppercase">
             Số dư:{" "}
             <strong
               className={`text-${finalBalance >= 0 ? "success" : "error"}-content`}
-            >{`${finalBalance} ${currency}`}</strong>
+            >{`${formatNumber(finalBalance)} ${currency}`}</strong>
           </div>
         </div>
         <div className="flex gap-1 justify-end">

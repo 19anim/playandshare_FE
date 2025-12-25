@@ -20,6 +20,13 @@ const AddCalculatorParticipantModal = ({ ref }) => {
     currency: "VND",
   });
   const [errorMessage, setErrorMessage] = useState("");
+
+  const formatNumber = (num) => {
+    return parseFloat(num || 0).toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+  };
   const exchangeToVND = useMemo(() => {
     let result = 0;
     if (participantData.currency === "VND") {
@@ -43,10 +50,18 @@ const AddCalculatorParticipantModal = ({ ref }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setParticipantData((prev) => ({
-      ...prev,
-      [name]: name === "balance" ? Number(value) : value,
-    }));
+    if (name === "balance") {
+      const numericValue = value.replace(/[^0-9.]/g, "");
+      setParticipantData((prev) => ({
+        ...prev,
+        [name]: numericValue,
+      }));
+    } else {
+      setParticipantData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleAddParticipant = () => {
@@ -65,7 +80,12 @@ const AddCalculatorParticipantModal = ({ ref }) => {
     setErrorMessage("");
     const tempData = JSON.parse(JSON.stringify(currentCalculator));
     tempData.participants.push(participantData);
-    dispatch(updatedExpense(calculatorId, tempData));
+    dispatch(
+      updatedExpense(calculatorId, {
+        updatedData: tempData,
+        Type: "addParticipant",
+      })
+    );
     setParticipantData({
       name: "",
       balance: 0,
@@ -111,10 +131,11 @@ const AddCalculatorParticipantModal = ({ ref }) => {
               <input
                 onChange={handleChange}
                 name="balance"
-                type="number"
+                type="text"
+                inputMode="decimal"
                 className="grow"
                 placeholder="1000000"
-                value={participantData.balance}
+                value={formatNumber(participantData.balance)}
               />
             </label>
           </div>{" "}
@@ -144,7 +165,7 @@ const AddCalculatorParticipantModal = ({ ref }) => {
           {participantData.currency !== "VND" && (
             <input
               type="text"
-              placeholder={`Số tiền quy đổi sang VND: ${exchangeToVND}`}
+              placeholder={`Số tiền quy đổi sang VND: ${formatNumber(exchangeToVND)}`}
               className="input"
               disabled
             />

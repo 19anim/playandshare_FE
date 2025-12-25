@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addPaymentToExpense } from "../../store/expense";
 import { useParams } from "react-router-dom";
@@ -17,6 +17,10 @@ const AddPaymentModal = ({ ref, participants }) => {
   const [updatedParticipants, setUpdatedParticipants] = useState(participants);
   const [error, setError] = useState("");
   const { rates } = useSelector((state) => state.currencyRate);
+
+  useEffect(() => {
+    setUpdatedParticipants(participants);
+  }, [participants]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,10 +56,9 @@ const AddPaymentModal = ({ ref, participants }) => {
     }
 
     setError("");
-
     const equalShare = exchangeToVND / paymentData.participants.length;
 
-    const updatedParts = updatedParticipants.map((part) => {
+    const updatedParts = [...updatedParticipants].map((part) => {
       if (paymentData.participants.includes(part.name)) {
         return {
           ...part,
@@ -77,12 +80,20 @@ const AddPaymentModal = ({ ref, participants }) => {
         updatedParticipants: updatedParts,
       })
     );
+    setPaymentData({
+      title: "",
+      description: "",
+      amount: "",
+      currency: "VND",
+      participants: [],
+    });
+    setError("");
     ref.current.close();
   };
 
   const handleCancel = () => {
     setPaymentData({
-      name: "",
+      title: "",
       description: "",
       amount: "",
       currency: "VND",
@@ -120,6 +131,13 @@ const AddPaymentModal = ({ ref, participants }) => {
     }
   };
 
+  const formatNumber = (num) => {
+    return parseFloat(num || 0).toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+  };
+
   const exchangeToVND = useMemo(() => {
     let result = 0;
     if (paymentData.currency === "VND") {
@@ -138,7 +156,7 @@ const AddPaymentModal = ({ ref, participants }) => {
           <div>
             <label className="input w-full focus:outline-none focus-within:outline-none">
               Tên khoản chi:
-              <input name="name" type="text" onChange={handleChange} value={paymentData.title} />
+              <input name="title" type="text" onChange={handleChange} value={paymentData.title} />
             </label>
           </div>
           <textarea
@@ -157,7 +175,7 @@ const AddPaymentModal = ({ ref, participants }) => {
                   type="text"
                   inputMode="decimal"
                   onChange={handleChange}
-                  value={paymentData.amount}
+                  value={formatNumber(paymentData.amount)}
                 />
               </label>
             </div>
@@ -189,7 +207,7 @@ const AddPaymentModal = ({ ref, participants }) => {
             {paymentData.currency !== "VND" && (
               <input
                 type="text"
-                placeholder={`Số tiền quy đổi sang VND: ${exchangeToVND}`}
+                placeholder={`Số tiền quy đổi sang VND: ${formatNumber(exchangeToVND)}`}
                 className="input w-full"
                 disabled
               />
@@ -221,12 +239,15 @@ const AddPaymentModal = ({ ref, participants }) => {
                     <p>{participant.name}</p>
                     {participant.currency !== "VND" ? (
                       <p>
-                        {participant.balance} {participant.currency} ~ {participant.balanceInVND}{" "}
-                        VND
+                        {formatNumber(
+                          parseFloat((participant.balance - participant.paid).toFixed(2))
+                        )}{" "}
+                        {participant.currency} ~ {formatNumber(participant.balanceInVND)} VND
                       </p>
                     ) : (
                       <p>
-                        {participant.balance} {participant.currency}
+                        {formatNumber(participant.balance - participant.paidInVND)}{" "}
+                        {participant.currency}
                       </p>
                     )}
                   </div>

@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { apiCallBegan } from "./api";
+import { data } from "react-router-dom";
 
 const expenseReducer = createSlice({
   name: "expense",
@@ -66,6 +67,15 @@ const expenseReducer = createSlice({
       state.loading = false;
       state.error = null;
     },
+    deletePaymentInExpenseSuccess: (state, action) => {
+      const expense = action.payload;
+      const index = state.expenses.findIndex((exp) => exp._id === expense._id);
+      if (index !== -1) {
+        state.expenses[index] = expense;
+      }
+      state.loading = false;
+      state.error = null;
+    },
   },
 });
 export const {
@@ -79,6 +89,7 @@ export const {
   deleteMultiExpensesSuccess,
   addPaymentToExpenseSuccess,
   updatePaymentInExpenseSuccess,
+  deletePaymentInExpenseSuccess,
 } = expenseReducer.actions;
 
 export const fetchExpenses = () =>
@@ -158,6 +169,18 @@ export const updatePaymentInExpense = (expenseId, paymentId, data) =>
     data,
     onStart: apiRequested.type,
     onSuccess: updatePaymentInExpenseSuccess.type,
+    onError: apiRequestFailed.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
+  });
+
+export const deletePaymentInExpense = (expenseId, paymentId, data) =>
+  apiCallBegan({
+    url: `/expense/${expenseId}/payment/${paymentId}`,
+    method: "delete",
+    data,
+    onStart: apiRequested.type,
+    onSuccess: deletePaymentInExpenseSuccess.type,
     onError: apiRequestFailed.type,
     withCredentials: true,
     accessTokenNeeded: true,

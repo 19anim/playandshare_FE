@@ -16,6 +16,13 @@ const EditCalculatorParticipantModal = ({ ref, name, balance, currency, id }) =>
   const currencyOptions = ["VND", "USD", "EUR", "THB", "JPY", "KRW", "GBP"];
   const [participantData, setParticipantData] = useState(currentParticipant);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const formatNumber = (num) => {
+    return parseFloat(num || 0).toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+  };
   const exchangeToVND = useMemo(() => {
     let result = 0;
     if (participantData.currency === "VND") {
@@ -39,13 +46,21 @@ const EditCalculatorParticipantModal = ({ ref, name, balance, currency, id }) =>
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setParticipantData((prev) => ({
-      ...prev,
-      [name]: name === "balance" ? Number(value) : value,
-    }));
+    if (name === "balance") {
+      const numericValue = value.replace(/[^0-9.]/g, "");
+      setParticipantData((prev) => ({
+        ...prev,
+        [name]: numericValue,
+      }));
+    } else {
+      setParticipantData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
-  const handleAddParticipant = () => {
+  const handleEditParticipant = () => {
     if (participantData.name.trim() === "") {
       setErrorMessage("Tên người tham gia không được để trống");
       return;
@@ -61,11 +76,21 @@ const EditCalculatorParticipantModal = ({ ref, name, balance, currency, id }) =>
     const tempData = JSON.parse(JSON.stringify(currentCalculator));
     const participantIndex = tempData.participants.findIndex((part) => part._id === id);
     tempData.participants[participantIndex] = { ...participantData };
-    dispatch(updatedExpense(calculatorId, tempData));
+    dispatch(
+      updatedExpense(calculatorId, {
+        updatedData: tempData,
+        Type: "editParticipant",
+      })
+    );
     ref.current.close();
   };
 
   const handleClose = () => {
+    setParticipantData({
+      name: currentParticipant.name,
+      balance: currentParticipant.balance,
+      currency: currentParticipant.currency,
+    });
     setErrorMessage("");
     ref.current.close();
   };
@@ -97,10 +122,11 @@ const EditCalculatorParticipantModal = ({ ref, name, balance, currency, id }) =>
               <input
                 onChange={handleChange}
                 name="balance"
-                type="number"
+                type="text"
+                inputMode="decimal"
                 className="grow"
                 placeholder="1000000"
-                value={participantData.balance}
+                value={formatNumber(participantData.balance)}
               />
             </label>
           </div>{" "}
@@ -117,7 +143,10 @@ const EditCalculatorParticipantModal = ({ ref, name, balance, currency, id }) =>
                 <li
                   className="text-center font-semibold hover:bg-primary hover:text-white rounded-md px-4 py-2"
                   key={currency}
-                  onClick={() => setParticipantData((prev) => ({ ...prev, currency: currency }))}
+                  onClick={() => {
+                    document.activeElement.blur();
+                    setParticipantData((prev) => ({ ...prev, currency: currency }));
+                  }}
                 >
                   {currency}
                 </li>
@@ -127,7 +156,7 @@ const EditCalculatorParticipantModal = ({ ref, name, balance, currency, id }) =>
           {participantData.currency !== "VND" && (
             <input
               type="text"
-              placeholder={`Số tiền quy đổi sang VND: ${exchangeToVND}`}
+              placeholder={`Số tiền quy đổi sang VND: ${formatNumber(exchangeToVND)}`}
               className="input"
               disabled
             />
@@ -136,7 +165,7 @@ const EditCalculatorParticipantModal = ({ ref, name, balance, currency, id }) =>
         {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
         <div className="flex flex-row gap-2 self-end">
           <button
-            onClick={handleAddParticipant}
+            onClick={handleEditParticipant}
             className="btn btn-success mt-4 flex gap-2 hover:scale-105 transition-all duration-300"
           >
             <IoMdCheckmark className="textarea-md" />

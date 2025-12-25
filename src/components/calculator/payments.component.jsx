@@ -4,18 +4,26 @@ import { useRef, useState } from "react";
 import Payment from "./payment.component";
 import AddPaymentModal from "../Modal/addPaymentModal.component";
 import EditPaymentModal from "../Modal/editPaymentModal.component";
+import DeletePaymentModal from "../Modal/deletePaymentModal.component copy";
 
 const Payments = ({ data }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const MAXIMUM_PAYMENTS_PER_PAGE = 4;
   const addPaymentRef = useRef(null);
   const editPaymentRef = useRef(null);
+  const deletePaymentRef = useRef(null);
   const { payments, participants } = data;
   const [paymentsToEdit, setPaymentsToEdit] = useState(null);
+  const [paymentIdToDelete, setPaymentIdToDelete] = useState(null);
 
   const handleEditPayment = (payment) => {
     setPaymentsToEdit(payment);
     editPaymentRef.current.showModal();
+  };
+
+  const handleDeltePayment = (paymentId) => {
+    setPaymentIdToDelete(paymentId);
+    deletePaymentRef.current.showModal();
   };
 
   return (
@@ -54,6 +62,7 @@ const Payments = ({ data }) => {
                 currency={payment.currency}
                 paymentParticipant={payment.participants.join(", ")}
                 handleEditPayment={() => handleEditPayment(payment)}
+                handleDeletePayment={() => handleDeltePayment(payment._id)}
               />
             ))
         )}
@@ -74,6 +83,7 @@ const Payments = ({ data }) => {
       </div>
       <AddPaymentModal ref={addPaymentRef} participants={participants} />
       <EditPaymentModal ref={editPaymentRef} participants={participants} payment={paymentsToEdit} />
+      <DeletePaymentModal ref={deletePaymentRef} paymentId={paymentIdToDelete} />
     </section>
   );
 };

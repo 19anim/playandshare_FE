@@ -1,5 +1,5 @@
 // LOGIC FOR EDIT PAYMENT MODAL IS WRONG, NEED TO STORE THE OLD PAYMENT DATA BEFORE EDITING TO CALCULATE THE DIFFERENCE AND UPDATE PARTICIPANTS' PAID AMOUNTS ACCORDINGLY
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, use } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updatePaymentInExpense } from "../../store/expense";
 import { useParams } from "react-router-dom";
@@ -19,6 +19,10 @@ const EditPaymentModal = ({ ref, participants, payment }) => {
   const [updatedParticipants, setUpdatedParticipants] = useState(participants);
   const [error, setError] = useState("");
   const { rates } = useSelector((state) => state.currencyRate);
+
+  useEffect(() => {
+    setUpdatedParticipants(participants);
+  }, [participants]);
 
   useEffect(() => {
     if (payment) {
@@ -69,7 +73,6 @@ const EditPaymentModal = ({ ref, participants, payment }) => {
 
     setError("");
 
-    // Calculate old and new amounts in VND
     const oldExchangeToVND =
       originalPaymentData.currency === "VND"
         ? parseFloat(originalPaymentData.amount)
@@ -142,17 +145,25 @@ const EditPaymentModal = ({ ref, participants, payment }) => {
         updatedParticipants: updatedParts,
       })
     );
-    ref.current.close();
-  };
-
-  const handleCancel = () => {
     setPaymentData({
-      name: "",
+      title: "",
       description: "",
       amount: "",
       currency: "VND",
       participants: [],
     });
+    setError("");
+    ref.current.close();
+  };
+
+  const handleCancel = () => {
+    // setPaymentData({
+    //   title: "",
+    //   description: "",
+    //   amount: "",
+    //   currency: "VND",
+    //   participants: [],
+    // });
     setError("");
   };
 
@@ -185,6 +196,13 @@ const EditPaymentModal = ({ ref, participants, payment }) => {
     }
   };
 
+  const formatNumber = (num) => {
+    return parseFloat(num || 0).toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+  };
+
   const exchangeToVND = useMemo(() => {
     let result = 0;
     if (paymentData.currency === "VND") {
@@ -198,12 +216,12 @@ const EditPaymentModal = ({ ref, participants, payment }) => {
   return (
     <dialog ref={ref} className="modal">
       <div className="modal-box flex flex-col w-[350px] md:w-[32rem] overflow-visible">
-        <h3 className="font-bold text-lg">Thêm mục chi tiêu</h3>
+        <h3 className="font-bold text-lg">Chỉnh sửa mục chi tiêu</h3>
         <div className="flex flex-col gap-1 pt-2 overflow-visible">
           <div>
             <label className="input w-full focus:outline-none focus-within:outline-none">
               Tên khoản chi:
-              <input name="name" type="text" onChange={handleChange} value={paymentData.title} />
+              <input name="title" type="text" onChange={handleChange} value={paymentData.title} />
             </label>
           </div>
           <textarea
@@ -222,7 +240,7 @@ const EditPaymentModal = ({ ref, participants, payment }) => {
                   type="text"
                   inputMode="decimal"
                   onChange={handleChange}
-                  value={paymentData.amount}
+                  value={formatNumber(paymentData.amount)}
                 />
               </label>
             </div>
@@ -254,7 +272,7 @@ const EditPaymentModal = ({ ref, participants, payment }) => {
             {paymentData.currency !== "VND" && (
               <input
                 type="text"
-                placeholder={`Số tiền quy đổi sang VND: ${exchangeToVND}`}
+                placeholder={`Số tiền quy đổi sang VND: ${formatNumber(exchangeToVND)}`}
                 className="input w-full"
                 disabled
               />
@@ -286,12 +304,15 @@ const EditPaymentModal = ({ ref, participants, payment }) => {
                     <p>{participant.name}</p>
                     {participant.currency !== "VND" ? (
                       <p>
-                        {participant.balance} {participant.currency} ~ {participant.balanceInVND}{" "}
-                        VND
+                        {formatNumber(
+                          parseFloat((participant.balance - participant.paid).toFixed(2))
+                        )}{" "}
+                        {participant.currency} ~ {formatNumber(participant.balanceInVND)} VND
                       </p>
                     ) : (
                       <p>
-                        {participant.balance} {participant.currency}
+                        {formatNumber(participant.balance - participant.paidInVND)}{" "}
+                        {participant.currency}
                       </p>
                     )}
                   </div>
@@ -303,7 +324,7 @@ const EditPaymentModal = ({ ref, participants, payment }) => {
         </div>
         <div className="modal-action">
           <button onClick={handleSubmit} className="btn bg-success">
-            Tạo chi tiêu
+            Cập nhật chi tiêu
           </button>
           <form method="dialog">
             <button onClick={handleCancel} className="btn bg-error">
