@@ -43,6 +43,10 @@ const App = () => {
     store.dispatch(getCurrencyRates());
   }, []);
 
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", mode === "dark" ? "dark" : "light");
+  }, [mode]);
+
   fetchSigninedUser();
 
   const router = createBrowserRouter([
