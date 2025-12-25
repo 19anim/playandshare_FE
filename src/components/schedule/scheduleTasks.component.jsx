@@ -47,22 +47,22 @@ const ScheduleTasks = ({ tasks, handleSetTasks = null, isEditMode }) => {
             ))}
           </div>
         ) : (
-          <div className="space-y-4 bg-base-50 dark:bg-base-600 p-6 rounded-lg border-2 border-base-200 dark:border-base-500 shadow-sm">
+          <div className="space-y-4 bg-base-100 dark:bg-base-800 p-6 rounded-lg border border-base-300 dark:border-base-700 shadow-sm">
             {tasks.map((task, index) => (
               <div
                 key={task.id}
-                className="p-4 border-2 border-base-200 dark:border-base-400 rounded-lg bg-base-100 dark:bg-base-700 shadow-sm hover:shadow-md transition-shadow"
+                className="p-4 border border-base-300 dark:border-base-700 rounded-lg bg-base-50 dark:bg-base-700 shadow-sm hover:shadow-md transition-shadow"
               >
                 <h3 className="text-lg font-semibold mb-2 text-base-900 dark:text-base-50">
                   {task.name}
                 </h3>
-                <p className="text-base-700 dark:text-base-200 mb-1">
+                <p className="text-base-700 dark:text-base-300 mb-1">
                   Từ: {new Date(task.fromDate).toLocaleDateString()} {task.startTime}
                 </p>
-                <p className="text-base-700 dark:text-base-200 mb-1">
+                <p className="text-base-700 dark:text-base-300 mb-1">
                   Đến: {new Date(task.toDate).toLocaleDateString()} {task.endTime}
                 </p>
-                <p className="text-base-700 dark:text-base-200">{task.description}</p>
+                <p className="text-base-700 dark:text-base-300">{task.description}</p>
               </div>
             ))}
           </div>
