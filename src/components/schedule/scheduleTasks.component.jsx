@@ -56,13 +56,13 @@ const ScheduleTasks = ({ tasks, handleSetTasks = null, isEditMode }) => {
                 <h3 className="text-lg font-semibold mb-2 text-base-900 dark:text-base-50">
                   {task.name}
                 </h3>
-                <p className="dark:text-base-300 mb-1">
+                <p className="text-base-700 mb-1">
                   Từ: {new Date(task.fromDate).toLocaleDateString()} {task.startTime}
                 </p>
-                <p className="dark:text-base-300 mb-1">
+                <p className="text-base-700 mb-1">
                   Đến: {new Date(task.toDate).toLocaleDateString()} {task.endTime}
                 </p>
-                <p className="dark:text-base-300">{task.description}</p>
+                <p className="text-base-700">{task.description}</p>
               </div>
             ))}
           </div>
