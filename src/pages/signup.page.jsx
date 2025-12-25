@@ -94,18 +94,9 @@ const SignUp = () => {
                 className="input w-full"
                 placeholder="***"
               />
-              {signUpData.password &&
-                !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/.test(signUpData.password) && (
-                  <p className="text-red-500 text-sm">
-                    Password must be at least 8 characters
-                    <br />
-                    Password must include at least one uppercase letter.
-                    <br />
-                    Password must include at least one lowercase letter.
-                    <br />
-                    Password must include at least one number.
-                  </p>
-                )}
+              {signUpData.password && signUpData.password.length < 8 && (
+                <p className="text-red-500 text-sm">Password must be at least 8 characters</p>
+              )}
 
               <button className="btn btn-neutral mt-4">Let's go</button>
             </fieldset>
