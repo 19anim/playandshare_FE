@@ -51,18 +51,18 @@ const ScheduleTasks = ({ tasks, handleSetTasks = null, isEditMode }) => {
             {tasks.map((task, index) => (
               <div
                 key={task.id}
-                className="p-4 border border-base-300 dark:border-stone-600 rounded-lg bg-base-50 dark:bg-stone-700 shadow-sm hover:shadow-md transition-shadow"
+                className="p-4 border border-base-300 dark:border-stone-600 rounded-lg bg-stone-50 dark:bg-stone-700 shadow-sm hover:shadow-md transition-shadow"
               >
                 <h3 className="text-lg font-semibold mb-2 text-base-900 dark:text-base-50">
                   {task.name}
                 </h3>
-                <p className="text-base-700 dark:text-base-300 mb-1">
+                <p className="dark:text-base-300 mb-1">
                   Từ: {new Date(task.fromDate).toLocaleDateString()} {task.startTime}
                 </p>
-                <p className="text-base-700 dark:text-base-300 mb-1">
+                <p className="dark:text-base-300 mb-1">
                   Đến: {new Date(task.toDate).toLocaleDateString()} {task.endTime}
                 </p>
-                <p className="text-base-700 dark:text-base-300">{task.description}</p>
+                <p className="dark:text-base-300">{task.description}</p>
               </div>
             ))}
           </div>
