@@ -105,11 +105,7 @@ const ImageDetail = () => {
             <section className="flex flex-col gap-2 overflow-scroll bg-[#252728] text-white">
               <section className="px-3 py-3 grid grid-cols-[auto_1fr_auto] gap-x-3">
                 <div className="avatar">
-                  <div className="size-12 rounded-full">
-                    {/* Update for real avatar
-                <img src={author.avatar} /> */}
-                    <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                  </div>
+                  <div className="size-12 rounded-full">{<img src={post?.author.avatar} />}</div>
                 </div>
 
                 <div>
