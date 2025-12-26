@@ -9,7 +9,7 @@ const Participants = ({ data }) => {
   const [showAll, setShowAll] = useState(false);
 
   return (
-    <section className="bg-gray-200 rounded-box p-2 lg:p-4 flex flex-col gap-2 justify-center self-start transition-all">
+    <section className="bg-gray-200 dark:bg-[#00000033] rounded-box p-2 lg:p-4 flex flex-col gap-2 justify-center self-start transition-all">
       <button
         onClick={() => addUserRef.current.showModal()}
         className="btn btn-success btn-sm text-xl self-start hover:scale-110 hover:animate-wiggle transition-all duration-300"

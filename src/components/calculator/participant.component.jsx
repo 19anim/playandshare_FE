@@ -25,18 +25,24 @@ const Participant = ({ name, balance, paid, currency, id }) => {
           <div>{name}</div>
           <div className="text-xs uppercase">
             Tiền đã đóng:{" "}
-            <strong className="text-success-content">{`${formatNumber(
+            <strong className="dark:text-success text-success-content">{`${formatNumber(
               balance
             )} ${currency}`}</strong>
           </div>
           <div className="text-xs uppercase">
             Tiền đã chi:{" "}
-            <strong className="text-error-content">{`${formatNumber(paid)} ${currency}`}</strong>
+            <strong className="dark:text-error text-error-content">{`${formatNumber(
+              paid
+            )} ${currency}`}</strong>
           </div>
           <div className="text-xs uppercase">
             Số dư:{" "}
             <strong
-              className={`text-${finalBalance >= 0 ? "success" : "error"}-content`}
+              className={
+                finalBalance >= 0
+                  ? "dark:text-success text-success-content"
+                  : "dark:text-error text-error-content"
+              }
             >{`${formatNumber(finalBalance)} ${currency}`}</strong>
           </div>
         </div>

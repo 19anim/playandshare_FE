@@ -21,7 +21,7 @@ const Payment = ({
       <div className="list-col-grow">
         <div>{paymentType}</div>
         <div className="font-semibold opacity-60">{paymentDes}</div>
-        <div className="text-error-content font-semibold">
+        <div className="dark:text-error text-error-content font-semibold">
           {formatNumber(paymentAmount)} {currency}
         </div>
         <div className="max-w-[200px] sm:max-w-[300px] truncate" title={paymentParticipant}>

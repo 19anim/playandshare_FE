@@ -198,7 +198,9 @@ const Calculator = () => {
                   <td className="max-w-[120px]">
                     <div
                       className={`truncate ${
-                        r.balance >= 0 ? "text-success-content" : "text-error-content"
+                        r.balance >= 0
+                          ? "dark:text-success text-success-content"
+                          : "dark:text-error text-error-content"
                       } font-semibold`}
                     >
                       {r.balance} VNĐ

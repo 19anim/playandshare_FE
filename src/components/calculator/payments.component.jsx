@@ -27,7 +27,7 @@ const Payments = ({ data }) => {
   };
 
   return (
-    <section className="bg-gray-200 rounded-box p-2 lg:p-4 flex flex-col gap-3">
+    <section className="bg-gray-200 dark:bg-[#00000033] rounded-box p-2 lg:p-4 flex flex-col gap-3">
       <div className="flex flex-row gap-2">
         <button
           className="btn btn-success btn-sm text-xl self-start hover:scale-110 hover:animate-wiggle transition-all duration-300"

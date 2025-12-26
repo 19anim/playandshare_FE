@@ -53,7 +53,7 @@ const ScheduleDetail = () => {
           Delete
         </button>
       </div>
-      <div className="card max-w-7xl w-full bg-base-100 dark:bg-base-800 shadow-xl p-6">
+      <div className="card max-w-7xl w-full bg-base-200 border border-base-300 dark:bg-base-800 shadow-xl p-6">
         <Link
           to="/schedule"
           className="flex items-center gap-2 text-base-600 dark:text-base-400 mb-4 hover:text-base-800 dark:hover:text-base-200 transition-colors"
@@ -61,10 +61,10 @@ const ScheduleDetail = () => {
           <i className="fa fa-arrow-left" aria-hidden="true"></i> Quay lại
         </Link>
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-8">
-          <div className="bg-base-100 dark:bg-stone-800 rounded-lg p-6 shadow-sm border border-base-300 dark:border-stone-600">
-            <h1 className="text-2xl font-bold mb-6 text-base-900 dark:text-base-50">
+          <div className="bg-base-100 dark:bg-[#00000033] rounded-lg p-6 shadow-sm border border-base-300 dark:border-gray-700">
+            <h2 className="text-2xl font-bold mb-6 text-base-900 dark:text-base-50">
               Thông tin chung
-            </h1>
+            </h2>
             {currentSchedule ? (
               <div className="space-y-4">
                 <div>
