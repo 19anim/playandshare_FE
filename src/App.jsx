@@ -1,33 +1,29 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
-import "./App.css";
 
 import Layout from "./layout/layout";
-import Search from "./pages/search.page";
-import SignIn from "./pages/signin.page";
-import SignUp from "./pages/signup.page";
-import UserInfor from "./pages/userInfor.page";
-import UserPosts from "./pages/userPosts.page";
-import PostDetail from "./pages/postDetail.page";
-import CreatePost from "./pages/createPost.page";
-import ImageDetail from "./pages/imageDetail.page";
-import Schedule from "./pages/schedule.page";
-import ScheduleDetail from "./pages/scheduleDetail.page";
-import EditScheduleDetail from "./pages/editSchedultDetail.page";
-import Calculator from "./pages/calculator.page";
-import CalculatorDetail from "./components/calculator/calculatorDetail.component";
-import NotFound from "./pages/notFound.page";
-import ThemeToggle from "./components/ThemeToggle/themeToggle.component";
+import PageLoader from "./components/Loading/pageLoader.component";
 
-import store from "./store/store";
 import token from "./helper/token";
-import { getPosts } from "./store/post";
-import { getCurrencyRates } from "./store/currenyRate";
-import { fetchSchedule } from "./store/schedule";
-import { fetchCities, fetchPlayTypes } from "./store/postUtil";
-import fetchSigninedUser from "./hooks/fetchSigninedUser.hook";
-import { fetchExpenses } from "./store/expense";
+import useFetchSignedInUser from "./hooks/fetchSigninedUser.hook";
+
+const Search = lazy(() => import("./pages/search.page"));
+const SignIn = lazy(() => import("./pages/signin.page"));
+const SignUp = lazy(() => import("./pages/signup.page"));
+const UserInfor = lazy(() => import("./pages/userInfor.page"));
+const UserPosts = lazy(() => import("./pages/userPosts.page"));
+const PostDetail = lazy(() => import("./pages/postDetail.page"));
+const CreatePost = lazy(() => import("./pages/createPost.page"));
+const ImageDetail = lazy(() => import("./pages/imageDetail.page"));
+const Schedule = lazy(() => import("./pages/schedule.page"));
+const ScheduleDetail = lazy(() => import("./pages/scheduleDetail.page"));
+const EditScheduleDetail = lazy(() => import("./pages/editSchedultDetail.page"));
+const Calculator = lazy(() => import("./pages/calculator.page"));
+const CalculatorDetail = lazy(() => import("./components/calculator/calculatorDetail.component"));
+const NotFound = lazy(() => import("./pages/notFound.page"));
+
+const loadPage = (page) => <Suspense fallback={<PageLoader />}>{page}</Suspense>;
 
 const App = () => {
   const { mode } = useSelector((state) => state.theme);
@@ -35,20 +31,10 @@ const App = () => {
   const accessToken = token.getAccessToken();
 
   useEffect(() => {
-    console.log("Fetching initial data...");
-    store.dispatch(fetchCities());
-    store.dispatch(fetchPlayTypes());
-    store.dispatch(getPosts());
-    store.dispatch(fetchSchedule());
-    store.dispatch(fetchExpenses());
-    store.dispatch(getCurrencyRates());
-  }, []);
-
-  useEffect(() => {
     document.documentElement.setAttribute("data-theme", mode === "dark" ? "dark" : "light");
   }, [mode]);
 
-  fetchSigninedUser();
+  useFetchSignedInUser();
 
   const router = createBrowserRouter([
     {
@@ -57,73 +43,72 @@ const App = () => {
       children: [
         {
           index: true,
-          element: <Search />,
+          element: loadPage(<Search />),
         },
         {
           path: "user",
           children: [
             {
               path: "info",
-              element: accessToken ? <UserInfor /> : <Navigate to="/signin" replace />,
+              element: accessToken ? loadPage(<UserInfor />) : <Navigate to="/signin" replace />,
             },
             {
               path: "posts",
-              element: accessToken ? <UserPosts /> : <Navigate to="/signin" replace />,
+              element: accessToken ? loadPage(<UserPosts />) : <Navigate to="/signin" replace />,
             },
           ],
         },
         {
           path: "posts/:postId",
-          element: accessToken ? <PostDetail /> : <Navigate to="/signin" replace />,
+          element: accessToken ? loadPage(<PostDetail />) : <Navigate to="/signin" replace />,
         },
         {
           path: "create-post",
-          element: accessToken ? <CreatePost /> : <Navigate to="/signin" replace />,
+          element: accessToken ? loadPage(<CreatePost />) : <Navigate to="/signin" replace />,
         },
         {
           path: "schedule",
-          element: accessToken ? <Schedule /> : <Navigate to="/signin" replace />,
+          element: accessToken ? loadPage(<Schedule />) : <Navigate to="/signin" replace />,
         },
         {
           path: "schedule/:scheduleId",
-          element: accessToken ? <ScheduleDetail /> : <Navigate to="/signin" replace />,
+          element: accessToken ? loadPage(<ScheduleDetail />) : <Navigate to="/signin" replace />,
         },
         {
           path: "schedule/edit/:scheduleId",
-          element: accessToken ? <EditScheduleDetail /> : <Navigate to="/signin" replace />,
+          element: accessToken ? loadPage(<EditScheduleDetail />) : <Navigate to="/signin" replace />,
         },
         {
           path: "signin",
-          element: username ? <Navigate to="/" replace /> : <SignIn />,
+          element: username ? <Navigate to="/" replace /> : loadPage(<SignIn />),
         },
         {
           path: "signup",
-          element: username ? <Navigate to="/" replace /> : <SignUp />,
+          element: username ? <Navigate to="/" replace /> : loadPage(<SignUp />),
         },
         {
           path: "calculator",
-          element: accessToken ? <Calculator /> : <Navigate to="/signin" replace />,
+          element: accessToken ? loadPage(<Calculator />) : <Navigate to="/signin" replace />,
         },
         {
           path: "calculator/:calculatorId",
-          element: accessToken ? <CalculatorDetail /> : <Navigate to="/signin" replace />,
+          element: accessToken ? loadPage(<CalculatorDetail />) : <Navigate to="/signin" replace />,
         },
       ],
     },
     {
       path: "photo",
-      element: <ImageDetail />,
+      element: loadPage(<ImageDetail />),
     },
     {
       path: "*",
-      element: <NotFound />,
+      element: loadPage(<NotFound />),
     },
   ]);
 
   return (
     <div className={`App w-screen ${mode === "dark" ? "dark" : ""}`}>
       <RouterProvider router={router} />
-      <ThemeToggle />
     </div>
   );
 };

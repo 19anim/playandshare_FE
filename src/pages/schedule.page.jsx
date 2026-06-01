@@ -1,13 +1,21 @@
-import NewSchedule from "../components/schedule/newSchedule.component";
-import { useDispatch } from "react-redux";
-import { fetchSchedule } from "../store/schedule";
-import { useEffect, useState, useRef } from "react";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { deleteMultipleSchedules } from "../store/schedule";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useRef, useState } from "react";
 import ConfirmationModal from "../components/Modal/confirmation.component";
-import SuccessModal from "../components/Modal/success.component";
 import ErrorModal from "../components/Modal/error.component";
+import SuccessModal from "../components/Modal/success.component";
+import NewSchedule from "../components/schedule/newSchedule.component";
+import ScheduleCard from "../components/schedule/scheduleCard.component";
+import { deleteMultipleSchedules, fetchSchedule } from "../store/schedule";
+
+const ScheduleSkeleton = () => (
+  <div className="card border border-base-300 bg-base-100">
+    <div className="card-body gap-4">
+      <div className="skeleton h-5 w-1/2"></div>
+      <div className="skeleton h-16 w-full"></div>
+      <div className="skeleton h-8 w-24 self-end"></div>
+    </div>
+  </div>
+);
 
 const Schedule = () => {
   const dispatch = useDispatch();
@@ -18,29 +26,29 @@ const Schedule = () => {
   const successModalRef = useRef(null);
   const errorModalRef = useRef(null);
   const deleteModalRef = useRef(null);
-  const today = new Date();
 
   useEffect(() => {
     dispatch(fetchSchedule());
-  }, []);
+  }, [dispatch]);
 
-  const toggleMultiDeleteMode = () => {
-    setIsMultiDeleteMode((prev) => !prev);
-  };
-
-  const handleScheduleSelection = (e) => {
-    const { checked, value } = e.target;
-    if (checked) {
-      setSelectedSchedules((prev) => [...prev, value]);
-    } else {
-      setSelectedSchedules((prev) => prev.filter((id) => id !== value));
+  useEffect(() => {
+    if (hasDeleted && loading === false) {
+      if (error) errorModalRef.current.showModal();
+      else successModalRef.current.showModal();
     }
+  }, [error, hasDeleted, loading]);
+
+  const handleScheduleSelection = (event) => {
+    const { checked, value } = event.target;
+    setSelectedSchedules((current) => (
+      checked ? [...current, value] : current.filter((id) => id !== value)
+    ));
   };
 
   const handleMultiDelete = () => {
     if (selectedSchedules.length === 0) {
       deleteModalRef.current.close();
-      errorModalRef.current.showModal("Vui lòng chọn ít nhất một lịch trình để xóa.");
+      errorModalRef.current.showModal("Vui lòng chọn ít nhất một timeline để xóa.");
       return;
     }
 
@@ -51,137 +59,73 @@ const Schedule = () => {
     deleteModalRef.current.close();
   };
 
-  useEffect(() => {
-    if (hasDeleted && loading === false) {
-      if (error) {
-        errorModalRef.current.showModal();
-      } else {
-        successModalRef.current.showModal();
-      }
-    }
-  }, [loading, error, hasDeleted]);
+  const cancelSelection = () => {
+    setSelectedSchedules([]);
+    setIsMultiDeleteMode(false);
+  };
 
   return (
-    <section className="w-full h-full flex justify-center items-center p-4">
-      <fieldset className="fieldset h-full w-full max-w-[1100px] bg-base-200 border border-base-300 p-4 m-4 rounded-box flex flex-col items-center">
-        <div className="sticky top-0 w-full z-10 bg-base-200 flex flex-col">
-          <div className="mb-2 self-end">
-            {!isMultiDeleteMode ? (
-              <button className="btn btn-error" onClick={toggleMultiDeleteMode}>
-                Xóa nhiều lịch trình
-              </button>
-            ) : (
-              <div className="flex gap-2">
-                <button
-                  className="btn btn-error"
-                  onClick={() => deleteModalRef.current.showModal()}
-                >
-                  Xác nhận xóa
-                </button>
-                <button className="btn" onClick={() => setIsMultiDeleteMode(false)}>
-                  Hủy bỏ
-                </button>
-              </div>
-            )}
+    <section className="mx-auto w-full max-w-[1200px] px-3 py-5 md:px-6">
+      <div className="mb-5 flex flex-col justify-between gap-3 md:flex-row md:items-end">
+        <div>
+          <p className="text-sm font-bold text-primary">TRIP PLANNER</p>
+          <h1 className="text-3xl font-bold">Timeline du lịch</h1>
+          <p className="mt-1 text-sm text-base-content/60">Lưu lịch trình để chuyến đi nhẹ đầu hơn.</p>
+        </div>
+        {!isMultiDeleteMode ? (
+          <button type="button" className="btn btn-secondary rounded-full" onClick={() => setIsMultiDeleteMode(true)}>
+            <i className="fa-regular fa-trash-can"></i>
+            Chọn timeline để xóa
+          </button>
+        ) : (
+          <div className="flex gap-2">
+            <button type="button" className="btn btn-error rounded-full" onClick={() => deleteModalRef.current.showModal()}>
+              Xóa đã chọn
+            </button>
+            <button type="button" className="btn btn-secondary rounded-full" onClick={cancelSelection}>
+              Hủy
+            </button>
           </div>
-          <NewSchedule />
-          <div className="divider my-0 before:bg-[#9d9d9d] before:h-[0.05rem] after:bg-[#9d9d9d] after:h-[0.05rem]"></div>
-        </div>
+        )}
+      </div>
 
-        <div className="rounded-box border border-base-content/5 bg-base-100 w-full">
-          {loading ? (
-            <div className="flex justify-center items-center">
-              <span className="loading loading-spinner loading-xl"></span>
-            </div>
-          ) : (
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Timeline</th>
-                  <th className="hidden md:table-cell">Trạng thái</th>
-                  <th>Hành động</th>
-                </tr>
-              </thead>
-              <tbody>
-                {schedule.map((item, index) => {
-                  let departureDate = new Date(item.departureDate);
-                  let returnDate = new Date(item.returnDate);
-                  return (
-                    <tr
-                      className="dark:bg-base-800 border-b border-base-300 dark:border-base-700 hover:bg-base-100 dark:hover:bg-base-700 transition-colors"
-                      key={item._id}
-                    >
-                      {!isMultiDeleteMode ? (
-                        <th>{index + 1}</th>
-                      ) : (
-                        <th>
-                          <input
-                            type="checkbox"
-                            className="checkbox"
-                            value={item._id}
-                            onClick={handleScheduleSelection}
-                          />
-                        </th>
-                      )}
-                      <td>
-                        <div className="flex flex-col">
-                          <p className="text-lg font-bold">{item.location}</p>
-                          {item.tasks.length > 0 ? (
-                            <p className="text-md font-bold">
-                              Đã tạo {item.tasks.length} lịch trình
-                            </p>
-                          ) : (
-                            <p className="text-md font-bold">Chưa tạo lịch trình</p>
-                          )}
-                          <p className="text-sm text-gray-500">Từ {item.departureDate}</p>
-                          <p className="text-sm text-gray-500">Đến {item.returnDate}</p>
-                        </div>
-                      </td>
-                      <td className="hidden md:table-cell">
-                        {returnDate < today ? (
-                          <span className="w-16 md:w-fit h-fit badge badge-soft badge-secondary text-xs md:textarea-md py-1">
-                            Đã hoàn thành
-                          </span>
-                        ) : departureDate > today ? (
-                          <span className="w-16 md:w-fit h-fit badge badge-soft badge-primary text-xs md:textarea-md py-1">
-                            Chưa khởi hành
-                          </span>
-                        ) : (
-                          <span className="w-16 md:w-fit h-fit badge badge-soft badge-warning text-xs md:textarea-md py-1">
-                            Đang đi chơi
-                          </span>
-                        )}
-                      </td>
-                      <td>
-                        <Link className="btn" to={item._id}>
-                          Chi tiết
-                        </Link>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          )}
+      <div className="mb-5">
+        <NewSchedule />
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {loading ? (
+          <>
+            <ScheduleSkeleton />
+            <ScheduleSkeleton />
+            <ScheduleSkeleton />
+          </>
+        ) : (
+          schedule.map((item) => (
+            <ScheduleCard
+              key={item._id}
+              schedule={item}
+              isSelecting={isMultiDeleteMode}
+              isSelected={selectedSchedules.includes(item._id)}
+              onSelect={handleScheduleSelection}
+            />
+          ))
+        )}
+      </div>
+
+      {!loading && schedule.length === 0 && (
+        <div className="rounded-box bg-base-100 py-16 text-center text-base-content/60">
+          Bạn chưa có timeline nào. Tạo một chuyến đi mới nhé.
         </div>
-      </fieldset>
-      <SuccessModal
-        ref={successModalRef}
-        modalMessage="Xóa lịch trình thành công"
-        closeModalFunction={true}
-        additionalFunction={setHasDeleted}
-      />
-      <ErrorModal
-        ref={errorModalRef}
-        modalMessage={error ? error : "Vui lòng chọn ít nhất một lịch trình để xóa."}
-        modalErrorHandlerText="Trở lại"
-      />
+      )}
+
+      <SuccessModal ref={successModalRef} modalMessage="Xóa timeline thành công" closeModalFunction={true} additionalFunction={setHasDeleted} />
+      <ErrorModal ref={errorModalRef} modalMessage={error || "Vui lòng chọn ít nhất một timeline để xóa."} modalErrorHandlerText="Trở lại" />
       <ConfirmationModal
         ref={deleteModalRef}
         isDeleting={loading}
-        title="Xóa lịch trình"
-        message="Bạn đồng ý xóa lịch trình này?"
+        title="Xóa timeline"
+        message="Bạn đồng ý xóa các timeline đã chọn?"
         agreeMessage="Xóa"
         disagreeMessage="Hủy bỏ"
         onAgree={handleMultiDelete}

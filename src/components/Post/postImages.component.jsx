@@ -1,7 +1,5 @@
 import Image from "./image.component";
 import ImageLayout from "./imageLayout.component";
-import { useRef, useState } from "react";
-import ImageModal from "../Modal/imageModal.component";
 import { useNavigate } from "react-router-dom";
 
 const PostImages = ({ images, postId }) => {
@@ -16,11 +14,7 @@ const PostImages = ({ images, postId }) => {
               <div key={`${image._id}_${index}`} className="relative h-full">
                 <Image
                   image={image.url}
-                  onclickHandler={() =>
-                    navigate(`/photo?postId=${postId}&imageId=${image._id}`, {
-                      state: { scrollToPostId: postId },
-                    })
-                  }
+                  onclickHandler={() => navigate(`/photo?postId=${postId}&imageId=${image._id}`)}
                 />
               </div>
             ))}
@@ -34,11 +28,7 @@ const PostImages = ({ images, postId }) => {
                 <div key={`${image._id}_${index}`} className="relative h-full">
                   <Image
                     image={image.url}
-                    onclickHandler={() =>
-                      navigate(`/photo?postId=${postId}&imageId=${image._id}`, {
-                        state: { scrollToPostId: postId },
-                      })
-                    }
+                    onclickHandler={() => navigate(`/photo?postId=${postId}&imageId=${image._id}`)}
                   />
                 </div>
               ))}
@@ -52,11 +42,7 @@ const PostImages = ({ images, postId }) => {
                     image={image.url}
                     isOverLayout={index === 2 && images.length > 5}
                     overAmount={images.length - 5}
-                    onclickHandler={() =>
-                      navigate(`/photo?postId=${postId}&imageId=${image._id}`, {
-                        state: { scrollToPostId: postId },
-                      })
-                    }
+                    onclickHandler={() => navigate(`/photo?postId=${postId}&imageId=${image._id}`)}
                   />
                 </div>
               ))}

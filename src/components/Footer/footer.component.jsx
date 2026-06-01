@@ -25,15 +25,15 @@ const Footer = () => {
         </p>
       </aside>
       <nav>
-        <h6 className="footer-title">Social</h6>
+        <h2 className="footer-title">Social</h2>
         <div className="grid grid-flow-col gap-4 justify-center items-center">
-          <a target="_blank" href="https://www.facebook.com/19.anim/">
+          <a target="_blank" rel="noreferrer" href="https://www.facebook.com/19.anim/" aria-label="Facebook">
             <Facebook className="text-2xl" />
           </a>
-          <a target="_blank" href="https://www.instagram.com/19.anim/">
+          <a target="_blank" rel="noreferrer" href="https://www.instagram.com/19.anim/" aria-label="Instagram">
             <Instagram className="text-2xl" />
           </a>
-          <a target="_blank" href="https://www.tiktok.com/@odayiembanthuochoconhuou">
+          <a target="_blank" rel="noreferrer" href="https://www.tiktok.com/@odayiembanthuochoconhuou" aria-label="TikTok">
             <Tiktok className="text-2xl" />
           </a>
         </div>

@@ -10,7 +10,7 @@ const PostComment = ({ user, comment, createdAt }) => {
             <img src={user.avatar} />
           </div>
         </div>
-        <div className="card text-white bg-[#333334] card-xs rounded-2xl shadow-sm">
+        <div className="card card-xs rounded-2xl bg-base-200 text-base-content">
           <div className="card-body gap-0.5">
             <h2 className="card-title">{user.displayName}</h2>
             <p className="textarea-md whitespace-pre">{comment}</p>

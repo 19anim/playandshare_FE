@@ -1,11 +1,11 @@
 import { IoMdCheckmark } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { useParams } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { updatedExpense } from "../../store/expense";
 import { useSelector, useDispatch } from "react-redux";
 
-const EditCalculatorParticipantModal = ({ ref, name, balance, currency, id }) => {
+const EditCalculatorParticipantModal = ({ ref, id }) => {
   const dispatch = useDispatch();
   const { calculatorId } = useParams();
   const { expenses } = useSelector((state) => state.expense);
@@ -17,6 +17,10 @@ const EditCalculatorParticipantModal = ({ ref, name, balance, currency, id }) =>
   const [participantData, setParticipantData] = useState(currentParticipant);
   const [errorMessage, setErrorMessage] = useState("");
 
+  useEffect(() => {
+    setParticipantData(currentParticipant);
+  }, [currentParticipant]);
+
   const formatNumber = (num) => {
     return parseFloat(num || 0).toLocaleString("en-US", {
       minimumFractionDigits: 0,
@@ -24,24 +28,11 @@ const EditCalculatorParticipantModal = ({ ref, name, balance, currency, id }) =>
     });
   };
   const exchangeToVND = useMemo(() => {
-    let result = 0;
-    if (participantData.currency === "VND") {
-      setParticipantData((prev) => ({
-        ...prev,
-        balanceInVND: participantData.balance,
-      }));
-      return result;
-    }
+    if (participantData.currency === "VND") return Number(participantData.balance) || 0;
 
-    const selectedRate = rates.filter((rate) => rate.currency === participantData.currency);
-    result = selectedRate.length > 0 ? selectedRate[0].compareToVND * participantData.balance : 0;
-    setParticipantData((prev) => ({
-      ...prev,
-      balanceInVND: result,
-    }));
-
-    return result;
-  }, [participantData.currency, participantData.balance]);
+    const selectedRate = rates.find((rate) => rate.currency === participantData.currency);
+    return selectedRate ? selectedRate.compareToVND * participantData.balance : 0;
+  }, [participantData.currency, participantData.balance, rates]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -73,9 +64,26 @@ const EditCalculatorParticipantModal = ({ ref, name, balance, currency, id }) =>
     }
 
     setErrorMessage("");
+    const selectedRate =
+      participantData.currency === "VND"
+        ? { compareToVND: 1 }
+        : rates.find((rate) => rate.currency === participantData.currency);
+
+    if (!selectedRate) {
+      setErrorMessage("Không tìm thấy tỷ giá cho đơn vị tiền tệ đã chọn");
+      return;
+    }
+
+    const paidInVND = Number(participantData.paidInVND) || 0;
+    const updatedParticipant = {
+      ...participantData,
+      balanceInVND: exchangeToVND,
+      paidInVND,
+      paid: paidInVND / selectedRate.compareToVND,
+    };
     const tempData = JSON.parse(JSON.stringify(currentCalculator));
     const participantIndex = tempData.participants.findIndex((part) => part._id === id);
-    tempData.participants[participantIndex] = { ...participantData };
+    tempData.participants[participantIndex] = updatedParticipant;
     dispatch(
       updatedExpense(calculatorId, {
         updatedData: tempData,
@@ -86,11 +94,7 @@ const EditCalculatorParticipantModal = ({ ref, name, balance, currency, id }) =>
   };
 
   const handleClose = () => {
-    setParticipantData({
-      name: currentParticipant.name,
-      balance: currentParticipant.balance,
-      currency: currentParticipant.currency,
-    });
+    setParticipantData(currentParticipant);
     setErrorMessage("");
     ref.current.close();
   };

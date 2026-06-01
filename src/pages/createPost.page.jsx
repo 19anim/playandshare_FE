@@ -51,7 +51,7 @@ const CreatePost = () => {
     setFormdata({ ...formData, types: [...newSelectedTypes] });
   };
 
-  const handleUploadClick = (e) => {
+  const handleUploadClick = () => {
     if (images.length < MAX_IMAGE_COUNT) imageElementRef.current.click();
   };
 
@@ -143,10 +143,14 @@ const CreatePost = () => {
   };
 
   return (
-    <section className="w-full h-full flex justify-center items-center p-4">
-      <fieldset className="fieldset h-full w-full max-w-[1100px] bg-base-200 border border-base-300 p-4 m-4 rounded-box flex flex-col items-center">
-        <header className="text-center text-xl font-bold pt-2">Bài viết mới</header>
-        <div className="divider my-0 before:bg-[#9d9d9d] before:h-[0.05rem] after:bg-[#9d9d9d] after:h-[0.05rem]"></div>
+    <section className="mx-auto w-full max-w-[960px] px-3 py-5 md:px-6">
+      <fieldset className="fieldset flex w-full flex-col items-center rounded-box border border-base-300 bg-base-100 p-5 md:p-8">
+        <header className="w-full max-w-[750px]">
+          <p className="text-sm font-bold text-primary">NEW INSPIRATION</p>
+          <h1 className="text-3xl font-bold">Bài viết mới</h1>
+          <p className="mt-1 text-sm text-base-content/60">Chia sẻ một địa điểm đáng nhớ với mọi người.</p>
+        </header>
+        <div className="divider my-3"></div>
 
         <section className="flex flex-wrap gap-3 max-w-[750px] w-full self-center">
           <SelectedFilter
@@ -176,11 +180,11 @@ const CreatePost = () => {
             type="text"
             placeholder="Tieu De"
             name="title"
-            className="input w-full"
+            className="input w-full bg-base-200"
           />
           <textarea
             onChange={handleOnChangeFormData}
-            className="textarea min-h-[200px] w-full"
+            className="textarea min-h-[200px] w-full bg-base-200"
             name="content"
             placeholder="Noi dung"
           ></textarea>
@@ -200,7 +204,7 @@ const CreatePost = () => {
           >
             <i
               className={`text-3xl fa-regular fa-images ${
-                images.length >= MAX_IMAGE_COUNT ? "text-gray-500" : null
+                images.length >= MAX_IMAGE_COUNT ? "text-base-content/40" : "text-primary"
               }`}
             ></i>
             {images.length >= MAX_IMAGE_COUNT ? (
@@ -229,8 +233,8 @@ const CreatePost = () => {
             <span className="loading loading-bars loading-xl"></span>
           ) : (
             images.map((image, index) => (
-              <div key={index} className="relative size-[80px] rounded-md overflow-hidden">
-                <img src={image} alt={`Preview ${index}`} className="w-full h-full object-cover" />
+              <div key={index} className="relative size-24 overflow-hidden rounded-box">
+                <img src={image} alt={`Preview ${index}`} className="h-full w-full object-cover" loading="lazy" />
                 <button
                   onClick={() => handleRemoveImage(index)}
                   className="absolute top-0 right-0  text-white p-1 rounded-full cursor-pointer"
@@ -242,7 +246,7 @@ const CreatePost = () => {
           )}
         </div>
 
-        <button onClick={handleSubmitPost} className="btn btn-primary" disabled={isCreating}>
+        <button onClick={handleSubmitPost} className="btn btn-primary mt-3 rounded-full" disabled={isCreating}>
           Đăng bài viết
         </button>
         <SuccessModal

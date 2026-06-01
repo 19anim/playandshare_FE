@@ -1,16 +1,79 @@
 @import "tailwindcss";
-
-html {
-  color-scheme: light dark;
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark;
 }
 
-html[data-theme="dark"] {
-  color-scheme: dark;
-}
-
-html[data-theme="light"] {
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  prefersdark: false;
   color-scheme: light;
+
+  --color-base-100: #ffffff;
+  --color-base-200: #fbfbf9;
+  --color-base-300: #f6f6f3;
+  --color-base-content: #211922;
+  --color-primary: #e60023;
+  --color-primary-content: #ffffff;
+  --color-secondary: #e5e5e0;
+  --color-secondary-content: #211922;
+  --color-accent: #262622;
+  --color-accent-content: #ffffff;
+  --color-neutral: #262622;
+  --color-neutral-content: #ffffff;
+  --color-info: #435ee5;
+  --color-info-content: #ffffff;
+  --color-success: #103c25;
+  --color-success-content: #ffffff;
+  --color-warning: #f4c430;
+  --color-warning-content: #211922;
+  --color-error: #9e0a0a;
+  --color-error-content: #ffffff;
+
+  --radius-selector: 9999px;
+  --radius-field: 1rem;
+  --radius-box: 1rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
 }
+
+@plugin "daisyui/theme" {
+  name: "dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: dark;
+
+  --color-base-100: #211922;
+  --color-base-200: #262622;
+  --color-base-300: #33332e;
+  --color-base-content: #fbfbf9;
+  --color-primary: #e60023;
+  --color-primary-content: #ffffff;
+  --color-secondary: #62625b;
+  --color-secondary-content: #ffffff;
+  --color-accent: #e5e5e0;
+  --color-accent-content: #211922;
+  --color-neutral: #e5e5e0;
+  --color-neutral-content: #211922;
+  --color-info: #617bff;
+  --color-info-content: #ffffff;
+  --color-success: #c7f0da;
+  --color-success-content: #103c25;
+  --color-warning: #f4c430;
+  --color-warning-content: #211922;
+  --color-error: #cc001f;
+  --color-error-content: #ffffff;
+
+  --radius-selector: 9999px;
+  --radius-field: 1rem;
+  --radius-box: 1rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 @theme {
   @keyframes wiggle {

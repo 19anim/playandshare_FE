@@ -34,20 +34,20 @@ const CalculatorDetail = () => {
   }, [currentCalculator, navigate]);
 
   return (
-    <section className="w-full h-full flex justify-center items-center p-4">
-      <fieldset className="fieldset h-full w-full max-w-[1100px] bg-base-200 border border-base-300 p-4 m-4 rounded-box flex flex-col items-center">
-        <div className="w-full flex flex-row items-center pt-2">
-          <Link className="justify-self-start" to="/calculator">
+    <section className="mx-auto w-full max-w-[1200px] px-3 py-5 md:px-6">
+      <div className="card w-full border border-base-300 bg-base-100 p-4 md:p-6">
+        <div className="flex w-full flex-row items-center gap-3">
+          <Link className="btn btn-circle btn-ghost" to="/calculator">
             <i className="fa-solid fa-arrow-left "></i>
           </Link>
-          <header className="text-center text-xl font-bold self-center justify-self-center w-full">
+          <header className="w-full text-xl font-bold">
             {currentCalculator ? currentCalculator.title : "Đang tải..."}
           </header>
-          <button onClick={() => confirmationModalRef.current.showModal()} className="btn">
+          <button onClick={() => confirmationModalRef.current.showModal()} className="btn btn-circle btn-ghost text-error">
             <i className="fa-regular fa-trash-can"></i>
           </button>
         </div>
-        <div className="divider my-0 before:bg-[#9d9d9d] before:h-[0.05rem] after:bg-[#9d9d9d] after:h-[0.05rem]"></div>
+        <div className="divider my-0"></div>
         <section className="w-full grid lg:grid-cols-[max-content_1fr] gap-3">
           {currentCalculator ? (
             <>
@@ -58,7 +58,7 @@ const CalculatorDetail = () => {
             <span className="loading loading-bars loading-lg"></span>
           )}
         </section>
-      </fieldset>
+      </div>
       <ConfirmationModal
         ref={confirmationModalRef}
         title="Xóa chi tiêu"

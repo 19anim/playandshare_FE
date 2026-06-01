@@ -40,14 +40,21 @@ const PostModal = ({ modalRef, post, likeHandler, currentLikeAmount, liked }) =>
   };
 
   return (
-    <dialog ref={modalRef} className="modal text-black">
+    <dialog
+      ref={modalRef}
+      className="modal"
+      onCancel={(event) => {
+        event.preventDefault();
+        modalRef.current?.close();
+      }}
+    >
       <div className="modal-box max-w-screen md:w-[700px] w-[95%] p-0">
-        <div className="max-h-[90vh] overflow-y-auto bg-[#252728] text-[#e2e5e9] flex flex-col">
-          <section className="sticky top-0 bg-[#252728] z-50">
-            <header className="text-center text-3xl py-3 font-mono">
+        <div className="flex max-h-[90vh] flex-col overflow-y-auto bg-base-100 text-base-content">
+          <section className="sticky top-0 z-50 bg-base-100">
+            <header className="py-3 text-center text-xl font-bold">
               {author.displayName}'s post
             </header>
-            <div className="divider h-0 before:h-[1px] before:bg-[#393939] after:h-[1px] after:bg-[#393939] m-0"></div>
+            <div className="divider m-0 h-0"></div>
             <form method="dialog">
               <button className="btn btn-sm btn-circle absolute right-2 top-2">✕</button>
             </form>
@@ -57,7 +64,7 @@ const PostModal = ({ modalRef, post, likeHandler, currentLikeAmount, liked }) =>
             <section className="px-3 grid grid-cols-[auto_1fr_auto] gap-x-3 pt-3">
               <div className="avatar">
                 <div className="size-12 rounded-full">
-                  <img src={author.avatar} />
+                    <img src={author.avatar} alt={author.displayName} loading="lazy" />
                 </div>
               </div>
 
@@ -83,7 +90,7 @@ const PostModal = ({ modalRef, post, likeHandler, currentLikeAmount, liked }) =>
               {images.length > 0 && <PostImages images={images} postId={_id} />}
             </section>
 
-            <div className="relative z-10 bg-[#252728]">
+            <div className="relative z-10 bg-base-100">
               <PostStatus
                 currentLikeAmount={currentLikeAmount}
                 commentAmount={comments.length}
@@ -105,10 +112,10 @@ const PostModal = ({ modalRef, post, likeHandler, currentLikeAmount, liked }) =>
           </div>
 
           {accessToken && (
-            <fieldset className="fieldset border-t-1 border-[#393939] w-full bg-[#252728] p-4 pb-5 sticky bottom-0 grid grid-cols-[auto_1fr] z-20">
+            <fieldset className="fieldset sticky bottom-0 z-20 grid w-full grid-cols-[auto_1fr] border-t border-base-300 bg-base-100 p-4 pb-5">
               <div className="avatar">
                 <div className="size-12 rounded-full">
-                  <img src={avatar} />
+                  <img src={avatar} alt="Your avatar" loading="lazy" />
                 </div>
               </div>
               <div className="relative">
@@ -121,7 +128,7 @@ const PostModal = ({ modalRef, post, likeHandler, currentLikeAmount, liked }) =>
                       commentToPost();
                     }
                   }}
-                  className="textarea w-full rounded-2xl bg-[#333334] resize-none outline-none focus:outline-none ring-0 focus:ring-0 border-0 focus:border-0 outline-offset-0 focus:outline-offset-0"
+                  className="textarea w-full resize-none rounded-2xl bg-base-200 outline-none focus:outline-none"
                   placeholder="Bình luận về bài viết nhennnn"
                 ></textarea>
                 <i
@@ -129,7 +136,7 @@ const PostModal = ({ modalRef, post, likeHandler, currentLikeAmount, liked }) =>
                   className={`fa-solid fa-paper-plane absolute bottom-2 right-2 text-base p-2 ${
                     commentContent.length === 0
                       ? "cursor-not-allowed text-gray-500"
-                      : "cursor-pointer text-blue-400 hover:bg-[#474646] hover:rounded-full"
+                      : "cursor-pointer text-primary hover:bg-base-200 hover:rounded-full"
                   }`}
                 ></i>
               </div>

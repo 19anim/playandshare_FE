@@ -1,5 +1,3 @@
-import { useRef } from "react";
-
 const Image = ({ image, isOverLayout, overAmount, onclickHandler }) => {
   return (
     <div className="absolute inset-0 w-full h-full">
@@ -10,6 +8,7 @@ const Image = ({ image, isOverLayout, overAmount, onclickHandler }) => {
         onClick={onclickHandler}
         src={image}
         alt="image_preview"
+        loading="lazy"
       />
       {isOverLayout && (
         <span

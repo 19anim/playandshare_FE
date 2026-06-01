@@ -1,47 +1,28 @@
-import { useState, useEffect, useRef, lazy, Suspense, useCallback } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Filter from "../components/Filter/filter.component";
 import SelectedFilter from "../components/Filter/selectedFilter.component";
 import Select from "../components/Filter/select.component";
-import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import PostSkeleton from "../components/Loading/postSkeleton.component";
 import { getPosts } from "../store/post";
+import { fetchCities, fetchPlayTypes } from "../store/postUtil";
 
 const Post = lazy(() => import("../components/Post/post.component"));
-
-// Create a PostSkeleton component for loading state
-const PostSkeleton = () => (
-  <div className="w-full max-w-[950px] self-center p-4">
-    <div className="card bg-base-100 shadow-xl animate-pulse">
-      <div className="skeleton h-32"></div>
-      <div className="card-body">
-        <div className="skeleton h-4 w-2/3"></div>
-        <div className="skeleton h-4 w-full"></div>
-        <div className="skeleton h-4 w-1/2"></div>
-      </div>
-    </div>
-  </div>
-);
+const DEFAULT_CITY = "default_city";
 
 const Search = () => {
   const dispatch = useDispatch();
   const observerRef = useRef(null);
-  const location = useLocation();
-  const [scrollToPostId, setScrollToPostId] = useState();
   const [isUsingFilter, setIsUsingFilter] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
+  const [postsWithFilter, setPostsWithFilter] = useState([]);
   const { playTypes, cities } = useSelector((state) => state.postUtil);
   const { posts, page, hasMore, loading } = useSelector((state) => state.post);
-  const postRefs = useRef({});
-  const cityRef = useRef(null);
-  const [postsWithFilter, setPostsWithFilter] = useState([]);
-  const DEFAULT_CITY = "default_city";
 
   const lastPostRef = useCallback(
     (node) => {
       if (loading) return;
-
       if (observerRef.current) observerRef.current.disconnect();
 
       observerRef.current = new IntersectionObserver((entries) => {
@@ -52,13 +33,12 @@ const Search = () => {
 
       if (node) observerRef.current.observe(node);
     },
-    [loading, hasMore, page, isUsingFilter]
+    [dispatch, hasMore, loading, page]
   );
 
   useEffect(() => {
-    setScrollToPostId(location.state?.scrollToPostId);
     dispatch(getPosts(1));
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     let filtered = [...posts];
@@ -71,82 +51,77 @@ const Search = () => {
       filtered = filtered.filter((post) => post.types?.some((type) => selectedTypes.includes(type.name)));
     }
 
-    filtered.sort((a, b) => new Date(b.UpdatedAt) - new Date(a.UpdatedAt));
+    filtered.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
     setPostsWithFilter(filtered);
   }, [posts, selectedCity, selectedTypes]);
 
   useEffect(() => {
     if (isUsingFilter) {
-      setSelectedCity(cityRef.current.value);
+      if (cities.length === 0) dispatch(fetchCities());
+      if (playTypes.length === 0) dispatch(fetchPlayTypes());
     } else {
       setSelectedCity("");
       setSelectedTypes([]);
     }
-  }, [isUsingFilter]);
+  }, [cities.length, dispatch, isUsingFilter, playTypes.length]);
 
-  useEffect(() => {
-    if (scrollToPostId && postRefs.current[scrollToPostId]) {
-      postRefs.current[scrollToPostId].scrollIntoView({ behavior: "smooth" });
+  const handleTypeFilter = (event) => {
+    const currentType = event.target.textContent?.trim();
+    if (currentType && !selectedTypes.includes(currentType)) {
+      setSelectedTypes([...selectedTypes, currentType]);
     }
-  }, [scrollToPostId]);
-
-  const onclickFilterHandler = (e) => {
-    setIsUsingFilter(!isUsingFilter);
   };
 
-  const handleTypeFilter = (e) => {
-    const currentType = e.target.text;
-    if (selectedTypes.indexOf(currentType) === -1 && currentType !== undefined) setSelectedTypes([...selectedTypes, currentType]);
+  const removeSelectedType = (event) => {
+    const currentType = event.currentTarget.textContent?.trim();
+    setSelectedTypes(selectedTypes.filter((type) => type !== currentType));
   };
 
-  const handleCityFilter = (e) => {
-    const currentCity = e.target.value;
-    setSelectedCity(currentCity);
-  };
-
-  const onClickSelectedTypesHandler = (e) => {
-    const newSelectedTypes = [...selectedTypes];
-    const typeIndex = newSelectedTypes.indexOf(e.target.innerText);
-    newSelectedTypes.splice(typeIndex, 1);
-    setSelectedTypes([...newSelectedTypes]);
-  };
-
-  // bg-bright
   return (
-    <section className="w-full h-full flex justify-center items-center">
-      <fieldset className="fieldset h-full w-full max-w-[1300px] bg-base-300 border border-base-300 p-4 m-4 rounded-box flex flex-col">
-        <legend className="fieldset-legend text-base">Tìm kiếm chỗ đi chơi thôi</legend>
-
-        <section className="flex flex-col max-w-[950px] w-full self-center md:flex-row gap-3 items-center">
-          <button onClick={onclickFilterHandler} className={`btn self-start ${isUsingFilter ? "btn-accent" : null}`}>
-            Bộ lọc <i className="fa-solid fa-arrow-down-short-wide"></i>
+    <section className="mx-auto w-full max-w-[1440px] px-3 py-5 md:px-6">
+      <div className="mb-5 rounded-box border border-base-300 bg-base-100 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 className="text-xl font-bold">Khám phá địa điểm mới</h1>
+            <p className="text-sm text-base-content/60">Tìm cảm hứng cho chuyến đi tiếp theo của bạn.</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsUsingFilter(!isUsingFilter)}
+            className={`btn rounded-full ${isUsingFilter ? "btn-accent" : "btn-secondary"}`}
+          >
+            <i className="fa-solid fa-sliders"></i>
+            Bộ lọc
           </button>
-          {isUsingFilter ? (
-            <section className="flex flex-col md:flex-row w-full gap-3">
-              <Filter filterLabel="Thể loại ăn chơi" filterData={playTypes} onClickHandler={handleTypeFilter} />
-              <Select ref={cityRef} searchVisible={false} selectLable="Thành phố" selectOptions={cities} onchangeHandler={handleCityFilter} />
-            </section>
-          ) : null}
-        </section>
+        </div>
 
-        {isUsingFilter ? (
-          <section className="flex flex-wrap gap-3 max-w-[950px] w-full self-center">
-            <SelectedFilter selectedFilter={selectedTypes} onClickHandler={onClickSelectedTypesHandler} />
-          </section>
-        ) : null}
+        {isUsingFilter && (
+          <div className="mt-4 flex flex-col gap-3 border-t border-base-300 pt-4">
+            <div className="flex flex-col gap-3 md:flex-row">
+              <Filter filterLabel="Thể loại" filterData={playTypes} onClickHandler={handleTypeFilter} />
+              <Select
+                searchVisible={false}
+                selectLable="Thành phố"
+                selectOptions={cities}
+                value={selectedCity || DEFAULT_CITY}
+                onchangeHandler={(event) => setSelectedCity(event.target.value)}
+              />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <SelectedFilter selectedFilter={selectedTypes} onClickHandler={removeSelectedType} />
+            </div>
+          </div>
+        )}
+      </div>
 
+      <div className="columns-1 gap-4 md:columns-2 xl:columns-3">
         {postsWithFilter.map((post, index) => {
           const isLastPost = index === postsWithFilter.length - 1;
           return (
             <div
-              className="w-full max-w-[950px] self-center"
               key={post._id}
               ref={(element) => {
-                postRefs.current[post._id] = element;
-
-                if (isLastPost) {
-                  lastPostRef(element);
-                }
+                if (isLastPost) lastPostRef(element);
               }}
             >
               <Suspense fallback={<PostSkeleton />}>
@@ -160,11 +135,16 @@ const Search = () => {
           <>
             <PostSkeleton />
             <PostSkeleton />
+            <PostSkeleton />
           </>
         )}
+      </div>
 
-        {!loading && postsWithFilter.length === 0 && <div className="text-center py-4">No posts found</div>}
-      </fieldset>
+      {!loading && postsWithFilter.length === 0 && (
+        <div className="rounded-box bg-base-100 py-16 text-center text-base-content/60">
+          Chưa tìm thấy bài viết phù hợp.
+        </div>
+      )}
     </section>
   );
 };

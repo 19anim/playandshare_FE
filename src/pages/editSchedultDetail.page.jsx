@@ -93,18 +93,18 @@ const EditScheduleDetail = () => {
   }, [loading, error, hasSubmitted]);
 
   return (
-    <section className="w-full h-full flex flex-col justify-center items-center p-4">
-      <div className="self-end flex gap-2 mb-3">
-        <button onClick={handleSubmit} className="btn btn-success">
+    <section className="mx-auto flex w-full max-w-[1200px] flex-col px-3 py-5 md:px-6">
+      <div className="mb-3 flex gap-2 self-end">
+        <button onClick={handleSubmit} className="btn btn-primary rounded-full">
           Save
         </button>
-        <Link to={`/schedule/${scheduleId}`} className="btn btn-error">
+        <Link to={`/schedule/${scheduleId}`} className="btn btn-secondary rounded-full">
           Cancel
         </Link>
       </div>
-      <div className="card max-w-7xl w-full bg-base-100 dark:bg-stone-800 shadow-xl p-6">
+      <div className="card w-full border border-base-300 bg-base-100 p-4 md:p-6">
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-8">
-          <div className="bg-base-100 dark:bg-stone-700 rounded-lg p-6 shadow-sm border border-base-300 dark:border-stone-600">
+          <div className="rounded-box bg-base-200 p-5 md:p-6">
             <h1 className="text-2xl font-bold mb-6 text-base-900 dark:text-base-50">
               Chỉnh sửa lịch trình
             </h1>
@@ -164,7 +164,7 @@ const EditScheduleDetail = () => {
           </div>
 
           {newSchedule && (
-            <div className="bg-base-100 dark:bg-stone-700 rounded-lg p-6 shadow-sm border border-base-300 dark:border-stone-600">
+            <div className="rounded-box bg-base-200 p-5 md:p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold text-base-900 dark:text-base-50">Lịch trình</h2>
                 <button

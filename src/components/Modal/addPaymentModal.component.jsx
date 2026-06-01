@@ -258,11 +258,11 @@ const AddPaymentModal = ({ ref, participants }) => {
           {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>
         <div className="modal-action">
-          <button onClick={handleSubmit} className="btn bg-success">
+          <button onClick={handleSubmit} className="btn btn-success">
             Tạo chi tiêu
           </button>
           <form method="dialog">
-            <button onClick={handleCancel} className="btn bg-error">
+            <button onClick={handleCancel} className="btn btn-error">
               Hủy bỏ
             </button>
           </form>

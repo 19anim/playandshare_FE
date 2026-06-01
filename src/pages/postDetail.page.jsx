@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom";
 import Post from "../components/Post/post.component";
-import fetchPostDetail from "../hooks/fetchPostDetail.hook";
+import useFetchPostDetail from "../hooks/fetchPostDetail.hook";
 
 const PostDetail = () => {
   const { postId } = useParams();
-  const [loading, post] = fetchPostDetail({ postId });
+  const [loading, post] = useFetchPostDetail({ postId });
 
   return (
     <div className="place-items-center flex flex-col w-full h-full p-4">

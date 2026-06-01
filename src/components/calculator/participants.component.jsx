@@ -9,15 +9,15 @@ const Participants = ({ data }) => {
   const [showAll, setShowAll] = useState(false);
 
   return (
-    <section className="bg-gray-200 dark:bg-[#00000033] rounded-box p-2 lg:p-4 flex flex-col gap-2 justify-center self-start transition-all">
+    <section className="flex flex-col gap-3 self-start rounded-box bg-base-200 p-3 lg:p-4">
       <button
         onClick={() => addUserRef.current.showModal()}
-        className="btn btn-success btn-sm text-xl self-start hover:scale-110 hover:animate-wiggle transition-all duration-300"
+        className="btn btn-primary btn-sm rounded-full self-start"
         title="Thêm người tham gia"
       >
         <LiaUserPlusSolid />
       </button>
-      <ul className="list bg-base-100 rounded-box shadow-md overflow-hidden">
+      <ul className="list overflow-hidden rounded-box border border-base-300 bg-base-100">
         {data &&
           data.map((participant, index) => (
             <div

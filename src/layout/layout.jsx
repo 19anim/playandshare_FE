@@ -4,9 +4,9 @@ import { Outlet } from "react-router-dom";
 
 const Layout = () => {
   return (
-    <div className="grid grid-rows-[auto_1fr_auto]">
+    <div className="grid min-h-screen grid-rows-[auto_1fr_auto] bg-base-200">
       <Navbar />
-      <main>
+      <main className="min-h-[calc(100vh-4rem)] min-w-0">
         <Outlet />
       </main>
       <Footer />

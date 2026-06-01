@@ -1,32 +1,24 @@
-import PostImages from "./postImages.component";
-import axios from "../../helper/api";
-import { useSelector } from "react-redux";
 import { useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import axios from "../../helper/api";
+import { formatDate } from "../../helper/formatDate";
 import PostModal from "../Modal/postModal.component";
 import PostActionButtons from "./postActionButtons.component";
+import PostImages from "./postImages.component";
 import PostStatus from "./postStatus.component";
-import { formatDate } from "../../helper/formatDate";
 
 const Post = ({ post }) => {
-  const { _id, author, title, content, types, city, images, likes, comments, shares, createdAt } =
-    post;
-  const formattedDate = formatDate(createdAt);
+  const { _id, author, title, content, types, city, images, likes, comments, shares, createdAt } = post;
   const { userId } = useSelector((state) => state.user);
   const [liked, setLiked] = useState(likes.indexOf(userId) !== -1);
   const [currentLikeAmount, setCurrentLikeAmount] = useState(likes.length);
   const modalRef = useRef(null);
 
-  const handleCommentClick = () => {
-    modalRef.current.showModal();
-  };
-
   const onLikeHandler = async () => {
     try {
       const response = await axios.request("/post/like", {
         method: "POST",
-        data: {
-          postId: _id,
-        },
+        data: { postId: _id },
       });
 
       if (response) {
@@ -39,61 +31,44 @@ const Post = ({ post }) => {
   };
 
   return (
-    <div
-      className={`fieldset w-full max-w-[950px] bg-[#555] rounded-box self-center text-white flex flex-col grow`}
-    >
-      <div className="card w-full">
-        <div className="card-body">
-          <h2 className="card-title">
-            <div className="avatar">
-              <div className="w-14 rounded-full">
-                <img src={author.avatar} />
-              </div>
+    <article className="card mb-4 break-inside-avoid overflow-hidden border border-base-300 bg-base-100">
+      {images.length > 0 ? <PostImages images={images} postId={_id} /> : null}
+
+      <div className="card-body gap-3 p-4">
+        <div className="flex items-center gap-3">
+          <div className="avatar">
+            <div className="w-10 rounded-full">
+              <img src={author.avatar} alt={author.displayName} loading="lazy" />
             </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold">{author.displayName}</h1>
-              </div>
-              <p className="text-xs text-[#9d9d9d]">{formattedDate}</p>
-            </div>
-          </h2>
-          <h1 className="text-xl font-medium"> {title}</h1>
-          <p className="whitespace-pre-line">{content}</p>
-          <div className="card-actions justify-end">
-            {types.map((type) => (
-              <div
-                key={`${author}_${title}_${type.name}`}
-                className="badge badge-soft dark:text-white"
-              >
-                {type.name}
-              </div>
-            ))}
           </div>
-          <div className="card-actions justify-end">
-            <div className="badge badge-soft badge-primary font-bold">{city.name}</div>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold">{author.displayName}</p>
+            <p className="text-xs text-base-content/60">{formatDate(createdAt)}</p>
           </div>
         </div>
+
+        <h2 className="text-lg font-bold">{title}</h2>
+        <p className="line-clamp-3 whitespace-pre-line text-sm text-base-content/75">{content}</p>
+
+        <div className="flex flex-wrap gap-2">
+          <span className="badge badge-primary badge-soft font-bold">{city.name}</span>
+          {types.map((type) => (
+            <span key={`${_id}_${type.name}`} className="badge badge-soft">
+              {type.name}
+            </span>
+          ))}
+        </div>
       </div>
-      {images.length > 0 ? <PostImages images={images} postId={_id} /> : null}
-      <PostStatus
-        currentLikeAmount={currentLikeAmount}
-        commentAmount={comments.length}
-        shareAmount={shares}
-      />
-      <div className="divider my-0 before:bg-[#9d9d9d] after:bg-[#9d9d9d]"></div>
+
+      <PostStatus currentLikeAmount={currentLikeAmount} commentAmount={comments.length} shareAmount={shares} />
+      <div className="divider my-0 px-4"></div>
       <PostActionButtons
         likeHandler={onLikeHandler}
-        commentHandler={handleCommentClick}
+        commentHandler={() => modalRef.current.showModal()}
         isLiked={liked}
       />
-      <PostModal
-        modalRef={modalRef}
-        post={post}
-        likeHandler={onLikeHandler}
-        currentLikeAmount={currentLikeAmount}
-        liked={liked}
-      />
-    </div>
+      <PostModal modalRef={modalRef} post={post} likeHandler={onLikeHandler} currentLikeAmount={currentLikeAmount} liked={liked} />
+    </article>
   );
 };
 

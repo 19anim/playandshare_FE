@@ -27,23 +27,23 @@ const Payments = ({ data }) => {
   };
 
   return (
-    <section className="bg-gray-200 dark:bg-[#00000033] rounded-box p-2 lg:p-4 flex flex-col gap-3">
+    <section className="flex flex-col gap-3 rounded-box bg-base-200 p-3 lg:p-4">
       <div className="flex flex-row gap-2">
         <button
-          className="btn btn-success btn-sm text-xl self-start hover:scale-110 hover:animate-wiggle transition-all duration-300"
+          className="btn btn-primary btn-sm rounded-full self-start"
           title="Thêm khoản chi"
           onClick={() => addPaymentRef.current.showModal()}
         >
           <LuCirclePlus />
         </button>
         <button
-          className="btn btn-success btn-sm text-xl self-start hover:scale-110 hover:animate-wiggle transition-all duration-300"
+          className="btn btn-secondary btn-sm rounded-full self-start"
           title="Xem tất cả người tham gia"
         >
           <IoExpand />
         </button>
       </div>
-      <ul className="list bg-base-100 rounded-box shadow-md">
+      <ul className="list rounded-box border border-base-300 bg-base-100">
         <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Thông tin chi tiết</li>
         {payments.length === 0 ? (
           <li className="p-4 text-center text-gray-500">Chưa có khoản chi nào</li>

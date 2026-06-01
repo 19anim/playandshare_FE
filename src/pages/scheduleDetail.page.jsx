@@ -36,16 +36,16 @@ const ScheduleDetail = () => {
     if (!loading && !error && !currentSchedule) {
       navigate("/schedule", { replace: true });
     }
-  }, [loading, error, currentSchedule]);
+  }, [loading, error, currentSchedule, navigate]);
 
   return (
-    <section className="w-full h-full flex flex-col justify-center items-center p-4">
-      <div className="self-end flex gap-2 mb-3">
-        <Link to={`/schedule/edit/${scheduleId}`} className="btn btn-primary">
+    <section className="mx-auto flex w-full max-w-[1200px] flex-col px-3 py-5 md:px-6">
+      <div className="mb-3 flex gap-2 self-end">
+        <Link to={`/schedule/edit/${scheduleId}`} className="btn btn-primary rounded-full">
           Edit
         </Link>
         <button
-          className="btn btn-error"
+          className="btn btn-error rounded-full"
           onClick={() => {
             deleteModalRef.current.showModal();
           }}
@@ -53,7 +53,7 @@ const ScheduleDetail = () => {
           Delete
         </button>
       </div>
-      <div className="card max-w-7xl w-full bg-base-200 border border-base-300 dark:bg-base-800 shadow-xl p-6">
+      <div className="card w-full border border-base-300 bg-base-100 p-4 md:p-6">
         <Link
           to="/schedule"
           className="flex items-center gap-2 text-base-600 dark:text-base-400 mb-4 hover:text-base-800 dark:hover:text-base-200 transition-colors"
@@ -61,7 +61,7 @@ const ScheduleDetail = () => {
           <i className="fa fa-arrow-left" aria-hidden="true"></i> Quay lại
         </Link>
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-8">
-          <div className="bg-base-100 dark:bg-[#00000033] rounded-lg p-6 shadow-sm border border-base-300 dark:border-gray-700">
+          <div className="rounded-box bg-base-200 p-5 md:p-6">
             <h2 className="text-2xl font-bold mb-6 text-base-900 dark:text-base-50">
               Thông tin chung
             </h2>
