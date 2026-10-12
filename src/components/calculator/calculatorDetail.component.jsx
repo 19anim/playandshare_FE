@@ -4,10 +4,11 @@ import { Link, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchExpenses, removeExpense } from "../../store/expense";
 import { getCurrencyRates } from "../../store/currenyRate";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmationModal from "../Modal/confirmation.component";
-import { exportExpensePdf } from "../../helper/exportExpensePdf";
+import ExpenseSummary from "./expenseSummary.component";
+import ExpenseExportActions from "./expenseExportActions.component";
 
 const CalculatorDetail = () => {
   const dispatch = useDispatch();
@@ -18,20 +19,6 @@ const CalculatorDetail = () => {
 
   // Derived (not mirrored in state) so the redirect below never sees a stale value
   const currentCalculator = expenses.find((item) => item._id === calculatorId);
-
-  const [isExporting, setIsExporting] = useState(false);
-
-  const handleExportPdf = async () => {
-    setIsExporting(true);
-    try {
-      await exportExpensePdf(currentCalculator);
-    } catch (exportError) {
-      console.error(exportError);
-      alert("Xuất PDF thất bại. Vui lòng thử lại.");
-    } finally {
-      setIsExporting(false);
-    }
-  };
 
   const handleDeleteCalculator = () => {
     dispatch(removeExpense(calculatorId));
@@ -55,32 +42,25 @@ const CalculatorDetail = () => {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-3 py-5 md:px-6">
       <div className="card w-full border border-base-300 bg-base-100 p-4 md:p-6">
-        <div className="flex w-full flex-row items-center gap-3">
+        <div className="flex w-full flex-row items-center gap-1 sm:gap-3">
           <Link className="btn btn-circle btn-ghost" to="/calculator">
             <i className="fa-solid fa-arrow-left "></i>
           </Link>
-          <header className="w-full text-xl font-bold">
+          <header className="min-w-0 flex-1 break-words text-xl font-bold">
             {currentCalculator ? currentCalculator.title : "Đang tải..."}
           </header>
-          <button
-            onClick={handleExportPdf}
-            disabled={!currentCalculator || isExporting}
-            className="btn btn-ghost rounded-full"
-            title="Xuất PDF để chia sẻ"
-          >
-            {isExporting ? (
-              <span className="loading loading-spinner loading-sm"></span>
-            ) : (
-              <i className="fa-regular fa-file-pdf"></i>
-            )}
-            <span className="hidden sm:inline">Xuất PDF</span>
-          </button>
+          <ExpenseExportActions expense={currentCalculator} />
           <button onClick={() => confirmationModalRef.current.showModal()} className="btn btn-circle btn-ghost text-error">
             <i className="fa-regular fa-trash-can"></i>
           </button>
         </div>
         <div className="divider my-0"></div>
-        <section className="w-full grid lg:grid-cols-[max-content_1fr] gap-3">
+        {currentCalculator && (
+          <div className="mb-3">
+            <ExpenseSummary expense={currentCalculator} />
+          </div>
+        )}
+        <section className="w-full grid grid-cols-1 lg:grid-cols-[max-content_1fr] gap-3">
           {currentCalculator ? (
             <>
               <Participants data={currentCalculator.participants} />

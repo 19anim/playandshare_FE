@@ -1,6 +1,7 @@
 // Builds and downloads a shareable PDF summary of one calculator (expense).
 // pdfmake (+ its bundled Roboto font, which covers Vietnamese) is ~1MB, so it is
 // only loaded when the user actually exports.
+import { getExpenseTotals } from "./expenseTotals";
 
 const COLORS = {
   text: "#211922",
@@ -61,9 +62,11 @@ export const buildExpensePdfDefinition = (expense, exportedAt = new Date()) => {
   const participants = expense.participants || [];
   const payments = expense.payments || [];
 
-  const totalContributedVND = participants.reduce((sum, p) => sum + (p.balanceInVND || 0), 0);
-  const totalSpentVND = participants.reduce((sum, p) => sum + (p.paidInVND || 0), 0);
-  const remainingVND = totalContributedVND - totalSpentVND;
+  const {
+    totalDeposit: totalContributedVND,
+    totalSpent: totalSpentVND,
+    remaining: remainingVND,
+  } = getExpenseTotals(expense);
 
   const participantRows = participants.map((p) => {
     const currency = p.currency || "VND";
@@ -201,18 +204,48 @@ const toFileName = (title) => {
   return `${safeTitle || "chia-tien"} - chia tien.pdf`;
 };
 
-export const exportExpensePdf = async (expense) => {
+const loadPdfMake = async () => {
   const [{ default: pdfMake }, { default: vfs }] = await Promise.all([
     import("pdfmake/build/pdfmake"),
     import("pdfmake/build/vfs_fonts"),
   ]);
   pdfMake.addVirtualFileSystem(vfs);
+  return pdfMake;
+};
 
-  await new Promise((resolve, reject) => {
+export const createExpensePdfFile = async (expense) => {
+  const pdfMake = await loadPdfMake();
+  const blob = await new Promise((resolve, reject) => {
     try {
-      pdfMake.createPdf(buildExpensePdfDefinition(expense)).download(toFileName(expense.title), resolve);
+      pdfMake.createPdf(buildExpensePdfDefinition(expense)).getBlob(resolve);
     } catch (error) {
       reject(error);
     }
   });
+  return new File([blob], toFileName(expense.title), { type: "application/pdf" });
 };
+
+export const downloadFile = (file) => {
+  const url = URL.createObjectURL(file);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = file.name;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+};
+
+// Web Share API with files: Android/iOS share sheet (Zalo, Messenger, mail...)
+export const canShareFiles = () => {
+  if (typeof navigator === "undefined" || !navigator.canShare) return false;
+  try {
+    return navigator.canShare({
+      files: [new File([""], "test.pdf", { type: "application/pdf" })],
+    });
+  } catch {
+    return false;
+  }
+};
+
+export const shareFile = (file, title) => navigator.share({ files: [file], title });
