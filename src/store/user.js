@@ -31,7 +31,6 @@ const userReducer = createSlice({
     },
     apiRequestFailed: (state, action) => {
       state.error = action.payload;
-      state.accessToken = "";
       state.loading = false;
     },
     apiRequestedDone: (state, action) => {
@@ -62,8 +61,11 @@ const userReducer = createSlice({
     },
     storeLoginData: (state, action) => {
       const { accessToken, user } = action.payload;
-      if (accessToken) token.setAccessToken(accessToken);
-      state.accessToken = accessToken;
+      // Profile updates reuse this reducer but don't return a new token
+      if (accessToken) {
+        token.setAccessToken(accessToken);
+        state.accessToken = accessToken;
+      }
       state.userId = user._id;
       state.username = user.username;
       state.displayName = user.displayName;

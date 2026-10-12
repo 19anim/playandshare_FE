@@ -5,6 +5,7 @@ const scheduleReducer = createSlice({
   name: "schedule",
   initialState: {
     schedule: [],
+    fetched: false,
     loading: false,
     error: null,
   },
@@ -15,6 +16,7 @@ const scheduleReducer = createSlice({
     },
     fetchScheduleSuccess: (state, action) => {
       state.schedule = action.payload.schedules;
+      state.fetched = true;
       state.loading = false;
     },
     fetchScheduleFailure: (state, action) => {

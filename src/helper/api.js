@@ -1,4 +1,12 @@
 import axios from "axios";
+import { userDataClearance } from "../store/user";
+
+// The store imports this module (via the api middleware), so it is injected
+// from store.js instead of imported here to avoid a circular import
+let store;
+export const injectStore = (_store) => {
+  store = _store;
+};
 
 const currentMode = import.meta.env.MODE;
 const apiUrl =
@@ -43,6 +51,8 @@ api.interceptors.response.use(
       } catch (err) {
         console.log("ERROR", err);
         localStorage.removeItem("access_token");
+        // Refresh token is gone/expired: sign the user out so protected routes redirect to /signin
+        store?.dispatch(userDataClearance());
         return Promise.reject(err);
       }
     }

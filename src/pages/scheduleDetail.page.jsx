@@ -1,42 +1,46 @@
 import { useSelector } from "react-redux";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import ScheduleTasks from "../components/schedule/scheduleTasks.component";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import ConfirmationModal from "../components/Modal/confirmation.component";
 import { useDispatch } from "react-redux";
-import { deleteSchedule } from "../store/schedule";
+import { deleteSchedule, fetchSchedule } from "../store/schedule";
 
 const ScheduleDetail = () => {
   const { scheduleId } = useParams();
   const navigate = useNavigate();
-  const { schedule, loading, error } = useSelector((state) => state.schedule);
+  const { schedule, fetched, loading, error } = useSelector((state) => state.schedule);
   const dispatch = useDispatch();
   const deleteModalRef = useRef(null);
+  const isDeletingRef = useRef(false);
 
-  const [currentSchedule, setCurrentSchedule] = useState(
-    schedule.filter((item) => item._id === scheduleId)[0]
-  );
+  // Derived (not mirrored in state) so the redirect below never sees a stale value
+  const currentSchedule = schedule.find((item) => item._id === scheduleId);
 
   const handleDelete = () => {
+    isDeletingRef.current = true;
     dispatch(deleteSchedule(scheduleId));
   };
 
   useEffect(() => {
-    setCurrentSchedule(schedule.filter((item) => item._id === scheduleId)[0]);
-  }, [schedule, scheduleId]);
-
-  useEffect(() => {
-    if (error) {
+    if (error && isDeletingRef.current) {
+      isDeletingRef.current = false;
       deleteModalRef.current.close();
       alert("Xóa lịch trình thất bại. Vui lòng thử lại.");
     }
   }, [error]);
 
+  // Opening this page directly (refresh / shared link) means the list hasn't been loaded yet
   useEffect(() => {
-    if (!loading && !error && !currentSchedule) {
+    if (!fetched) dispatch(fetchSchedule());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (fetched && !loading && !error && !currentSchedule) {
       navigate("/schedule", { replace: true });
     }
-  }, [loading, error, currentSchedule, navigate]);
+  }, [fetched, loading, error, currentSchedule, navigate]);
 
   return (
     <section className="mx-auto flex w-full max-w-[1200px] flex-col px-3 py-5 md:px-6">
@@ -101,7 +105,11 @@ const ScheduleDetail = () => {
                 </div>
               </div>
             ) : (
-              <p className="text-red-500">Không tìm thấy lịch trình.</p>
+              fetched || error ? (
+                <p className="text-red-500">Không tìm thấy lịch trình.</p>
+              ) : (
+                <span className="loading loading-bars loading-lg"></span>
+              )
             )}
           </div>
 

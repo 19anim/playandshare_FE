@@ -38,9 +38,8 @@ const api =
         data,
         withCredentials,
         headers: isMultipartData ? { "Content-Type": "multipart/form-data" } : {},
-        validateStatus: function (status) {
-          return true;
-        },
+        // Keep axios' default validateStatus: 4xx/5xx must reject so the token
+        // refresh interceptor in helper/api can catch expired tokens (403)
       };
 
       response = !accessTokenNeeded

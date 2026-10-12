@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import InputComponent from "../components/Input/input.component";
 import ScheduleTasks from "../components/schedule/scheduleTasks.component";
 import { useDispatch } from "react-redux";
-import { updateSchedule } from "../store/schedule";
+import { fetchSchedule, updateSchedule } from "../store/schedule";
 import SuccessModal from "../components/Modal/success.component";
 import ErrorModal from "../components/Modal/error.component";
 
@@ -14,7 +14,7 @@ const EditScheduleDetail = () => {
   const { schedule } = useSelector((state) => state.schedule);
   const successModalRef = useRef(null);
   const errorModalRef = useRef(null);
-  const { loading, error } = useSelector((state) => state.schedule);
+  const { fetched, loading, error } = useSelector((state) => state.schedule);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const dispatch = useDispatch();
 
@@ -69,6 +69,12 @@ const EditScheduleDetail = () => {
     setHasSubmitted(true);
     dispatch(updateSchedule(scheduleId, newSchedule));
   };
+
+  // Opening this page directly (refresh / shared link) means the list hasn't been loaded yet
+  useEffect(() => {
+    if (!fetched) dispatch(fetchSchedule());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
 
   useEffect(() => {
     setNewSchedule(schedule ? schedule.filter((item) => item._id === scheduleId)[0] : null);

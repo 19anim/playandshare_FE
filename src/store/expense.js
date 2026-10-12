@@ -6,6 +6,7 @@ const expenseReducer = createSlice({
   name: "expense",
   initialState: {
     expenses: [],
+    fetched: false,
     loading: false,
     error: null,
   },
@@ -23,6 +24,7 @@ const expenseReducer = createSlice({
     },
     setExpenses: (state, action) => {
       state.expenses = action.payload;
+      state.fetched = true;
       state.loading = false;
       state.error = null;
     },

@@ -2,24 +2,21 @@ import Participants from "./participants.component";
 import Payments from "./payments.component";
 import { Link, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { removeExpense } from "../../store/expense";
-import { useEffect, useRef, useState } from "react";
+import { fetchExpenses, removeExpense } from "../../store/expense";
+import { getCurrencyRates } from "../../store/currenyRate";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmationModal from "../Modal/confirmation.component";
 
 const CalculatorDetail = () => {
   const dispatch = useDispatch();
   const { calculatorId } = useParams();
-  const { expenses } = useSelector((state) => state.expense);
+  const { expenses, fetched, loading, error } = useSelector((state) => state.expense);
+  const { rates } = useSelector((state) => state.currencyRate);
   const confirmationModalRef = useRef(null);
 
-  const [currentCalculator, setCurrentCalculator] = useState(
-    expenses.find((item) => item._id === calculatorId)
-  );
-
-  useEffect(() => {
-    setCurrentCalculator(expenses.find((item) => item._id === calculatorId));
-  }, [expenses, calculatorId]);
+  // Derived (not mirrored in state) so the redirect below never sees a stale value
+  const currentCalculator = expenses.find((item) => item._id === calculatorId);
 
   const handleDeleteCalculator = () => {
     dispatch(removeExpense(calculatorId));
@@ -27,11 +24,18 @@ const CalculatorDetail = () => {
 
   const navigate = useNavigate();
 
+  // Opening this page directly (refresh / shared link) means the list hasn't been loaded yet
   useEffect(() => {
-    if (!currentCalculator) {
+    if (!fetched) dispatch(fetchExpenses());
+    if (rates.length === 0) dispatch(getCurrencyRates());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (fetched && !loading && !currentCalculator) {
       navigate("/calculator", { replace: true });
     }
-  }, [currentCalculator, navigate]);
+  }, [fetched, loading, currentCalculator, navigate]);
 
   return (
     <section className="mx-auto w-full max-w-[1200px] px-3 py-5 md:px-6">
@@ -55,7 +59,11 @@ const CalculatorDetail = () => {
               <Payments data={currentCalculator} />
             </>
           ) : (
-            <span className="loading loading-bars loading-lg"></span>
+            !fetched && error ? (
+              <p className="text-error">Không tải được dữ liệu, vui lòng thử lại.</p>
+            ) : (
+              <span className="loading loading-bars loading-lg"></span>
+            )
           )}
         </section>
       </div>

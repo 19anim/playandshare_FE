@@ -1,13 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import SignUpImage from "../assets/authentication/signup.svg";
 import { useDispatch } from "react-redux";
 import { signup } from "../store/user";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
-  const { accessToken, loading, error } = useSelector((state) => state.user);
+  const { loading, error } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [signUpData, setSignUpData] = useState({
     username: "",
@@ -15,13 +14,7 @@ const SignUp = () => {
     password: "",
     email: "",
   });
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (accessToken !== "") {
-      navigate("/");
-    }
-  }, [accessToken, navigate]);
+  const location = useLocation();
 
   const onChangeHandler = (e) => {
     const { name, value } = e.target;
@@ -104,7 +97,7 @@ const SignUp = () => {
           <p className="text-red-500">{error !== null ? error : null}</p>
           <p>
             Bạn đã có tài khoản ?{" "}
-            <Link className="text-blue-600" to="/signin">
+            <Link className="text-blue-600" to="/signin" state={location.state}>
               Đăng nhập tại đây nhe
             </Link>
           </p>

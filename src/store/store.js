@@ -7,6 +7,7 @@ import themeReducer from "./theme";
 import expenseReducer from "./expense";
 import currencyRateReducer from "./currenyRate";
 import api from "./middleware/api";
+import { injectStore } from "../helper/api";
 
 const store = configureStore({
   reducer: {
@@ -26,5 +27,7 @@ const store = configureStore({
       },
     }).concat(api),
 });
+
+injectStore(store);
 
 export default store;
