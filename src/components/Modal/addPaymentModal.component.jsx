@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addPaymentToExpense } from "../../store/expense";
 import { useParams } from "react-router-dom";
@@ -14,13 +14,8 @@ const AddPaymentModal = ({ ref, participants }) => {
     currency: "VND",
     participants: [],
   });
-  const [updatedParticipants, setUpdatedParticipants] = useState(participants);
   const [error, setError] = useState("");
   const { rates } = useSelector((state) => state.currencyRate);
-
-  useEffect(() => {
-    setUpdatedParticipants(participants);
-  }, [participants]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -56,28 +51,11 @@ const AddPaymentModal = ({ ref, participants }) => {
     }
 
     setError("");
-    const equalShare = exchangeToVND / paymentData.participants.length;
-
-    const updatedParts = [...updatedParticipants].map((part) => {
-      if (paymentData.participants.includes(part.name)) {
-        return {
-          ...part,
-          paid:
-            part.currency === "VND"
-              ? part.paid + equalShare
-              : part.paid +
-                equalShare / rates.find((rate) => rate.currency === part.currency).compareToVND,
-          paidInVND: part.paidInVND + equalShare,
-        };
-      }
-      return part;
-    });
-
-    setUpdatedParticipants(updatedParts);
+    // Everyone's spent money is recalculated by the server from the payments
     dispatch(
       addPaymentToExpense(expenseID, {
         payment: paymentData,
-        updatedParticipants: updatedParts,
+        rates,
       })
     );
     setPaymentData({
@@ -139,14 +117,10 @@ const AddPaymentModal = ({ ref, participants }) => {
   };
 
   const exchangeToVND = useMemo(() => {
-    let result = 0;
-    if (paymentData.currency === "VND") {
-      return paymentData.amount;
-    }
-    const selectedRate = rates.filter((rate) => rate.currency === paymentData.currency);
-    result = selectedRate[0].compareToVND * paymentData.amount;
-    return result;
-  }, [paymentData.currency, paymentData.amount]);
+    if (paymentData.currency === "VND") return Number(paymentData.amount) || 0;
+    const selectedRate = rates.find((rate) => rate.currency === paymentData.currency);
+    return selectedRate ? selectedRate.compareToVND * paymentData.amount : 0;
+  }, [paymentData.currency, paymentData.amount, rates]);
 
   return (
     <dialog ref={ref} className="modal">

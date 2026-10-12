@@ -5,6 +5,11 @@ import { useEffect, useMemo, useState } from "react";
 import { updatedExpense } from "../../store/expense";
 import { useSelector, useDispatch } from "react-redux";
 
+const isNameTaken = (participants, name, exceptId) =>
+  participants.some(
+    (part) => part._id !== exceptId && part.name.trim().toLowerCase() === name.trim().toLowerCase()
+  );
+
 const EditCalculatorParticipantModal = ({ ref, id }) => {
   const dispatch = useDispatch();
   const { calculatorId } = useParams();
@@ -55,6 +60,9 @@ const EditCalculatorParticipantModal = ({ ref, id }) => {
     if (participantData.name.trim() === "") {
       setErrorMessage("Tên người tham gia không được để trống");
       return;
+    } else if (isNameTaken(currentCalculator.participants, participantData.name, id)) {
+      setErrorMessage("Tên này đã có trong danh sách");
+      return;
     } else if (isNaN(participantData.balance) || participantData.balance < 0) {
       setErrorMessage("Số tiền đóng vào không hợp lệ");
       return;
@@ -87,6 +95,7 @@ const EditCalculatorParticipantModal = ({ ref, id }) => {
     dispatch(
       updatedExpense(calculatorId, {
         updatedData: tempData,
+        rates,
         Type: "editParticipant",
       })
     );

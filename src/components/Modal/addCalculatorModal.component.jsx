@@ -11,19 +11,25 @@ const AddCalculatorModal = ({ ref, calculatorData, setCalculatorData }) => {
   const { userId } = useSelector((state) => state.user);
   const [errorMessage, setErrorMessage] = useState("");
   const handleAdd = () => {
+    // Blank lines (e.g. a trailing Enter) are not people
+    const participants = calculatorData.participants
+      .map((p) => ({ ...p, name: p.name.trim() }))
+      .filter((p) => p.name !== "");
+    const names = participants.map((p) => p.name.toLowerCase());
+    const duplicate = participants.find((p, index) => names.indexOf(p.name.toLowerCase()) !== index);
+
     if (calculatorData.title.trim() === "") {
       setErrorMessage("Tên chi tiêu không được để trống");
-    } else if (
-      calculatorData.participants.length === 0 ||
-      (calculatorData.participants.length === 1 &&
-        calculatorData.participants[0].name.trim() === "")
-    ) {
+    } else if (participants.length === 0) {
       setErrorMessage("Vui lòng thêm ít nhất một người tham gia");
+    } else if (duplicate) {
+      setErrorMessage(`Tên "${duplicate.name}" bị trùng, vui lòng đặt tên khác`);
     } else {
       setErrorMessage("");
       dispatch(
         createExpense({
           ...calculatorData,
+          participants,
           createdBy: userId,
         })
       );

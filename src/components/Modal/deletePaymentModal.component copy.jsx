@@ -16,7 +16,7 @@ const DeletePaymentModal = ({ ref, paymentId }) => {
       <div className="modal-box">
         <h3 className="font-bold text-lg">Xóa chi tiêu</h3>
         <p className="py-4">Bạn có muốn xóa chi tiêu này không?</p>
-        {error && <p className="text-error">{error}</p>}
+        {error && <p className="text-error">{error.message || "Có lỗi xảy ra, vui lòng thử lại."}</p>}
         <div className="flex gap-2 justify-end">
           <button className="btn btn-error" onClick={handleDeletePayment}>
             {loading ? "Đang xóa..." : "Xóa"}

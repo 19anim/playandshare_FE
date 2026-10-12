@@ -1,9 +1,14 @@
 import { Link } from "react-router-dom";
+import { getExpenseTotals } from "../../helper/expenseTotals";
 
-const ExpenseCard = ({ expense, isSelecting, isSelected, onSelect }) => {
-  const formattedBalance = Number(expense.balance || 0).toLocaleString("en-US", {
+const formatNumber = (num) =>
+  Number(num || 0).toLocaleString("en-US", {
     maximumFractionDigits: 2,
   });
+
+const ExpenseCard = ({ expense, isSelecting, isSelected, onSelect }) => {
+  // Same numbers as the summary on the detail page
+  const { totalSpent, remaining } = getExpenseTotals(expense);
 
   return (
     <article className="card border border-base-300 bg-base-100">
@@ -34,11 +39,17 @@ const ExpenseCard = ({ expense, isSelecting, isSelected, onSelect }) => {
         </div>
 
         <div className="flex items-end justify-between gap-3">
-          <div>
-            <p className="text-xs text-base-content/60">Số dư</p>
-            <p className={`font-bold ${expense.balance >= 0 ? "text-success" : "text-error"}`}>
-              {formattedBalance} VNĐ
-            </p>
+          <div className="flex gap-5">
+            <div>
+              <p className="text-xs text-base-content/60">Đã chi</p>
+              <p className="whitespace-nowrap font-bold text-error">{formatNumber(totalSpent)} VNĐ</p>
+            </div>
+            <div>
+              <p className="text-xs text-base-content/60">Số dư</p>
+              <p className={`whitespace-nowrap font-bold ${remaining >= 0 ? "text-success" : "text-error"}`}>
+                {formatNumber(remaining)} VNĐ
+              </p>
+            </div>
           </div>
           <Link className="btn btn-secondary btn-sm" to={expense._id}>
             Chi tiết

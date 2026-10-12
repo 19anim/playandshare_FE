@@ -1,5 +1,4 @@
-// LOGIC FOR EDIT PAYMENT MODAL IS WRONG, NEED TO STORE THE OLD PAYMENT DATA BEFORE EDITING TO CALCULATE THE DIFFERENCE AND UPDATE PARTICIPANTS' PAID AMOUNTS ACCORDINGLY
-import { useState, useMemo, useEffect, use } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updatePaymentInExpense } from "../../store/expense";
 import { useParams } from "react-router-dom";
@@ -15,14 +14,8 @@ const EditPaymentModal = ({ ref, participants, payment }) => {
     currency: "VND",
     participants: [],
   });
-  const [originalPaymentData, setOriginalPaymentData] = useState(null);
-  const [updatedParticipants, setUpdatedParticipants] = useState(participants);
   const [error, setError] = useState("");
   const { rates } = useSelector((state) => state.currencyRate);
-
-  useEffect(() => {
-    setUpdatedParticipants(participants);
-  }, [participants]);
 
   useEffect(() => {
     if (payment) {
@@ -34,7 +27,6 @@ const EditPaymentModal = ({ ref, participants, payment }) => {
         participants: payment.participants,
       };
       setPaymentData(paymentDataObj);
-      setOriginalPaymentData({ ...paymentDataObj });
     }
   }, [payment]);
 
@@ -72,77 +64,11 @@ const EditPaymentModal = ({ ref, participants, payment }) => {
     }
 
     setError("");
-
-    const oldExchangeToVND =
-      originalPaymentData.currency === "VND"
-        ? parseFloat(originalPaymentData.amount)
-        : (rates.find((rate) => rate.currency === originalPaymentData.currency)?.compareToVND ||
-            1) * parseFloat(originalPaymentData.amount);
-
-    const newExchangeToVND = exchangeToVND;
-
-    // Calculate the difference in VND
-    const amountDifference = newExchangeToVND - oldExchangeToVND;
-
-    // Get the old participants
-    const oldParticipants = originalPaymentData.participants;
-
-    // Calculate shares
-    const oldSharePerPerson = oldExchangeToVND / oldParticipants.length;
-    const newSharePerPerson = newExchangeToVND / paymentData.participants.length;
-
-    const updatedParts = updatedParticipants.map((part) => {
-      const wasInOldPayment = oldParticipants.includes(part.name);
-      const isInNewPayment = paymentData.participants.includes(part.name);
-
-      if (wasInOldPayment && !isInNewPayment) {
-        // Participant was removed from payment - deduct their share
-        return {
-          ...part,
-          paid:
-            part.currency === "VND"
-              ? part.paid - oldSharePerPerson
-              : part.paid -
-                (oldSharePerPerson /
-                  rates.find((rate) => rate.currency === part.currency)?.compareToVND || 1),
-          paidInVND: part.paidInVND - oldSharePerPerson,
-        };
-      } else if (!wasInOldPayment && isInNewPayment) {
-        // Participant was added to payment - add their new share
-        return {
-          ...part,
-          paid:
-            part.currency === "VND"
-              ? part.paid + newSharePerPerson
-              : part.paid +
-                (newSharePerPerson /
-                  rates.find((rate) => rate.currency === part.currency)?.compareToVND || 1),
-          paidInVND: part.paidInVND + newSharePerPerson,
-        };
-      } else if (wasInOldPayment && isInNewPayment) {
-        // Participant was in both - update with the difference
-        return {
-          ...part,
-          paid:
-            part.currency === "VND"
-              ? part.paid - oldSharePerPerson + newSharePerPerson
-              : part.paid -
-                (oldSharePerPerson /
-                  rates.find((rate) => rate.currency === part.currency)?.compareToVND || 1) +
-                (newSharePerPerson /
-                  rates.find((rate) => rate.currency === part.currency)?.compareToVND || 1),
-          paidInVND: part.paidInVND - oldSharePerPerson + newSharePerPerson,
-        };
-      }
-
-      return part;
-    });
-
-    setUpdatedParticipants(updatedParts);
+    // Everyone's spent money is recalculated by the server from the payments
     dispatch(
       updatePaymentInExpense(expenseID, payment._id, {
         payment: paymentData,
-        updatedParticipants: updatedParts,
+        rates,
       })
     );
     setPaymentData({
@@ -204,14 +130,10 @@ const EditPaymentModal = ({ ref, participants, payment }) => {
   };
 
   const exchangeToVND = useMemo(() => {
-    let result = 0;
-    if (paymentData.currency === "VND") {
-      return paymentData.amount;
-    }
-    const selectedRate = rates.filter((rate) => rate.currency === paymentData.currency);
-    result = selectedRate[0].compareToVND * paymentData.amount;
-    return result;
-  }, [paymentData.currency, paymentData.amount]);
+    if (paymentData.currency === "VND") return Number(paymentData.amount) || 0;
+    const selectedRate = rates.find((rate) => rate.currency === paymentData.currency);
+    return selectedRate ? selectedRate.compareToVND * paymentData.amount : 0;
+  }, [paymentData.currency, paymentData.amount, rates]);
 
   return (
     <dialog ref={ref} className="modal">
