@@ -23,7 +23,8 @@ const SignUp = () => {
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
-    dispatch(signup(signUpData));
+    // Keyboard suggestions on phones often append a space after the word
+    dispatch(signup({ ...signUpData, username: signUpData.username.trim(), email: signUpData.email.trim() }));
   };
   return (
     <section className="w-full h-full p-4 flex justify-center items-center">
@@ -45,6 +46,10 @@ const SignUp = () => {
                 type="text"
                 className="input w-full"
                 placeholder="abcxyz"
+                autoComplete="username"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
               />
               {signUpData.username &&
                 !/^[A-Za-z][A-Za-z0-9\-]{5,19}$/.test(signUpData.username) && (
@@ -74,6 +79,10 @@ const SignUp = () => {
                 type="email"
                 className="input w-full"
                 placeholder="abcxyz@mail.com"
+                autoComplete="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
               />
               {signUpData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signUpData.email) && (
                 <p className="text-red-500 text-sm">Please input correct email type</p>
@@ -86,6 +95,7 @@ const SignUp = () => {
                 type="password"
                 className="input w-full"
                 placeholder="***"
+                autoComplete="new-password"
               />
               {signUpData.password && signUpData.password.length < 8 && (
                 <p className="text-red-500 text-sm">Password must be at least 8 characters</p>

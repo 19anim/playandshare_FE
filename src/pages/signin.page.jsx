@@ -21,7 +21,8 @@ const SignIn = () => {
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
-    store.dispatch(signin(signinData));
+    // Keyboard suggestions on phones often append a space after the word
+    store.dispatch(signin({ ...signinData, username: signinData.username.trim() }));
   };
   return (
     <section className="w-full h-full p-4 flex justify-center items-center">
@@ -44,6 +45,10 @@ const SignIn = () => {
                 type="text"
                 placeholder="abcxyz"
                 name="username"
+                autoComplete="username"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
               />
 
               <label className="fieldset-label">Mật khẩu</label>
@@ -54,6 +59,7 @@ const SignIn = () => {
                 type="password"
                 placeholder="***"
                 name="password"
+                autoComplete="current-password"
               />
               <button
                 type="submit"
