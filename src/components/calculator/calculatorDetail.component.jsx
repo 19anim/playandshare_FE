@@ -4,9 +4,10 @@ import { Link, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchExpenses, removeExpense } from "../../store/expense";
 import { getCurrencyRates } from "../../store/currenyRate";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmationModal from "../Modal/confirmation.component";
+import { exportExpensePdf } from "../../helper/exportExpensePdf";
 
 const CalculatorDetail = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,20 @@ const CalculatorDetail = () => {
 
   // Derived (not mirrored in state) so the redirect below never sees a stale value
   const currentCalculator = expenses.find((item) => item._id === calculatorId);
+
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportPdf = async () => {
+    setIsExporting(true);
+    try {
+      await exportExpensePdf(currentCalculator);
+    } catch (exportError) {
+      console.error(exportError);
+      alert("Xuất PDF thất bại. Vui lòng thử lại.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const handleDeleteCalculator = () => {
     dispatch(removeExpense(calculatorId));
@@ -47,6 +62,19 @@ const CalculatorDetail = () => {
           <header className="w-full text-xl font-bold">
             {currentCalculator ? currentCalculator.title : "Đang tải..."}
           </header>
+          <button
+            onClick={handleExportPdf}
+            disabled={!currentCalculator || isExporting}
+            className="btn btn-ghost rounded-full"
+            title="Xuất PDF để chia sẻ"
+          >
+            {isExporting ? (
+              <span className="loading loading-spinner loading-sm"></span>
+            ) : (
+              <i className="fa-regular fa-file-pdf"></i>
+            )}
+            <span className="hidden sm:inline">Xuất PDF</span>
+          </button>
           <button onClick={() => confirmationModalRef.current.showModal()} className="btn btn-circle btn-ghost text-error">
             <i className="fa-regular fa-trash-can"></i>
           </button>

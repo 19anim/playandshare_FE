@@ -36,7 +36,7 @@ const DeleteCalculatorParticipantModal = ({ ref, id }) => {
       <div className="modal-box">
         <h3 className="font-bold text-lg">Xóa nạn nhân này?</h3>
         <p className="py-4">Xóa người này là mất 1 người chia tiền ó nha 🙄</p>
-        {error && <p className="text-error-content">{error}</p>}
+        {error && <p className="text-error">{error}</p>}
         <div className="flex gap-2 justify-end">
           <button
             className="btn btn-error"
