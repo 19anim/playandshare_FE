@@ -2,6 +2,7 @@ import { LuCirclePlus } from "react-icons/lu";
 import { IoExpand } from "react-icons/io5";
 import { useRef, useState } from "react";
 import Payment from "./payment.component";
+import { formatSharers } from "../../helper/portions";
 import AddPaymentModal from "../Modal/addPaymentModal.component";
 import EditPaymentModal from "../Modal/editPaymentModal.component";
 import DeletePaymentModal from "../Modal/deletePaymentModal.component copy";
@@ -60,7 +61,7 @@ const Payments = ({ data }) => {
                 paymentDes={payment.description}
                 paymentAmount={payment.amount}
                 currency={payment.currency}
-                paymentParticipant={payment.participants.join(", ")}
+                paymentParticipant={formatSharers(payment)}
                 handleEditPayment={() => handleEditPayment(payment)}
                 handleDeletePayment={() => handleDeltePayment(payment._id)}
               />

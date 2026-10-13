@@ -2,6 +2,8 @@ import { useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addPaymentToExpense } from "../../store/expense";
 import { useParams } from "react-router-dom";
+import PaymentParticipantsPicker from "./paymentParticipantsPicker.component";
+import { portionsToList } from "../../helper/portions";
 
 const AddPaymentModal = ({ ref, participants }) => {
   const currencyOptions = ["VND", "USD", "EUR", "THB", "JPY", "KRW", "GBP"];
@@ -13,6 +15,7 @@ const AddPaymentModal = ({ ref, participants }) => {
     amount: "",
     currency: "VND",
     participants: [],
+    portions: {},
   });
   const [error, setError] = useState("");
   const { rates } = useSelector((state) => state.currencyRate);
@@ -54,7 +57,10 @@ const AddPaymentModal = ({ ref, participants }) => {
     // Everyone's spent money is recalculated by the server from the payments
     dispatch(
       addPaymentToExpense(expenseID, {
-        payment: paymentData,
+        payment: {
+          ...paymentData,
+          portions: portionsToList(paymentData.portions, paymentData.participants),
+        },
         rates,
       })
     );
@@ -64,6 +70,7 @@ const AddPaymentModal = ({ ref, participants }) => {
       amount: "",
       currency: "VND",
       participants: [],
+      portions: {},
     });
     setError("");
     ref.current.close();
@@ -76,37 +83,9 @@ const AddPaymentModal = ({ ref, participants }) => {
       amount: "",
       currency: "VND",
       participants: [],
+      portions: {},
     });
     setError("");
-  };
-
-  const handleCheckboxChange = (e, participant) => {
-    if (e.target.checked) {
-      setPaymentData((prev) => ({
-        ...prev,
-        participants: [...prev.participants, participant.name],
-      }));
-    } else {
-      setPaymentData((prev) => ({
-        ...prev,
-        participants: prev.participants.filter((name) => name !== participant.name),
-      }));
-    }
-  };
-
-  const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      const allParticipantNames = participants.map((participant) => participant.name);
-      setPaymentData((prev) => ({
-        ...prev,
-        participants: allParticipantNames,
-      }));
-    } else {
-      setPaymentData((prev) => ({
-        ...prev,
-        participants: [],
-      }));
-    }
   };
 
   const formatNumber = (num) => {
@@ -187,48 +166,15 @@ const AddPaymentModal = ({ ref, participants }) => {
               />
             )}
           </div>
-          <div className="border border-base-300 p-2 rounded-xl">
-            <h2 className="font-semibold textarea-md pb-1">Người tham gia</h2>
-            <div>
-              <label className="label">
-                <input
-                  type="checkbox"
-                  checked={paymentData.participants.length === participants.length}
-                  onChange={handleSelectAll}
-                  className="checkbox checkbox-lg"
-                />
-                Chọn tất cả người tham gia
-              </label>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-1 max-h-30 overflow-scroll md:max-h-60">
-              {participants.map((participant) => (
-                <div key={participant.name} className="flex gap-2 items-center">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-lg"
-                    checked={paymentData.participants.includes(participant.name)}
-                    onChange={(e) => handleCheckboxChange(e, participant)}
-                  />
-                  <div>
-                    <p>{participant.name}</p>
-                    {participant.currency !== "VND" ? (
-                      <p>
-                        {formatNumber(
-                          parseFloat((participant.balance - participant.paid).toFixed(2))
-                        )}{" "}
-                        {participant.currency} ~ {formatNumber(participant.balanceInVND)} VND
-                      </p>
-                    ) : (
-                      <p>
-                        {formatNumber(participant.balance - participant.paidInVND)}{" "}
-                        {participant.currency}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <PaymentParticipantsPicker
+            participants={participants}
+            selected={paymentData.participants}
+            portions={paymentData.portions}
+            amountInVND={exchangeToVND}
+            onChange={({ participants: selected, portions }) =>
+              setPaymentData((prev) => ({ ...prev, participants: selected, portions }))
+            }
+          />
           {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>
         <div className="modal-action">

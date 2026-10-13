@@ -2,6 +2,7 @@
 // pdfmake (+ its bundled Roboto font, which covers Vietnamese) is ~1MB, so it is
 // only loaded when the user actually exports.
 import { getExpenseTotals } from "./expenseTotals";
+import { formatSharers, hasCustomPortions, totalPortions } from "./portions";
 
 const COLORS = {
   text: "#211922",
@@ -81,8 +82,9 @@ export const buildExpensePdfDefinition = (expense, exportedAt = new Date()) => {
 
   const paymentRows = payments.map((payment, index) => {
     const currency = payment.currency || "VND";
-    const sharedBy = payment.participants || [];
-    const perPerson = sharedBy.length ? payment.amount / sharedBy.length : 0;
+    const portions = totalPortions(payment);
+    // Price of one portion; equals the per-person price when nobody has extra portions
+    const perPortion = portions ? payment.amount / portions : 0;
     return [
       { text: String(index + 1), color: COLORS.muted },
       {
@@ -92,8 +94,12 @@ export const buildExpensePdfDefinition = (expense, exportedAt = new Date()) => {
         ],
       },
       { text: formatMoney(payment.amount, currency), alignment: "right", color: COLORS.error, noWrap: true },
-      { text: sharedBy.join(", ") || "—" },
-      { text: formatMoney(perPerson, currency), alignment: "right", noWrap: true },
+      { text: formatSharers(payment) || "—" },
+      {
+        text: formatMoney(perPortion, currency) + (hasCustomPortions(payment) ? " / phần" : ""),
+        alignment: "right",
+        noWrap: true,
+      },
     ];
   });
 
