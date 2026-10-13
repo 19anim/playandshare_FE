@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { getExpenseTotals } from "../../helper/expenseTotals";
+import { describeBalance, getExpenseTotals } from "../../helper/expenseTotals";
 
 const formatNumber = (num) =>
   Number(num || 0).toLocaleString("en-US", {
@@ -9,6 +9,7 @@ const formatNumber = (num) =>
 const ExpenseCard = ({ expense, isSelecting, isSelected, onSelect }) => {
   // Same numbers as the summary on the detail page
   const { totalSpent, remaining } = getExpenseTotals(expense);
+  const balance = describeBalance(remaining);
 
   return (
     <article className="card border border-base-300 bg-base-100">
@@ -45,9 +46,9 @@ const ExpenseCard = ({ expense, isSelecting, isSelected, onSelect }) => {
               <p className="whitespace-nowrap font-bold text-error">{formatNumber(totalSpent)} VNĐ</p>
             </div>
             <div>
-              <p className="text-xs text-base-content/60">Số dư</p>
-              <p className={`whitespace-nowrap font-bold ${remaining >= 0 ? "text-success" : "text-error"}`}>
-                {formatNumber(remaining)} VNĐ
+              <p className="text-xs text-base-content/60">{balance.label}</p>
+              <p className={`whitespace-nowrap font-bold ${balance.isDue ? "text-error" : "text-success"}`}>
+                {formatNumber(balance.amount)} VNĐ
               </p>
             </div>
           </div>

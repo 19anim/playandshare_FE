@@ -1,12 +1,22 @@
 import { LiaUserPlusSolid } from "react-icons/lia";
 import { useRef, useState } from "react";
 import Participant from "./participant.component";
+import SelectedParticipantsTotal from "./selectedParticipantsTotal.component";
 import AddCalculatorParticipantModal from "../Modal/addCalculatorParticipantModal.component";
 
 const Participants = ({ data }) => {
   const MAX_PARTICIPANTS_SHOW = 3;
   const addUserRef = useRef(null);
   const [showAll, setShowAll] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
+  // Derived from the latest data, so a deleted participant drops out of the selection
+  const selected = data.filter((participant) => selectedIds.includes(participant._id));
+
+  const toggleSelected = (id) => {
+    setSelectedIds((current) =>
+      current.includes(id) ? current.filter((item) => item !== id) : [...current, id]
+    );
+  };
 
   return (
     <section className="flex flex-col gap-3 self-start rounded-box bg-base-200 p-3 lg:p-4">
@@ -17,6 +27,15 @@ const Participants = ({ data }) => {
       >
         <LiaUserPlusSolid />
       </button>
+      <SelectedParticipantsTotal
+        selected={selected}
+        total={data.length}
+        onSelectAll={() => {
+          setSelectedIds(data.map((participant) => participant._id));
+          setShowAll(true);
+        }}
+        onClear={() => setSelectedIds([])}
+      />
       <ul className="list overflow-hidden rounded-box border border-base-300 bg-base-100">
         {data &&
           data.map((participant, index) => (
@@ -34,6 +53,8 @@ const Participants = ({ data }) => {
                 paid={participant.paid}
                 currency={participant.currency}
                 id={participant._id}
+                selected={selectedIds.includes(participant._id)}
+                onToggleSelected={() => toggleSelected(participant._id)}
               />
             </div>
           ))}

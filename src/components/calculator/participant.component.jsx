@@ -3,13 +3,12 @@ import { GoPencil } from "react-icons/go";
 import { useRef } from "react";
 import EditCalculatorParticipantModal from "../Modal/editCalculatorParticipantModal.component";
 import DeleteCalculatorParticipantModal from "../Modal/deleteCalculatorParticipantModal.component";
+import { describeBalance } from "../../helper/expenseTotals";
 
-const Participant = ({ name, balance, paid, currency, id }) => {
+const Participant = ({ name, balance, paid, currency, id, selected, onToggleSelected }) => {
   const editUserRef = useRef(null);
   const deleteUserRef = useRef(null);
-  const finalBalance = useMemo(() => {
-    return parseFloat((balance - paid).toFixed(2));
-  }, [balance, paid]);
+  const finalBalance = useMemo(() => describeBalance(balance - paid), [balance, paid]);
 
   const formatNumber = (num) => {
     return parseFloat(num).toLocaleString("en-US", {
@@ -20,7 +19,14 @@ const Participant = ({ name, balance, paid, currency, id }) => {
 
   return (
     <>
-      <li className="list-row items-center">
+      <li className={`list-row items-center ${selected ? "bg-primary/5" : ""}`}>
+        <input
+          type="checkbox"
+          className="checkbox checkbox-primary checkbox-sm"
+          checked={selected}
+          onChange={onToggleSelected}
+          aria-label={`Chọn ${name} để tính tổng`}
+        />
         <div>
           <div>{name}</div>
           <div className="text-xs uppercase">
@@ -36,15 +42,10 @@ const Participant = ({ name, balance, paid, currency, id }) => {
             )} ${currency}`}</strong>
           </div>
           <div className="text-xs uppercase">
-            Số dư:{" "}
+            {finalBalance.label}:{" "}
             <strong
-              className={
-                "whitespace-nowrap " +
-                (finalBalance >= 0
-                  ? "text-success"
-                  : "text-error")
-              }
-            >{`${formatNumber(finalBalance)} ${currency}`}</strong>
+              className={"whitespace-nowrap " + (finalBalance.isDue ? "text-error" : "text-success")}
+            >{`${formatNumber(finalBalance.amount)} ${currency}`}</strong>
           </div>
         </div>
         <div className="flex gap-1 justify-end">
