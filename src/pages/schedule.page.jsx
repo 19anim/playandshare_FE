@@ -29,6 +29,8 @@ const Schedule = () => {
   const [isMultiDeleteMode, setIsMultiDeleteMode] = useState(false);
   const [hasDeleted, setHasDeleted] = useState(false);
   const [selectedSchedules, setSelectedSchedules] = useState([]);
+  const [deleteExpensesToo, setDeleteExpensesToo] = useState(false);
+  const selectedExpenseCount = expenses.filter((expense) => selectedSchedules.includes(expense.schedule)).length;
   const successModalRef = useRef(null);
   const errorModalRef = useRef(null);
   const deleteModalRef = useRef(null);
@@ -61,7 +63,8 @@ const Schedule = () => {
     }
 
     setHasDeleted(true);
-    dispatch(deleteMultipleSchedules(selectedSchedules));
+    dispatch(deleteMultipleSchedules(selectedSchedules, { deleteExpenses: deleteExpensesToo }));
+    setDeleteExpensesToo(false);
     setSelectedSchedules([]);
     setIsMultiDeleteMode(false);
     deleteModalRef.current.close();
@@ -138,7 +141,19 @@ const Schedule = () => {
         agreeMessage="Xóa"
         disagreeMessage="Hủy bỏ"
         onAgree={handleMultiDelete}
-      />
+      >
+        {selectedExpenseCount > 0 && (
+          <label className="label mb-4 cursor-pointer gap-2 text-base-content">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-error checkbox-sm"
+              checked={deleteExpensesToo}
+              onChange={(event) => setDeleteExpensesToo(event.target.checked)}
+            />
+            Xóa luôn {selectedExpenseCount} chi tiêu liên kết
+          </label>
+        )}
+      </ConfirmationModal>
     </section>
   );
 };

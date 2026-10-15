@@ -19,6 +19,7 @@ const ScheduleDetail = () => {
   const addExpenseModalRef = useRef(null);
   const isDeletingRef = useRef(false);
   const [newCalculator, setNewCalculator] = useState({ title: "", participants: [], createdBy: null });
+  const [deleteExpensesToo, setDeleteExpensesToo] = useState(false);
 
   // Derived (not mirrored in state) so the redirect below never sees a stale value
   const currentSchedule = schedule.find((item) => item._id === scheduleId);
@@ -27,7 +28,7 @@ const ScheduleDetail = () => {
 
   const handleDelete = () => {
     isDeletingRef.current = true;
-    dispatch(deleteSchedule(scheduleId));
+    dispatch(deleteSchedule(scheduleId, { deleteExpenses: deleteExpensesToo }));
   };
 
   const handleCreateExpense = () => {
@@ -147,7 +148,19 @@ const ScheduleDetail = () => {
         agreeMessage="Xóa"
         disagreeMessage="Hủy bỏ"
         onAgree={handleDelete}
-      />
+      >
+        {linkedExpenses.length > 0 && (
+          <label className="label mb-4 cursor-pointer gap-2 text-base-content">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-error checkbox-sm"
+              checked={deleteExpensesToo}
+              onChange={(event) => setDeleteExpensesToo(event.target.checked)}
+            />
+            Xóa luôn {linkedExpenses.length} chi tiêu liên kết
+          </label>
+        )}
+      </ConfirmationModal>
     </section>
   );
 };

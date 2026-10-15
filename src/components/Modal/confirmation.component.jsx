@@ -6,6 +6,7 @@ const ConfirmationModal = ({
   agreeMessage,
   disagreeMessage,
   onAgree,
+  children,
 }) => {
   const disagreeHandler = () => {
     ref.current.close();
@@ -15,6 +16,7 @@ const ConfirmationModal = ({
       <div className="modal-box">
         <h3 className="font-bold text-lg">{title}</h3>
         <p className="py-4">{message}</p>
+        {children}
         <div className="flex gap-2 justify-end">
           <button
             className="btn btn-error"
