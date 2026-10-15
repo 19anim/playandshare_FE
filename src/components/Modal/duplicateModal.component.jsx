@@ -15,7 +15,7 @@ const DuplicateModal = ({ ref, title, message, checkboxLabel, showCheckbox, onCo
       setErrorMessage("Nhân bản thất bại, vui lòng thử lại.");
       return;
     }
-    ref.current.close();
+    ref.current?.close();
     onSuccess(result);
   };
 
@@ -23,6 +23,9 @@ const DuplicateModal = ({ ref, title, message, checkboxLabel, showCheckbox, onCo
     <dialog
       ref={ref}
       className="modal"
+      onCancel={(event) => {
+        if (busy) event.preventDefault();
+      }}
       onClose={() => {
         setChecked(false);
         setErrorMessage("");

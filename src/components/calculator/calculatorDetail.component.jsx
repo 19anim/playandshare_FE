@@ -64,7 +64,8 @@ const CalculatorDetail = () => {
           >
             <i className="fa-regular fa-copy"></i>
           </button>
-          <ExpenseExportActions expense={currentCalculator} />
+          {/* Keyed by id (here and on Participants/Payments): opening a copy must not keep the previous calculator's page, selection or prepared PDF */}
+          <ExpenseExportActions key={calculatorId} expense={currentCalculator} />
           <button onClick={() => confirmationModalRef.current.showModal()} className="btn btn-circle btn-ghost text-error">
             <i className="fa-regular fa-trash-can"></i>
           </button>
@@ -79,8 +80,8 @@ const CalculatorDetail = () => {
         <section className="w-full grid grid-cols-1 lg:grid-cols-[max-content_1fr] gap-3">
           {currentCalculator ? (
             <>
-              <Participants data={currentCalculator.participants} />
-              <Payments data={currentCalculator} />
+              <Participants key={calculatorId} data={currentCalculator.participants} />
+              <Payments key={calculatorId} data={currentCalculator} />
             </>
           ) : (
             !fetched && error ? (
