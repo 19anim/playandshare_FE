@@ -44,6 +44,10 @@ const scheduleReducer = createSlice({
       );
       state.loading = false;
     },
+    duplicateScheduleSuccess: (state, action) => {
+      state.schedule.unshift(action.payload.schedule);
+      state.loading = false;
+    },
   },
 });
 
@@ -55,6 +59,7 @@ export const {
   updateScheduleSuccess,
   deleteScheduleSuccess,
   deleteMultipleSchedulesSuccess,
+  duplicateScheduleSuccess,
 } = scheduleReducer.actions;
 export default scheduleReducer.reducer;
 
@@ -95,9 +100,9 @@ export const updateSchedule = (scheduleId, newSchedule) => {
   });
 };
 
-export const deleteSchedule = (scheduleId) => {
+export const deleteSchedule = (scheduleId, { deleteExpenses = false } = {}) => {
   return apiCallBegan({
-    url: `schedule/${scheduleId}`,
+    url: `schedule/${scheduleId}?deleteExpenses=${deleteExpenses}`,
     method: "DELETE",
     onStart: fetchScheduleStart.type,
     onSuccess: deleteScheduleSuccess.type,
@@ -107,13 +112,51 @@ export const deleteSchedule = (scheduleId) => {
   });
 };
 
-export const deleteMultipleSchedules = (scheduleIds) => {
+export const deleteMultipleSchedules = (scheduleIds, { deleteExpenses = false } = {}) => {
   return apiCallBegan({
     url: `schedule/`,
     method: "DELETE",
-    data: { scheduleIds },
+    data: { scheduleIds, deleteExpenses },
     onStart: fetchScheduleStart.type,
     onSuccess: deleteMultipleSchedulesSuccess.type,
+    onError: fetchScheduleFailure.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
+  });
+};
+
+// Also used for "Tạo link mới": the server always issues a fresh token
+export const shareSchedule = (scheduleId) => {
+  return apiCallBegan({
+    url: `schedule/${scheduleId}/share`,
+    method: "POST",
+    onStart: fetchScheduleStart.type,
+    onSuccess: updateScheduleSuccess.type,
+    onError: fetchScheduleFailure.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
+  });
+};
+
+export const unshareSchedule = (scheduleId) => {
+  return apiCallBegan({
+    url: `schedule/${scheduleId}/share`,
+    method: "DELETE",
+    onStart: fetchScheduleStart.type,
+    onSuccess: updateScheduleSuccess.type,
+    onError: fetchScheduleFailure.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
+  });
+};
+
+export const duplicateSchedule = (scheduleId, { withExpenses = false } = {}) => {
+  return apiCallBegan({
+    url: `schedule/${scheduleId}/duplicate`,
+    method: "POST",
+    data: { withExpenses },
+    onStart: fetchScheduleStart.type,
+    onSuccess: duplicateScheduleSuccess.type,
     onError: fetchScheduleFailure.type,
     withCredentials: true,
     accessTokenNeeded: true,

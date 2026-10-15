@@ -1,5 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { apiCallBegan } from "./api";
+import {
+  deleteMultipleSchedulesSuccess,
+  deleteScheduleSuccess,
+  duplicateScheduleSuccess,
+} from "./schedule";
+
+// Deleting trips either removes their calculators or leaves them without a trip
+const applyReleasedExpenses = (state, { deletedExpenseIds = [], unlinkedExpenseIds = [] }) => {
+  state.expenses = state.expenses.filter((exp) => !deletedExpenseIds.includes(exp._id));
+  state.expenses.forEach((exp) => {
+    if (unlinkedExpenseIds.includes(exp._id)) exp.schedule = null;
+  });
+};
 import { data } from "react-router-dom";
 
 const expenseReducer = createSlice({
@@ -78,6 +91,17 @@ const expenseReducer = createSlice({
       state.loading = false;
       state.error = null;
     },
+  },
+  // Keep the calculator list right after trip actions without refetching it
+  extraReducers: (builder) => {
+    builder
+      .addCase(duplicateScheduleSuccess, (state, action) => {
+        state.expenses.push(...action.payload.expenses);
+      })
+      .addCase(deleteScheduleSuccess, (state, action) => applyReleasedExpenses(state, action.payload))
+      .addCase(deleteMultipleSchedulesSuccess, (state, action) =>
+        applyReleasedExpenses(state, action.payload)
+      );
   },
 });
 export const {
@@ -183,6 +207,30 @@ export const deletePaymentInExpense = (expenseId, paymentId, data) =>
     data,
     onStart: apiRequested.type,
     onSuccess: deletePaymentInExpenseSuccess.type,
+    onError: apiRequestFailed.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
+  });
+
+export const linkExpenseToSchedule = (id, scheduleId) =>
+  apiCallBegan({
+    url: `/expense/${id}/schedule`,
+    method: "put",
+    data: { schedule: scheduleId },
+    onStart: apiRequested.type,
+    onSuccess: updateExpenseSuccess.type,
+    onError: apiRequestFailed.type,
+    withCredentials: true,
+    accessTokenNeeded: true,
+  });
+
+export const duplicateExpense = (id, { withPayments = false, rates = [] } = {}) =>
+  apiCallBegan({
+    url: `/expense/${id}/duplicate`,
+    method: "post",
+    data: { withPayments, rates },
+    onStart: apiRequested.type,
+    onSuccess: creatSuccess.type,
     onError: apiRequestFailed.type,
     withCredentials: true,
     accessTokenNeeded: true,

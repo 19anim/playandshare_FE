@@ -50,11 +50,13 @@ const api =
         if (onError) {
           dispatch({ type: onError, payload: response.data });
         }
-        return;
+        return null;
       }
 
       dispatch({ type: onSuccess, payload: response.data });
       next(action);
+      // Lets components `await dispatch(...)` to close a modal or open a new copy
+      return response.data;
     } catch (error) {
       console.log("API Error:", {
         status: error.response?.status,
@@ -70,6 +72,7 @@ const api =
       if (onError) {
         dispatch({ type: onError, payload: errorMessage });
       }
+      return null;
     }
   };
 
