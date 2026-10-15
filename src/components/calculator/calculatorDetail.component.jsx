@@ -2,11 +2,12 @@ import Participants from "./participants.component";
 import Payments from "./payments.component";
 import { Link, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchExpenses, removeExpense } from "../../store/expense";
+import { duplicateExpense, fetchExpenses, removeExpense } from "../../store/expense";
 import { getCurrencyRates } from "../../store/currenyRate";
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmationModal from "../Modal/confirmation.component";
+import DuplicateModal from "../Modal/duplicateModal.component";
 import ExpenseSummary from "./expenseSummary.component";
 import ExpenseExportActions from "./expenseExportActions.component";
 import ExpenseTripChip from "./expenseTripChip.component";
@@ -19,6 +20,7 @@ const CalculatorDetail = () => {
   const { rates } = useSelector((state) => state.currencyRate);
   const schedulesFetched = useSelector((state) => state.schedule.fetched);
   const confirmationModalRef = useRef(null);
+  const duplicateModalRef = useRef(null);
 
   // Derived (not mirrored in state) so the redirect below never sees a stale value
   const currentCalculator = expenses.find((item) => item._id === calculatorId);
@@ -53,6 +55,15 @@ const CalculatorDetail = () => {
           <header className="min-w-0 flex-1 break-words text-xl font-bold">
             {currentCalculator ? currentCalculator.title : "Đang tải..."}
           </header>
+          <button
+            onClick={() => duplicateModalRef.current.showModal()}
+            className="btn btn-circle btn-ghost"
+            disabled={!currentCalculator}
+            title="Nhân bản"
+            aria-label="Nhân bản chi tiêu"
+          >
+            <i className="fa-regular fa-copy"></i>
+          </button>
           <ExpenseExportActions expense={currentCalculator} />
           <button onClick={() => confirmationModalRef.current.showModal()} className="btn btn-circle btn-ghost text-error">
             <i className="fa-regular fa-trash-can"></i>
@@ -80,6 +91,15 @@ const CalculatorDetail = () => {
           )}
         </section>
       </div>
+      <DuplicateModal
+        ref={duplicateModalRef}
+        title="Nhân bản chi tiêu"
+        message="Tạo một bản sao với cùng người tham gia."
+        checkboxLabel="Sao chép cả các khoản chi"
+        showCheckbox={(currentCalculator?.payments.length || 0) > 0}
+        onConfirm={(withPayments) => dispatch(duplicateExpense(calculatorId, { withPayments, rates }))}
+        onSuccess={(copy) => navigate(`/calculator/${copy._id}`)}
+      />
       <ConfirmationModal
         ref={confirmationModalRef}
         title="Xóa chi tiêu"

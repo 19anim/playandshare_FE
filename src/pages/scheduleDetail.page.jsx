@@ -5,8 +5,9 @@ import ScheduleTasks from "../components/schedule/scheduleTasks.component";
 import TripExpenses from "../components/schedule/tripExpenses.component";
 import AddCalculatorModal from "../components/Modal/addCalculatorModal.component";
 import ConfirmationModal from "../components/Modal/confirmation.component";
+import DuplicateModal from "../components/Modal/duplicateModal.component";
 import ShareScheduleModal from "../components/Modal/shareScheduleModal.component";
-import { deleteSchedule, fetchSchedule } from "../store/schedule";
+import { deleteSchedule, duplicateSchedule, fetchSchedule } from "../store/schedule";
 import { fetchExpenses } from "../store/expense";
 
 const ScheduleDetail = () => {
@@ -18,6 +19,7 @@ const ScheduleDetail = () => {
   const dispatch = useDispatch();
   const deleteModalRef = useRef(null);
   const addExpenseModalRef = useRef(null);
+  const duplicateModalRef = useRef(null);
   const shareModalRef = useRef(null);
   const isDeletingRef = useRef(false);
   const [newCalculator, setNewCalculator] = useState({ title: "", participants: [], createdBy: null });
@@ -70,6 +72,14 @@ const ScheduleDetail = () => {
         <Link to={`/schedule/edit/${scheduleId}`} className="btn btn-primary rounded-full">
           Edit
         </Link>
+        <button
+          className="btn btn-secondary rounded-full"
+          disabled={!currentSchedule}
+          onClick={() => duplicateModalRef.current.showModal()}
+        >
+          <i className="fa-regular fa-copy"></i>
+          Nhân bản
+        </button>
         <button
           className="btn btn-secondary rounded-full"
           disabled={!currentSchedule}
@@ -156,6 +166,15 @@ const ScheduleDetail = () => {
         )}
       </div>
       <AddCalculatorModal ref={addExpenseModalRef} calculatorData={newCalculator} setCalculatorData={setNewCalculator} />
+      <DuplicateModal
+        ref={duplicateModalRef}
+        title="Nhân bản lịch trình"
+        message="Tạo một bản sao của lịch trình này. Bản sao không được chia sẻ."
+        checkboxLabel={`Sao chép cả ${linkedExpenses.length} chi tiêu liên kết (chỉ người tham gia)`}
+        showCheckbox={linkedExpenses.length > 0}
+        onConfirm={(withExpenses) => dispatch(duplicateSchedule(scheduleId, { withExpenses }))}
+        onSuccess={(result) => navigate(`/schedule/${result.schedule._id}`)}
+      />
       <ShareScheduleModal ref={shareModalRef} schedule={currentSchedule} />
       <ConfirmationModal
         ref={deleteModalRef}
