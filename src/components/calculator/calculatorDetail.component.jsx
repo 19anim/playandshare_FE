@@ -24,6 +24,12 @@ const CalculatorDetail = () => {
 
   // Derived (not mirrored in state) so the redirect below never sees a stale value
   const currentCalculator = expenses.find((item) => item._id === calculatorId);
+  // A calculator may hold only deposits so far; copying them alone is still useful
+  const hasPayments = (currentCalculator?.payments.length || 0) > 0;
+  const hasDeposits = (currentCalculator?.participants || []).some((participant) => (Number(participant.balance) || 0) !== 0);
+  const duplicateCheckboxLabel = [hasPayments && "các khoản chi", hasDeposits && "tiền đã đóng"]
+    .filter(Boolean)
+    .join(" và ");
 
   const handleDeleteCalculator = () => {
     dispatch(removeExpense(calculatorId));
@@ -96,8 +102,8 @@ const CalculatorDetail = () => {
         ref={duplicateModalRef}
         title="Nhân bản chi tiêu"
         message="Tạo một bản sao với cùng người tham gia."
-        checkboxLabel="Sao chép cả các khoản chi"
-        showCheckbox={(currentCalculator?.payments.length || 0) > 0}
+        checkboxLabel={`Sao chép cả ${duplicateCheckboxLabel}`}
+        showCheckbox={hasPayments || hasDeposits}
         onConfirm={(withPayments) => dispatch(duplicateExpense(calculatorId, { withPayments, rates }))}
         onSuccess={(copy) => navigate(`/calculator/${copy._id}`)}
       />
