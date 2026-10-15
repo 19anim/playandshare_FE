@@ -2,7 +2,8 @@ import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { shareSchedule, unshareSchedule } from "../../store/schedule";
 
-const EMPTY_MESSAGE = { text: "", isError: false };
+const EMPTY_MESSAGE = { text: "", tone: "success" };
+const TONE_CLASS = { success: "text-success", error: "text-error", info: "text-base-content/70" };
 const shareUrl = (token) => `${window.location.origin}/trip/${token}`;
 
 const ShareScheduleModal = ({ ref, schedule }) => {
@@ -22,32 +23,37 @@ const ShareScheduleModal = ({ ref, schedule }) => {
     setConfirmRegenerate(false);
     setMessage(
       result
-        ? { text: successText, isError: false }
-        : { text: "Có lỗi xảy ra, vui lòng thử lại.", isError: true }
+        ? { text: successText, tone: "success" }
+        : { text: "Có lỗi xảy ra, vui lòng thử lại.", tone: "error" }
     );
   };
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(link);
-      setMessage({ text: "Đã sao chép link", isError: false });
+      setMessage({ text: "Đã sao chép link", tone: "success" });
     } catch {
       // No clipboard access (old browser / insecure origin): let the user copy it by hand
       linkInputRef.current?.select();
-      setMessage({ text: "Hãy sao chép link đang được chọn", isError: false });
+      setMessage({ text: "Hãy sao chép link đang được chọn", tone: "info" });
     }
   };
 
   const handleShare = () =>
     navigator.share({ title: schedule.location, url: link }).catch((error) => {
       // AbortError = the user closed the share sheet
-      if (error.name !== "AbortError") setMessage({ text: "Không chia sẻ được, hãy sao chép link.", isError: true });
+      if (error.name !== "AbortError") setMessage({ text: "Không chia sẻ được, hãy sao chép link.", tone: "error" });
     });
+
+  const handleClose = () => {
+    setMessage(EMPTY_MESSAGE);
+    setConfirmRegenerate(false);
+  };
 
   if (!schedule) return null;
 
   return (
-    <dialog ref={ref} className="modal">
+    <dialog ref={ref} className="modal" onClose={handleClose}>
       <div className="modal-box">
         <form method="dialog">
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" aria-label="Đóng">
@@ -115,7 +121,10 @@ const ShareScheduleModal = ({ ref, schedule }) => {
                   type="button"
                   className="btn btn-ghost btn-sm rounded-full"
                   disabled={busy}
-                  onClick={() => setConfirmRegenerate(true)}
+                  onClick={() => {
+                    setMessage(EMPTY_MESSAGE);
+                    setConfirmRegenerate(true);
+                  }}
                 >
                   <i className="fa-solid fa-rotate"></i>
                   Tạo link mới
@@ -134,7 +143,9 @@ const ShareScheduleModal = ({ ref, schedule }) => {
           </div>
         )}
         {message.text && (
-          <p className={`mt-3 text-sm ${message.isError ? "text-error" : "text-success"}`}>{message.text}</p>
+          <p role="status" className={`mt-3 text-sm ${TONE_CLASS[message.tone]}`}>
+            {message.text}
+          </p>
         )}
       </div>
       <form method="dialog" className="modal-backdrop">
