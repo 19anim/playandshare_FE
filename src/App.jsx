@@ -22,6 +22,7 @@ const EditScheduleDetail = lazy(() => import("./pages/editSchedultDetail.page"))
 const Calculator = lazy(() => import("./pages/calculator.page"));
 const CalculatorDetail = lazy(() => import("./components/calculator/calculatorDetail.component"));
 const NotFound = lazy(() => import("./pages/notFound.page"));
+const SharedTrip = lazy(() => import("./pages/sharedTrip.page"));
 
 const loadPage = (page) => <Suspense fallback={<PageLoader />}>{page}</Suspense>;
 const protectedPage = (page) => <RequireAuth>{loadPage(page)}</RequireAuth>;
@@ -85,6 +86,11 @@ const router = createBrowserRouter([
       {
         path: "calculator/:calculatorId",
         element: protectedPage(<CalculatorDetail />),
+      },
+      {
+        // Public: anyone with the link can view, no login
+        path: "trip/:token",
+        element: loadPage(<SharedTrip />),
       },
     ],
   },

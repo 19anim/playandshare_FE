@@ -7,7 +7,7 @@ import AddPaymentModal from "../Modal/addPaymentModal.component";
 import EditPaymentModal from "../Modal/editPaymentModal.component";
 import DeletePaymentModal from "../Modal/deletePaymentModal.component copy";
 
-const Payments = ({ data }) => {
+const Payments = ({ data, readOnly = false }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const MAXIMUM_PAYMENTS_PER_PAGE = 4;
   const addPaymentRef = useRef(null);
@@ -29,21 +29,23 @@ const Payments = ({ data }) => {
 
   return (
     <section className="flex flex-col gap-3 rounded-box bg-base-200 p-3 lg:p-4">
-      <div className="flex flex-row gap-2">
-        <button
-          className="btn btn-primary btn-sm rounded-full self-start"
-          title="Thêm khoản chi"
-          onClick={() => addPaymentRef.current.showModal()}
-        >
-          <LuCirclePlus />
-        </button>
-        <button
-          className="btn btn-secondary btn-sm rounded-full self-start"
-          title="Xem tất cả người tham gia"
-        >
-          <IoExpand />
-        </button>
-      </div>
+      {!readOnly && (
+        <div className="flex flex-row gap-2">
+          <button
+            className="btn btn-primary btn-sm rounded-full self-start"
+            title="Thêm khoản chi"
+            onClick={() => addPaymentRef.current.showModal()}
+          >
+            <LuCirclePlus />
+          </button>
+          <button
+            className="btn btn-secondary btn-sm rounded-full self-start"
+            title="Xem tất cả người tham gia"
+          >
+            <IoExpand />
+          </button>
+        </div>
+      )}
       <ul className="list rounded-box border border-base-300 bg-base-100">
         <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Thông tin chi tiết</li>
         {payments.length === 0 ? (
@@ -64,6 +66,7 @@ const Payments = ({ data }) => {
                 paymentParticipant={formatSharers(payment)}
                 handleEditPayment={() => handleEditPayment(payment)}
                 handleDeletePayment={() => handleDeltePayment(payment._id)}
+                readOnly={readOnly}
               />
             ))
         )}
@@ -82,9 +85,13 @@ const Payments = ({ data }) => {
           </button>
         ))}
       </div>
-      <AddPaymentModal ref={addPaymentRef} participants={participants} />
-      <EditPaymentModal ref={editPaymentRef} participants={participants} payment={paymentsToEdit} />
-      <DeletePaymentModal ref={deletePaymentRef} paymentId={paymentIdToDelete} />
+      {!readOnly && (
+        <>
+          <AddPaymentModal ref={addPaymentRef} participants={participants} />
+          <EditPaymentModal ref={editPaymentRef} participants={participants} payment={paymentsToEdit} />
+          <DeletePaymentModal ref={deletePaymentRef} paymentId={paymentIdToDelete} />
+        </>
+      )}
     </section>
   );
 };

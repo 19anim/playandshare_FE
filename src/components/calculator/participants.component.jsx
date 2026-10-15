@@ -4,7 +4,7 @@ import Participant from "./participant.component";
 import SelectedParticipantsTotal from "./selectedParticipantsTotal.component";
 import AddCalculatorParticipantModal from "../Modal/addCalculatorParticipantModal.component";
 
-const Participants = ({ data }) => {
+const Participants = ({ data, readOnly = false }) => {
   const MAX_PARTICIPANTS_SHOW = 3;
   const addUserRef = useRef(null);
   const [showAll, setShowAll] = useState(false);
@@ -20,13 +20,15 @@ const Participants = ({ data }) => {
 
   return (
     <section className="flex flex-col gap-3 self-start rounded-box bg-base-200 p-3 lg:p-4">
-      <button
-        onClick={() => addUserRef.current.showModal()}
-        className="btn btn-primary btn-sm rounded-full self-start"
-        title="Thêm người tham gia"
-      >
-        <LiaUserPlusSolid />
-      </button>
+      {!readOnly && (
+        <button
+          onClick={() => addUserRef.current.showModal()}
+          className="btn btn-primary btn-sm rounded-full self-start"
+          title="Thêm người tham gia"
+        >
+          <LiaUserPlusSolid />
+        </button>
+      )}
       <SelectedParticipantsTotal
         selected={selected}
         total={data.length}
@@ -55,6 +57,7 @@ const Participants = ({ data }) => {
                 id={participant._id}
                 selected={selectedIds.includes(participant._id)}
                 onToggleSelected={() => toggleSelected(participant._id)}
+                readOnly={readOnly}
               />
             </div>
           ))}
@@ -67,7 +70,7 @@ const Participants = ({ data }) => {
           {showAll ? "Thu gọn" : `Xem tất cả (${data.length})`}
         </button>
       )}
-      <AddCalculatorParticipantModal ref={addUserRef} />
+      {!readOnly && <AddCalculatorParticipantModal ref={addUserRef} />}
     </section>
   );
 };

@@ -8,6 +8,7 @@ const Payment = ({
   paymentParticipant,
   handleEditPayment,
   handleDeletePayment,
+  readOnly = false,
 }) => {
   const formatNumber = (num) => {
     return parseFloat(num).toLocaleString("en-US", {
@@ -28,20 +29,24 @@ const Payment = ({
           {paymentParticipant}
         </div>
       </div>
-      <button
-        className="btn btn-square text-xl btn-ghost hover:scale-110 hover:animate-wiggle transition-all duration-300"
-        title="Xem chi tiết khoản chi"
-        onClick={handleEditPayment}
-      >
-        <MdOutlinePageview />
-      </button>
-      <button
-        className="btn btn-square btn-ghost hover:scale-110 hover:animate-wiggle transition-all duration-300"
-        title="Xóa khoản chi"
-        onClick={handleDeletePayment}
-      >
-        <i className="fa-regular fa-trash-can"></i>
-      </button>
+      {!readOnly && (
+        <>
+          <button
+            className="btn btn-square text-xl btn-ghost hover:scale-110 hover:animate-wiggle transition-all duration-300"
+            title="Xem chi tiết khoản chi"
+            onClick={handleEditPayment}
+          >
+            <MdOutlinePageview />
+          </button>
+          <button
+            className="btn btn-square btn-ghost hover:scale-110 hover:animate-wiggle transition-all duration-300"
+            title="Xóa khoản chi"
+            onClick={handleDeletePayment}
+          >
+            <i className="fa-regular fa-trash-can"></i>
+          </button>
+        </>
+      )}
     </li>
   );
 };
