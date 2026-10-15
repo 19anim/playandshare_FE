@@ -6,7 +6,7 @@ const formatNumber = (num) =>
     maximumFractionDigits: 2,
   });
 
-const ExpenseCard = ({ expense, isSelecting, isSelected, onSelect }) => {
+const ExpenseCard = ({ expense, tripName, isSelecting, isSelected, onSelect, onUnlink, isUnlinking }) => {
   // Same numbers as the summary on the detail page
   const { totalSpent, remaining } = getExpenseTotals(expense);
   const balance = describeBalance(remaining);
@@ -20,6 +20,12 @@ const ExpenseCard = ({ expense, isSelecting, isSelected, onSelect }) => {
             <p className="text-sm text-base-content/60">
               {expense.participants.length} người tham gia
             </p>
+            {tripName && (
+              <p className="mt-1 flex items-center gap-1 text-xs text-base-content/60">
+                <i className="fa-solid fa-route"></i>
+                {tripName}
+              </p>
+            )}
           </div>
           {isSelecting && (
             <input
@@ -52,9 +58,24 @@ const ExpenseCard = ({ expense, isSelecting, isSelected, onSelect }) => {
               </p>
             </div>
           </div>
-          <Link className="btn btn-secondary btn-sm" to={expense._id}>
-            Chi tiết
-          </Link>
+          <div className="flex gap-2">
+            {onUnlink && (
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                onClick={onUnlink}
+                disabled={isUnlinking}
+                title="Gỡ khỏi chuyến đi"
+                aria-label={`Gỡ ${expense.title} khỏi chuyến đi`}
+              >
+                <i className="fa-solid fa-link-slash"></i>
+              </button>
+            )}
+            {/* Absolute: the card is also shown on the trip detail page */}
+            <Link className="btn btn-secondary btn-sm" to={`/calculator/${expense._id}`}>
+              Chi tiết
+            </Link>
+          </div>
         </div>
       </div>
     </article>

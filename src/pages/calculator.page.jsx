@@ -5,6 +5,7 @@ import ConfirmationModal from "../components/Modal/confirmation.component";
 import ExpenseCard from "../components/calculator/expenseCard.component";
 import { getCurrencyRates } from "../store/currenyRate";
 import { fetchExpenses, removeMultiExpenses } from "../store/expense";
+import { fetchSchedule } from "../store/schedule";
 
 const ExpenseSkeleton = () => (
   <div className="card border border-base-300 bg-base-100">
@@ -20,6 +21,8 @@ const Calculator = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const { expenses, loading } = useSelector((state) => state.expense);
+  const { schedule: schedules, fetched: schedulesFetched } = useSelector((state) => state.schedule);
+  const tripNameById = Object.fromEntries(schedules.map((item) => [item._id, item.location]));
   const [multiSelect, setMultiSelect] = useState(false);
   const [selectedCalculators, setSelectedCalculators] = useState([]);
   const [newCalculator, setNewCalculator] = useState({ title: "", participants: [], createdBy: null });
@@ -29,6 +32,9 @@ const Calculator = () => {
   useEffect(() => {
     dispatch(fetchExpenses());
     dispatch(getCurrencyRates());
+    // Trip names on the cards and the trip select in the create modal
+    if (!schedulesFetched) dispatch(fetchSchedule());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   const handleAddNewCalculator = () => {
@@ -101,6 +107,7 @@ const Calculator = () => {
             <ExpenseCard
               key={expense._id}
               expense={expense}
+              tripName={tripNameById[expense.schedule]}
               isSelecting={multiSelect}
               isSelected={selectedCalculators.includes(expense._id)}
               onSelect={(event) => handleSingleSelect(event, expense._id)}

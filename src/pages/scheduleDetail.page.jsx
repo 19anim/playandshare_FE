@@ -1,25 +1,43 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import ScheduleTasks from "../components/schedule/scheduleTasks.component";
-import { useEffect, useRef } from "react";
+import TripExpenses from "../components/schedule/tripExpenses.component";
+import AddCalculatorModal from "../components/Modal/addCalculatorModal.component";
 import ConfirmationModal from "../components/Modal/confirmation.component";
-import { useDispatch } from "react-redux";
 import { deleteSchedule, fetchSchedule } from "../store/schedule";
+import { fetchExpenses } from "../store/expense";
 
 const ScheduleDetail = () => {
   const { scheduleId } = useParams();
   const navigate = useNavigate();
   const { schedule, fetched, loading, error } = useSelector((state) => state.schedule);
+  const { expenses, fetched: expensesFetched } = useSelector((state) => state.expense);
+  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const deleteModalRef = useRef(null);
+  const addExpenseModalRef = useRef(null);
   const isDeletingRef = useRef(false);
+  const [newCalculator, setNewCalculator] = useState({ title: "", participants: [], createdBy: null });
 
   // Derived (not mirrored in state) so the redirect below never sees a stale value
   const currentSchedule = schedule.find((item) => item._id === scheduleId);
+  const linkedExpenses = expenses.filter((expense) => expense.schedule === scheduleId);
+  const availableExpenses = expenses.filter((expense) => !expense.schedule);
 
   const handleDelete = () => {
     isDeletingRef.current = true;
     dispatch(deleteSchedule(scheduleId));
+  };
+
+  const handleCreateExpense = () => {
+    setNewCalculator({
+      title: "",
+      participants: [{ name: user.displayName, balance: 0, paid: 0 }],
+      createdBy: null,
+      schedule: scheduleId,
+    });
+    addExpenseModalRef.current.showModal();
   };
 
   useEffect(() => {
@@ -30,9 +48,10 @@ const ScheduleDetail = () => {
     }
   }, [error]);
 
-  // Opening this page directly (refresh / shared link) means the list hasn't been loaded yet
+  // Opening this page directly (refresh / shared link) means the lists haven't been loaded yet
   useEffect(() => {
     if (!fetched) dispatch(fetchSchedule());
+    if (!expensesFetched) dispatch(fetchExpenses());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
@@ -44,16 +63,11 @@ const ScheduleDetail = () => {
 
   return (
     <section className="mx-auto flex w-full max-w-[1200px] flex-col px-3 py-5 md:px-6">
-      <div className="mb-3 flex gap-2 self-end">
+      <div className="mb-3 flex flex-wrap gap-2 self-end">
         <Link to={`/schedule/edit/${scheduleId}`} className="btn btn-primary rounded-full">
           Edit
         </Link>
-        <button
-          className="btn btn-error rounded-full"
-          onClick={() => {
-            deleteModalRef.current.showModal();
-          }}
-        >
+        <button className="btn btn-error rounded-full" onClick={() => deleteModalRef.current.showModal()}>
           Delete
         </button>
       </div>
@@ -115,7 +129,16 @@ const ScheduleDetail = () => {
 
           {currentSchedule && <ScheduleTasks tasks={currentSchedule.tasks} isEditMode={false} />}
         </div>
+        {currentSchedule && (
+          <TripExpenses
+            scheduleId={scheduleId}
+            linkedExpenses={linkedExpenses}
+            availableExpenses={availableExpenses}
+            onCreate={handleCreateExpense}
+          />
+        )}
       </div>
+      <AddCalculatorModal ref={addExpenseModalRef} calculatorData={newCalculator} setCalculatorData={setNewCalculator} />
       <ConfirmationModal
         ref={deleteModalRef}
         isDeleting={loading}

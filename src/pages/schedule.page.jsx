@@ -6,6 +6,7 @@ import SuccessModal from "../components/Modal/success.component";
 import NewSchedule from "../components/schedule/newSchedule.component";
 import ScheduleCard from "../components/schedule/scheduleCard.component";
 import { deleteMultipleSchedules, fetchSchedule } from "../store/schedule";
+import { fetchExpenses } from "../store/expense";
 
 const ScheduleSkeleton = () => (
   <div className="card border border-base-300 bg-base-100">
@@ -20,6 +21,11 @@ const ScheduleSkeleton = () => (
 const Schedule = () => {
   const dispatch = useDispatch();
   const { schedule, loading, error } = useSelector((state) => state.schedule);
+  const { expenses, fetched: expensesFetched } = useSelector((state) => state.expense);
+  const expenseCountBySchedule = expenses.reduce((counts, expense) => {
+    if (expense.schedule) counts[expense.schedule] = (counts[expense.schedule] || 0) + 1;
+    return counts;
+  }, {});
   const [isMultiDeleteMode, setIsMultiDeleteMode] = useState(false);
   const [hasDeleted, setHasDeleted] = useState(false);
   const [selectedSchedules, setSelectedSchedules] = useState([]);
@@ -29,6 +35,8 @@ const Schedule = () => {
 
   useEffect(() => {
     dispatch(fetchSchedule());
+    if (!expensesFetched) dispatch(fetchExpenses());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   useEffect(() => {
@@ -105,6 +113,7 @@ const Schedule = () => {
             <ScheduleCard
               key={item._id}
               schedule={item}
+              expenseCount={expenseCountBySchedule[item._id] || 0}
               isSelecting={isMultiDeleteMode}
               isSelected={selectedSchedules.includes(item._id)}
               onSelect={handleScheduleSelection}

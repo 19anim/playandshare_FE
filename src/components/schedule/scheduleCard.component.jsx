@@ -14,7 +14,7 @@ const getScheduleStatus = (departureDate, returnDate) => {
   return { label: "Đang đi chơi", className: "badge-warning" };
 };
 
-const ScheduleCard = ({ schedule, isSelecting, isSelected, onSelect }) => {
+const ScheduleCard = ({ schedule, expenseCount = 0, isSelecting, isSelected, onSelect }) => {
   const status = getScheduleStatus(schedule.departureDate, schedule.returnDate);
 
   return (
@@ -43,6 +43,22 @@ const ScheduleCard = ({ schedule, isSelecting, isSelected, onSelect }) => {
           )}
         </div>
 
+        {(expenseCount > 0 || schedule.shareToken) && (
+          <div className="flex flex-wrap gap-2">
+            {expenseCount > 0 && (
+              <span className="badge badge-soft badge-secondary gap-1">
+                <i className="fa-solid fa-wallet"></i>
+                {expenseCount} chi tiêu
+              </span>
+            )}
+            {schedule.shareToken && (
+              <span className="badge badge-soft badge-success gap-1">
+                <i className="fa-solid fa-share-nodes"></i>
+                Đang chia sẻ
+              </span>
+            )}
+          </div>
+        )}
         <div className="grid grid-cols-2 gap-3 rounded-box bg-base-200 p-3 text-sm">
           <div>
             <p className="text-xs text-base-content/60">Ngày đi</p>

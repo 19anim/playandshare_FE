@@ -9,6 +9,7 @@ const AddCalculatorModal = ({ ref, calculatorData, setCalculatorData }) => {
   const dispatch = useDispatch();
   const { error, loading } = useSelector((state) => state.expense);
   const { userId } = useSelector((state) => state.user);
+  const { schedule: schedules } = useSelector((state) => state.schedule);
   const [errorMessage, setErrorMessage] = useState("");
   const handleAdd = () => {
     // Blank lines (e.g. a trailing Enter) are not people
@@ -82,6 +83,22 @@ const AddCalculatorModal = ({ ref, calculatorData, setCalculatorData }) => {
               />
             </label>
           </div>
+          <label className="select mt-1 w-full focus:outline-none focus-within:outline-none">
+            <span className="label">Chuyến đi</span>
+            <select
+              value={calculatorData.schedule || ""}
+              onChange={(event) =>
+                setCalculatorData((prev) => ({ ...prev, schedule: event.target.value || null }))
+              }
+            >
+              <option value="">Không thuộc chuyến đi nào</option>
+              {schedules.map((item) => (
+                <option key={item._id} value={item._id}>
+                  {item.location}
+                </option>
+              ))}
+            </select>
+          </label>
           <fieldset className="fieldset ">
             <legend className="fieldset-legend">Danh sách người tham gia</legend>
             <textarea

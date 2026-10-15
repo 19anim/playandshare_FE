@@ -9,12 +9,15 @@ import { useNavigate } from "react-router-dom";
 import ConfirmationModal from "../Modal/confirmation.component";
 import ExpenseSummary from "./expenseSummary.component";
 import ExpenseExportActions from "./expenseExportActions.component";
+import ExpenseTripChip from "./expenseTripChip.component";
+import { fetchSchedule } from "../../store/schedule";
 
 const CalculatorDetail = () => {
   const dispatch = useDispatch();
   const { calculatorId } = useParams();
   const { expenses, fetched, loading, error } = useSelector((state) => state.expense);
   const { rates } = useSelector((state) => state.currencyRate);
+  const schedulesFetched = useSelector((state) => state.schedule.fetched);
   const confirmationModalRef = useRef(null);
 
   // Derived (not mirrored in state) so the redirect below never sees a stale value
@@ -30,6 +33,7 @@ const CalculatorDetail = () => {
   useEffect(() => {
     if (!fetched) dispatch(fetchExpenses());
     if (rates.length === 0) dispatch(getCurrencyRates());
+    if (!schedulesFetched) dispatch(fetchSchedule());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
@@ -56,7 +60,8 @@ const CalculatorDetail = () => {
         </div>
         <div className="divider my-0"></div>
         {currentCalculator && (
-          <div className="mb-3">
+          <div className="mb-3 flex flex-col gap-3">
+            <ExpenseTripChip expense={currentCalculator} />
             <ExpenseSummary expense={currentCalculator} />
           </div>
         )}
