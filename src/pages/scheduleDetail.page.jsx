@@ -5,6 +5,7 @@ import ScheduleTasks from "../components/schedule/scheduleTasks.component";
 import TripExpenses from "../components/schedule/tripExpenses.component";
 import AddCalculatorModal from "../components/Modal/addCalculatorModal.component";
 import ConfirmationModal from "../components/Modal/confirmation.component";
+import ShareScheduleModal from "../components/Modal/shareScheduleModal.component";
 import { deleteSchedule, fetchSchedule } from "../store/schedule";
 import { fetchExpenses } from "../store/expense";
 
@@ -17,6 +18,7 @@ const ScheduleDetail = () => {
   const dispatch = useDispatch();
   const deleteModalRef = useRef(null);
   const addExpenseModalRef = useRef(null);
+  const shareModalRef = useRef(null);
   const isDeletingRef = useRef(false);
   const [newCalculator, setNewCalculator] = useState({ title: "", participants: [], createdBy: null });
   const [deleteExpensesToo, setDeleteExpensesToo] = useState(false);
@@ -68,6 +70,14 @@ const ScheduleDetail = () => {
         <Link to={`/schedule/edit/${scheduleId}`} className="btn btn-primary rounded-full">
           Edit
         </Link>
+        <button
+          className="btn btn-secondary rounded-full"
+          disabled={!currentSchedule}
+          onClick={() => shareModalRef.current.showModal()}
+        >
+          <i className="fa-solid fa-share-nodes"></i>
+          Chia sẻ
+        </button>
         <button
           className="btn btn-error rounded-full"
           onClick={() => {
@@ -146,6 +156,7 @@ const ScheduleDetail = () => {
         )}
       </div>
       <AddCalculatorModal ref={addExpenseModalRef} calculatorData={newCalculator} setCalculatorData={setNewCalculator} />
+      <ShareScheduleModal ref={shareModalRef} schedule={currentSchedule} />
       <ConfirmationModal
         ref={deleteModalRef}
         isDeleting={loading}
