@@ -23,8 +23,9 @@ const SharedTrip = () => {
 
   const load = useCallback(() => {
     setState({ status: "loading", data: null });
+    // First visitor often wakes the server up: allow a cold start
     normalAxios
-      .get(`/share/${token}`)
+      .get(`/share/${token}`, { timeout: 60000 })
       .then((response) => setState({ status: "ready", data: response.data }))
       .catch((error) =>
         setState({ status: error.response?.status === 404 ? "notFound" : "error", data: null })

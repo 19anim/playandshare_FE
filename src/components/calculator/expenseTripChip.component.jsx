@@ -6,7 +6,7 @@ import { linkExpenseToSchedule } from "../../store/expense";
 // Shows which trip a calculator belongs to and lets the owner change or remove it
 const ExpenseTripChip = ({ expense }) => {
   const dispatch = useDispatch();
-  const { schedule: schedules } = useSelector((state) => state.schedule);
+  const { schedule: schedules, fetched } = useSelector((state) => state.schedule);
   const [saving, setSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const trip = schedules.find((item) => item._id === expense.schedule);
@@ -27,13 +27,16 @@ const ExpenseTripChip = ({ expense }) => {
           {trip.location}
         </Link>
       ) : (
-        <span className="text-base-content/60">Không thuộc chuyến đi nào</span>
+        // Until the trip list arrives, a linked calculator's trip is unknown, not missing
+        <span className="text-base-content/60">
+          {!fetched && expense.schedule ? "Đang tải chuyến đi..." : "Không thuộc chuyến đi nào"}
+        </span>
       )}
       <select
         className="select select-xs w-auto rounded-full"
         value={expense.schedule || ""}
         onChange={handleChange}
-        disabled={saving}
+        disabled={saving || !fetched}
         aria-label="Đổi chuyến đi"
       >
         <option value="">Không thuộc chuyến đi nào</option>

@@ -3,7 +3,7 @@ import { IoMdClose } from "react-icons/io";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createExpense } from "../../store/expense";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const AddCalculatorModal = ({ ref, calculatorData, setCalculatorData }) => {
   const dispatch = useDispatch();
@@ -11,6 +11,8 @@ const AddCalculatorModal = ({ ref, calculatorData, setCalculatorData }) => {
   const { userId } = useSelector((state) => state.user);
   const { schedule: schedules } = useSelector((state) => state.schedule);
   const [errorMessage, setErrorMessage] = useState("");
+  // Only our own submit should reset or close the form, not other expense requests
+  const submittedRef = useRef(false);
   const handleAdd = () => {
     // Blank lines (e.g. a trailing Enter) are not people
     const participants = calculatorData.participants
@@ -27,6 +29,7 @@ const AddCalculatorModal = ({ ref, calculatorData, setCalculatorData }) => {
       setErrorMessage(`Tên "${duplicate.name}" bị trùng, vui lòng đặt tên khác`);
     } else {
       setErrorMessage("");
+      submittedRef.current = true;
       dispatch(
         createExpense({
           ...calculatorData,
@@ -51,6 +54,8 @@ const AddCalculatorModal = ({ ref, calculatorData, setCalculatorData }) => {
   };
 
   useEffect(() => {
+    if (!submittedRef.current || loading) return;
+    submittedRef.current = false;
     if (error) {
       setErrorMessage("Đã có lỗi xảy ra. Vui lòng thử lại.");
     } else if (!loading && !error) {
