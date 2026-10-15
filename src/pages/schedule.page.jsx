@@ -63,7 +63,8 @@ const Schedule = () => {
     }
 
     setHasDeleted(true);
-    dispatch(deleteMultipleSchedules(selectedSchedules, { deleteExpenses: deleteExpensesToo }));
+    // Only when the box was visible: never delete calculators the user didn't see
+    dispatch(deleteMultipleSchedules(selectedSchedules, { deleteExpenses: deleteExpensesToo && selectedExpenseCount > 0 }));
     setDeleteExpensesToo(false);
     setSelectedSchedules([]);
     setIsMultiDeleteMode(false);
@@ -73,6 +74,7 @@ const Schedule = () => {
   const cancelSelection = () => {
     setSelectedSchedules([]);
     setIsMultiDeleteMode(false);
+    setDeleteExpensesToo(false);
   };
 
   return (
@@ -90,7 +92,14 @@ const Schedule = () => {
           </button>
         ) : (
           <div className="flex gap-2">
-            <button type="button" className="btn btn-error rounded-full" onClick={() => deleteModalRef.current.showModal()}>
+            <button
+              type="button"
+              className="btn btn-error rounded-full"
+              onClick={() => {
+                setDeleteExpensesToo(false);
+                deleteModalRef.current.showModal();
+              }}
+            >
               Xóa đã chọn
             </button>
             <button type="button" className="btn btn-secondary rounded-full" onClick={cancelSelection}>

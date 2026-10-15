@@ -28,7 +28,7 @@ const ScheduleDetail = () => {
 
   const handleDelete = () => {
     isDeletingRef.current = true;
-    dispatch(deleteSchedule(scheduleId, { deleteExpenses: deleteExpensesToo }));
+    dispatch(deleteSchedule(scheduleId, { deleteExpenses: deleteExpensesToo && linkedExpenses.length > 0 }));
   };
 
   const handleCreateExpense = () => {
@@ -68,7 +68,13 @@ const ScheduleDetail = () => {
         <Link to={`/schedule/edit/${scheduleId}`} className="btn btn-primary rounded-full">
           Edit
         </Link>
-        <button className="btn btn-error rounded-full" onClick={() => deleteModalRef.current.showModal()}>
+        <button
+          className="btn btn-error rounded-full"
+          onClick={() => {
+            setDeleteExpensesToo(false);
+            deleteModalRef.current.showModal();
+          }}
+        >
           Delete
         </button>
       </div>
