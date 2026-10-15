@@ -86,8 +86,9 @@ const CalculatorDetail = () => {
         <section className="w-full grid grid-cols-1 lg:grid-cols-[max-content_1fr] gap-3">
           {currentCalculator ? (
             <>
-              <Participants key={calculatorId} data={currentCalculator.participants} />
-              <Payments key={calculatorId} data={currentCalculator} />
+              {/* Siblings need distinct keys: a shared key makes React keep a stale copy when the id changes */}
+              <Participants key={`participants-${calculatorId}`} data={currentCalculator.participants} />
+              <Payments key={`payments-${calculatorId}`} data={currentCalculator} />
             </>
           ) : (
             !fetched && error ? (
